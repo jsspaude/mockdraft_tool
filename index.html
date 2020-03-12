@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Lato|Rock+Salt&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css"> 
+    <title>Sweatalus Mock Draft</title>
+    
+
+</head>
+<body>
+  <header>
+    <h1>Sweatalus Fantasy Football Mock Draft Simulator</h1>
+    <p>All of the keepers are already inputted. Just follow along and draft. Last player drafted appears in red in case you get lost.</p>
+    <p class="signoff">Your Commish,<br> - Jess</p>
+  </header>
+  <div id ="tracker" data-currentName="" data-currentPos="" data-currentRound="">
+    <h2>Round</h2>
+    <h3 class="round"></h3>
+    <div>
+      <h2 class="currentTeam"></h2>
+      <h4 class="currentPlayer"></h4>
+    </div>
+  </div>
+  <div id="current-team">
+
+  </div>
+  <div id="teamsList">
+      <div id="team1" class="team-list" data-qb="2" data-rb="1" data-wr="0" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Kamryn</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="pos-label">QB</td>
+              <td class="keeper 1qb2">Andy Dalton</td>
+              <td class="round-drafted 1qb2r">13</td>
+            </tr>
+            <tr>
+              <td class="pos-label">RB</td>
+              <td class="keeper 1rb1">Mark Ingram</td>
+              <td class="round-drafted 1rb1r">3</td>
+            </tr>
+            <tr>
+              <td class="pos-label">RB</td>
+              <td class="1rb2"></td>
+              <td class="round-drafted 1rb2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">WR</td>
+              <td class="1wr1"></td>
+              <td class="round-drafted 1wr1r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">WR</td>
+              <td class="1wr2"></td>
+              <td class="round-drafted 1wr2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">TE</td>
+              <td class="1te2"></td>
+              <td class="round-drafted 1te2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">RB/WR/TE</td>
+              <td class="1rb3 1wr3 1te3"></td>
+              <td class="round-drafted 1rb3r 1wr3r 1te3r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="1bench2"></td>
+              <td class="round-drafted 1bench2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="1bench3"></td>
+              <td class="round-drafted 1bench3r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="1bench4"></td>
+              <td class="round-drafted 1bench4r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="1bench5"></td>
+              <td class="round-drafted 1bench5r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="1bench6"></td>
+              <td class="round-drafted 1bench6r"></td>
+            </tr>
+            <tr>         
+              <td class="pos-label">DST</td>
+              <td class="1def2"></td>
+              <td class="round-drafted 1def2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">K</td>
+              <td class="1pk2"></td>
+              <td class="round-drafted 1pk2r"></td>
+            </tr>
+        </tbody>
+        </table>
+      </div>
+      <div id="team2" class="team-list" data-qb="2" data-rb="0" data-wr="0" data-te="2" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Gilbert</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="pos-label">QB</td>
+              <td class="2qb2 keeper">Patrick Mahommes</td>
+              <td class="round-drafted 2qb2r">8</td>
+            </tr>
+            <tr>
+              <td class="pos-label">RB</td>
+              <td class="2rb1"></td>
+              <td class="round-drafted 2rb1r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">RB</td>
+              <td class="2rb2"></td>
+              <td class="round-drafted 2rb2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">WR</td>
+              <td class="2wr1"></td>
+              <td class="round-drafted 2wr1r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">WR</td>
+              <td class="2wr2"></td>
+              <td class="round-drafted 2wr2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">TE</td>
+              <td class="2te2 keeper">Zach Ertz</td>
+              <td class="round-drafted 2te2r">13</td>
+            </tr>
+            <tr>
+              <td class="pos-label">RB/WR/TE</td>
+              <td class="2rb3 2wr3 2te3"></td>
+              <td class="round-drafted 2rb3r 2wr3r 2te3r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="2bench2"></td>
+              <td class="round-drafted 2bench2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="2bench3"></td>
+              <td class="round-drafted 2bench3r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="2bench4"></td>
+              <td class="round-drafted 2bench4r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="2bench5"></td>
+              <td class="round-drafted 2bench5r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">BENCH</td>
+              <td class="2bench6"></td>
+              <td class="round-drafted 2bench6r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">DST</td>
+              <td class="2def2"></td>
+              <td class="round-drafted 2def2r"></td>
+            </tr>
+            <tr>
+              <td class="pos-label">K</td>
+              <td class="2pk2"></td>
+              <td class="round-drafted 2pk2r"></td>
+            </tr>
+        </tbody>
+        </table>
+      </div>
+      <div id="team3" class="team-list" data-qb="1" data-rb="0" data-wr="0" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="0">
+        <h2>Owen</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="3qb2"></td>
+            <td class="round-drafted 3qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="3rb1"></td>
+            <td class="round-drafted 3rb1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="3rb2"></td>
+            <td class="round-drafted 3rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="3wr1"></td>
+            <td class="round-drafted 3wr1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="3wr2"></td>
+            <td class="round-drafted 3wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="3te2"></td>
+            <td class="round-drafted 3te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="3rb3 3wr3 3te3"></td>
+            <td class="round-drafted 3rb3r 3wr3r 3te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="3bench2"></td>
+            <td class="round-drafted 3bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="3bench3"></td>
+            <td class="round-drafted 3bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="3bench4"></td>
+            <td class="round-drafted 3bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="3bench5"></td>
+            <td class="round-drafted 3bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="3bench6"></td>
+            <td class="round-drafted 3bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="3def2"></td>
+            <td class="round-drafted 3def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="3pk2"></td>
+            <td class="round-drafted 3pk2r"></td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+      <div id="team4" class="team-list" data-qb="1" data-rb="0" data-wr="1" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="1">
+        <h2>Mark</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="4qb2"></td>
+            <td class="round-drafted 4qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="4rb1"></td>
+            <td class="round-drafted 4rb1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="4rb2"></td>
+            <td class="round-drafted 4rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="4wr1 keeper">Antonio Brown</td>
+            <td class="round-drafted 4wr1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="4wr2"></td>
+            <td class="round-drafted 4wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="4te2"></td>
+            <td class="round-drafted 4te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="4rb3 4wr3 4te3"></td>
+            <td class="round-drafted 4rb3r 4wr3r 4te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="4bench2"></td>
+            <td class="round-drafted 4bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="4bench3"></td>
+            <td class="round-drafted 4bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="4bench4"></td>
+            <td class="round-drafted 4bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="4bench5"></td>
+            <td class="round-drafted 4bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="4bench6"></td>
+            <td class="round-drafted 4bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="4def2"></td>
+            <td class="round-drafted 4def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="4pk2"></td>
+            <td class="round-drafted 4pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team5" class="team-list" data-qb="1" data-rb="1" data-wr="1" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Amanda</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="5qb2"></td>
+            <td class="round-drafted 5qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="5rb1 keeper">David Johnson</td>
+            <td class="round-drafted 5rb1r">7</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="5rb2"></td>
+            <td class="round-drafted 5rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="5wr1 keeper">Julio Jones</td>
+            <td class="round-drafted 5wr1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="5wr2"></td>
+            <td class="round-drafted 5wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="5te2"></td>
+            <td class="round-drafted 5te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="5rb3 5wr3 5te3"></td>
+            <td class="round-drafted 5rb3r 5wr3r 5te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="5bench2"></td>
+            <td class="round-drafted 5bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="5bench3"></td>
+            <td class="round-drafted 5bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="5bench4"></td>
+            <td class="round-drafted 5bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="5bench5"></td>
+            <td class="round-drafted 5bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="5bench6"></td>
+            <td class="round-drafted 5bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="5def2"></td>
+            <td class="round-drafted 5def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="5pk2"></td>
+            <td class="round-drafted 5pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team6" class="team-list" data-qb="1" data-rb="1" data-wr="0" data-te="2" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Derek</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="6qb2"></td>
+            <td class="round-drafted 6qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="6rb1 keeper">Darrius Guice</td>
+            <td class="round-drafted 6rb1r">15</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="6rb2"></td>
+            <td class="round-drafted 6rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="6wr1"></td>
+            <td class="round-drafted 6wr1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="6wr2"></td>
+            <td class="round-drafted 6wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="6te2 keeper">Travis Kelce</td>
+            <td class="round-drafted 6te2r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="6rb3 6wr3 6te3"></td>
+            <td class="round-drafted 6rb3r 6wr3r 6te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="6bench2"></td>
+            <td class="round-drafted 6bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="6bench3"></td>
+            <td class="round-drafted 6bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="6bench4"></td>
+            <td class="round-drafted 6bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="6bench5"></td>
+            <td class="round-drafted 6bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="6bench6"></td>
+            <td class="round-drafted 6bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="6def2"></td>
+            <td class="round-drafted 6def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="6pk2"></td>
+            <td class="round-drafted 6pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team7" class="team-list" data-qb="1" data-rb="1" data-wr="1" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Kevin</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="7qb2"></td>
+            <td class="round-drafted 7qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="7rb1 keeper">Alvin Kamara</td>
+            <td class="round-drafted 7rb1r">10</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="7rb2"></td>
+            <td class="round-drafted 7rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="7wr1 keeper">Davante Adams</td>
+            <td class="round-drafted 7wr1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="7wr2"></td>
+            <td class="round-drafted 7wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="7te2"></td>
+            <td class="round-drafted 7te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="7rb3 7wr3 7te3"></td>
+            <td class="round-drafted 7rb3r 7wr3r 7te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="7bench2"></td>
+            <td class="round-drafted 7bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="7bench3"></td>
+            <td class="round-drafted 7bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="7bench4"></td>
+            <td class="round-drafted 7bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="7bench5"></td>
+            <td class="round-drafted 7bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="7bench6"></td>
+            <td class="round-drafted 7bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="7def2"></td>
+            <td class="round-drafted 7def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="7pk2"></td>
+            <td class="round-drafted 7pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team8" class="team-list" data-qb="1" data-rb="1" data-wr="0" data-te="2" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Jess</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="8qb2"></td>
+            <td class="round-drafted 8qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="8rb1 keeper">Todd Gurley</td>
+            <td class="round-drafted 8rb1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="8rb2"></td>
+            <td class="round-drafted 8rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="8wr1"></td>
+            <td class="round-drafted 8wr1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="8wr2"></td>
+            <td class="round-drafted 8wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="8te2 keeper">Evan Engram</td>
+            <td class="round-drafted 8te2r">15</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="8rb3 8wr3 8te3"></td>
+            <td class="round-drafted 8rb3r 8wr3r 8te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="8bench2"></td>
+            <td class="round-drafted 8bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="8bench3"></td>
+            <td class="round-drafted 8bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="8bench4"></td>
+            <td class="round-drafted 8bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="8bench5"></td>
+            <td class="round-drafted 8bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="8bench6"></td>
+            <td class="round-drafted 8bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="8def2"></td>
+            <td class="round-drafted 8def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="8pk2"></td>
+            <td class="round-drafted 8pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team9" class="team-list" data-qb="1" data-rb="1" data-wr="1" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Chad</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="9qb2"></td>
+            <td class="round-drafted 9qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="9rb1 keeper">Ezekiel Elliott</td>
+            <td class="round-drafted 9rb1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="9rb2"></td>
+            <td class="round-drafted 9rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="9wr1 keeper">Adam Thielen</td>
+            <td class="round-drafted 9wr1r">3</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="9wr2"></td>
+            <td class="round-drafted 9wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="9te2"></td>
+            <td class="round-drafted 9te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="9rb3 9wr3 9te3"></td>
+            <td class="round-drafted 9rb3r 9wr3r 9te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="9bench2"></td>
+            <td class="round-drafted 9bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="9bench3"></td>
+            <td class="round-drafted 9bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="9bench4"></td>
+            <td class="round-drafted 9bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="9bench5"></td>
+            <td class="round-drafted 9bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="9bench6"></td>
+            <td class="round-drafted 9bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="9def2"></td>
+            <td class="round-drafted 9def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="9pk2"></td>
+            <td class="round-drafted 9pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team10" class="team-list" data-qb="1" data-rb="0" data-wr="2" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Cory</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="10qb2"></td>
+            <td class="round-drafted 10qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="10rb1"></td>
+            <td class="round-drafted 10rb1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="10rb2"></td>
+            <td class="round-drafted 10rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="10wr1 keeper">DeAndre Hopkins</td>
+            <td class="round-drafted 10wr1r">13</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="10wr2 keeper">Michael Thomas</td>
+            <td class="round-drafted 10wr2r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="10te2"></td>
+            <td class="round-drafted 10te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="10rb3 10wr3 10te3"></td>
+            <td class="round-drafted 10rb3r 10wr3r 10te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="10bench2"></td>
+            <td class="round-drafted 10bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="10bench3"></td>
+            <td class="round-drafted 10bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="10bench4"></td>
+            <td class="round-drafted 10bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="10bench5"></td>
+            <td class="round-drafted 10bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="10bench6"></td>
+            <td class="round-drafted 10bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="10def2"></td>
+            <td class="round-drafted 10def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="10pk2"></td>
+            <td class="round-drafted 10pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team11" class="team-list" data-qb="1" data-rb="1" data-wr="1" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Nikki</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="11qb2"></td>
+            <td class="round-drafted 11qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="11rb1 keeper">James Connor</td>
+            <td class="round-drafted 11rb1r">9</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="11rb2"></td>
+            <td class="round-drafted 11rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="11wr1 keeper">Odell Beckham Jr</td>
+            <td class="round-drafted 11wr1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="11wr2"></td>
+            <td class="round-drafted 11wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="11te2"></td>
+            <td class="round-drafted 11te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="11rb3 11wr3 11te3"></td>
+            <td class="round-drafted 11rb3r 11wr3r 11te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="112bench2"></td>
+            <td class="round-drafted 112bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="112bench3"></td>
+            <td class="round-drafted 112bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="112bench4"></td>
+            <td class="round-drafted 112bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="112bench5"></td>
+            <td class="round-drafted 112bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="112bench6"></td>
+            <td class="round-drafted 112bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="11def2"></td>
+            <td class="round-drafted 11def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="11pk2"></td>
+            <td class="round-drafted 11pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team12" class="team-list" data-qb="1" data-rb="2" data-wr="0" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
+        <h2>Ryan</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="12qb2"></td>
+            <td class="round-drafted 12qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="12rb1 keeper">Christian McCaffery</td>
+            <td class="round-drafted 12rb1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="12rb2 keeper">Dalvin Cook</td>
+            <td class="round-drafted 12rb2r">14</td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="12wr1"></td>
+            <td class="round-drafted 12wr1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="12wr2"></td>
+            <td class="round-drafted 12wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="12te2"></td>
+            <td class="round-drafted 12te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="12rb3 12wr3 12te3"></td>
+            <td class="round-drafted 12rb3r 12wr3r 12te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="12bench2"></td>
+            <td class="round-drafted 12bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="12bench3"></td>
+            <td class="round-drafted 12bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="12bench4"></td>
+            <td class="round-drafted 12bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="12bench5"></td>
+            <td class="round-drafted 12bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="12bench6"></td>
+            <td class="round-drafted 12bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="12def2"></td>
+            <td class="round-drafted 12def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="12pk2"></td>
+            <td class="round-drafted 12pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team13" class="team-list" data-qb="1" data-rb="1" data-wr="0" data-te="1" data-flex="0" data-bench="0" data-def="2" data-pk="1" data-total="2">
+        <h2>Bill</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="13qb2"></td>
+            <td class="round-drafted 13qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="13rb1 keeper">Saquon Barkley</td>
+            <td class="round-drafted 13rb1r">1</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="13rb2"></td>
+            <td class="round-drafted 13rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="13wr1"></td>
+            <td class="round-drafted 13wr1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="13wr2"></td>
+            <td class="round-drafted 13wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="13te2"></td>
+            <td class="round-drafted 13te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="13rb3 13wr3 13te3"></td>
+            <td class="round-drafted 13rb3r 13wr3r 13te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="13bench2"></td>
+            <td class="round-drafted 13bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="13bench3"></td>
+            <td class="round-drafted 13bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="13bench4"></td>
+            <td class="round-drafted 13bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="13bench5"></td>
+            <td class="round-drafted 13bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="13bench6"></td>
+            <td class="round-drafted 13bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="13def2 keeper">Chicago</td>
+            <td class="round-drafted 13def2r">13</td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="13pk2"></td>
+            <td class="round-drafted 13pk2r"></td>
+          </tr>
+          <tbody>
+        </table>
+      </div>
+      <div id="team14" class="team-list" data-qb="1" data-rb="1" data-wr="0" data-te="1" data-flex="0" data-bench="0" data-def="1" data-pk="1" data-total="1">
+        <h2>Taaj</h2>
+        <table>
+          <thead>
+            <th>Pos.</th>
+            <th>Player</th>
+            <th>Round</th>
+          </thead>
+          <tr>
+            <td class="pos-label">QB</td>
+            <td class="14qb2"></td>
+            <td class="round-drafted 14qb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="14rb1 keeper">Jordan Howard</td>
+            <td class="round-drafted 14rb1r">13</td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB</td>
+            <td class="14rb2"></td>
+            <td class="round-drafted 14rb2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="14wr1"></td>
+            <td class="round-drafted 14wr1r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">WR</td>
+            <td class="14wr2"></td>
+            <td class="round-drafted 14wr2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">TE</td>
+            <td class="14te2"></td>
+            <td class="round-drafted 14te2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">RB/WR/TE</td>
+            <td class="14rb3 14wr3 14te3"></td>
+            <td class="round-drafted 14rb3r 14wr3 14te3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="14bench2"></td>
+            <td class="round-drafted 14bench2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="14bench3"></td>
+            <td class="round-drafted 14bench3r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="14bench4"></td>
+            <td class="round-drafted 14bench4r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="14bench5"></td>
+            <td class="round-drafted 14bench5r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">BENCH</td>
+            <td class="14bench6"></td>
+            <td class="round-drafted 14bench6r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">DST</td>
+            <td class="14def2"></td>
+            <td class="round-drafted 14def2r"></td>
+          </tr>
+          <tr>
+            <td class="pos-label">K</td>
+            <td class="14pk2"></td>
+            <td class="round-drafted 14pk2r"></td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+  </div>
+  <div id="playerList">
+      <table>
+        <thead>
+          <th>ADP</th>
+          <th>Overall</th>
+          <th>Name</th>
+          <th>Pos</th>
+          <th>Team</th>
+          <th>Std. Dev</th>
+          <th>High</th>
+          <th>Low</th>
+        </thead>
+        <tbody id="myData">
+        </tbody>
+      </table>
+    </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="js/undo-manager.js"></script>
+  <script src="js/scripts2.js"></script>
+</body>
+</html>

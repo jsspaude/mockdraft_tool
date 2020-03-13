@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css?family=Lato|Rock+Salt&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css"> 
     <title>Sweatalus Mock Draft</title>
-    
 
 </head>
 <body>
@@ -16,6 +15,18 @@
     <p>All of the keepers are already inputted. Just follow along and draft. Last player drafted appears in red in case you get lost.</p>
     <p class="signoff">Your Commish,<br> - Jess</p>
   </header>
+  <div class='team-select'>
+    <form onsubmit="setupDraft()">
+      <label for="number-of-teams">Number Of Teams</label>
+      <select id="number-of-teams" name="number-of-teams" data-js='numOfTeams'>
+        <option value="10">10 Teams</option>
+        <option value="12">12 Teams</option>
+        <option value="14">14 Teams</option>
+        <option value="16">16 Teams</option>
+      </select>
+      <input type="submit">
+    </form>
+  </div>
   <div id ="tracker" data-currentName="" data-currentPos="" data-currentRound="">
     <h2>Round</h2>
     <h3 class="round"></h3>
@@ -27,7 +38,7 @@
   <div id="current-team">
 
   </div>
-  <div id="teamsList">
+  <!-- <div id="teamsList">
       <div id="team1" class="team-list" data-qb="2" data-rb="1" data-wr="0" data-te="1" data-flex="0" data-bench="0" 1 1 data-total="2">
         <h2>Kamryn</h2>
         <table>
@@ -1165,9 +1176,9 @@
         </tbody>
         </table>
       </div>
-  </div>
+  </div> -->
   <div id="playerList">
-      <table>
+      <!-- <table>
         <thead>
           <th>ADP</th>
           <th>Overall</th>
@@ -1180,10 +1191,9 @@
         </thead>
         <tbody id="myData">
         </tbody>
-      </table>
+      </table> -->
     </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="js/undo-manager.js"></script>
-  <script src="js/scripts2.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>

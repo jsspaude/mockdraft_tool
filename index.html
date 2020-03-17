@@ -7,7 +7,6 @@
     <!-- <link href="https://fonts.googleapis.com/css?family=Lato|Rock+Salt&display=swap" rel="stylesheet"> -->
     <link rel="stylesheet" href="styles.css"> 
     <title>Sweatalus Mock Draft</title>
-
 </head>
 <body>
   <header>
@@ -16,10 +15,7 @@
     <p class="signoff">Your Commish,<br> - Jess</p>
   </header>
   <section id="settings-contaienr" data-js="settings">
-    <article class="number-of-rounds">
-      <input value="# of Rounds" type>
-    </article>
-    <article class='team-select'>
+    <article class='settings-select'>
       <label for="number-of-managers">Number Of Managers</label>
       <select id="number-of-managers" name="number-of-managers">
         <option value="10">10 Managers</option>
@@ -28,16 +24,17 @@
         <option value="16">16 Managers</option>
       </select>
       <button data-js="manNameBtn">SUBMIT</button>
-      <form class="setup-draft" data-js="setupDraft">
-        <input value="SETUP DRAFT" type="submit">
-      </form>
-      <form data-js="startDraft">
+      <div class='manager-input-container' data-js="managerInputContainer">
+      
+      </div>
+      <form class="start-draft" data-js="startDraft">
+        <input data-js="numRounds" placeholder="# of Rounds" type="text" required>
         <input value="START DRAFT" type="submit">
       </form>
+      <button data-js="resetBtn">RESET</button>
     </article>
   </section>
   <section id="info-container">
-    
     <article id ="tracker" data-currentName="" data-currentPos="" data-currentRound="">
       <h2>Round</h2>
       <h3 class="round"></h3>

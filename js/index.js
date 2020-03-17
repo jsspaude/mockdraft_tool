@@ -2,10 +2,11 @@
 const   playerTable         = document.querySelector('[data-js="playerTable"]'),
         managerContainer    = document.querySelector('[data-js="managerContainer"]'),
         settings            = document.querySelector('[data-js="settings"]'),
-        rounds              = settings.querySelector('[data-js="numOfRounds"]'),
+        rounds              = 15,
         namesButton         = settings.querySelector('button'),
         playerStoreString   = 'playerStore',
         managerStoreString  = 'managerStore',
+        positions           =['QB','RB','RB','WR','WR','TE','FLEX','DST','K'],
         formStart           = document.querySelector('[data-js="startDraft"]'),
         formSetup           = document.querySelector('[data-js="setupDraft"]');
 var     teamCount           = 0,
@@ -34,6 +35,9 @@ window.onload = function() {
     request.onsuccess = function() {
         console.log('Draft data inputted');
         db = request.result;
+
+        displayManagers();
+        displayPlayers();
     };
     request.onupgradeneeded = function(e) {
         let db              = e.target.result;
@@ -68,7 +72,7 @@ window.onload = function() {
 
     function addManagerData(e) {
         e.preventDefault();
-        clearData();
+        
         let transaction     = db.transaction(['managerStore'], 'readwrite');
         let managerStore    = transaction.objectStore('managerStore');
 
@@ -137,16 +141,28 @@ window.onload = function() {
                 const article       = document.createElement('article');
                 const table         = document.createElement('table');
                 const managerData   = document.createElement('th');
-                const draftRow      = document.createElement('tr');
-                const draftData     = document.createElement('td');
-                console.log(managerInput);
-                console.log('test');
 
                 article.appendChild(table);
                 table.appendChild(managerData);
-                table.appendChild(draftRow);
-                draftRow.appendChild(draftData);
+
+                for(let i=0; i < rounds; i++) {
+                    const draftRow      = document.createElement('tr');
+                    table.appendChild(draftRow);
+
+                    for(let i=0; i < 2; i++) {
+                        const draftData = document.createElement('td');
+                        draftRow.appendChild(draftData);
+                        draftData.setAttribute('data-td', i);
+                    }
+                    
+                    draftRow.firstChild.innerText = positions[i];
+
+                    if(i>8) {
+                        draftRow.firstChild.innerText = 'BENCH';
+                    }
+                }
                 managerContainer.appendChild(article);
+
                 if(cursor.value.managerName == "") {
                     managerData.innerText = `Manager ${cursor.value.managerNum}`;
                 }
@@ -194,7 +210,30 @@ window.onload = function() {
         };
     };
 
-    function draftPlayer() {
-        console.log('test');
+    function draftPlayer(draftBtn) {
+        var objectStore = db.transaction(["playerStore"], "readwrite").objectStore("playerStore");
+        var item    = parseInt(draftBtn.target.parentElement.getAttribute('data-playerkey'));
+        var request = objectStore.get(item);
+
+        console.log(request);
+        request.onerror = function(event) {
+            console.log('Error in manager change')
+        };
+        request.onsuccess = function(event) {
+            // Get the old value that we want to update
+            var data = event.target.result;
+            console.log(data);
+            // update the value(s) in the object that you want to change
+            data.manager = 1;
+
+            // Put this updated object back into the database.
+            var requestUpdate = objectStore.put(data);
+            requestUpdate.onerror = function(event) {
+                // Do something with the error
+            };
+            requestUpdate.onsuccess = function(event) {
+                // Success - the data is updated!
+            };
+        };  
     }
 };

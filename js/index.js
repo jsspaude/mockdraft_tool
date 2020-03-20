@@ -80,17 +80,35 @@ window.onload = function() {
 
     function addData(e) {//ADD PLAYER DATA + CREATE INDEXES
         e.preventDefault();
-        let transaction     = db.transaction(['playerStore'], 'readwrite'),
-            transaction2    = db.transaction(['managerStore'], 'readwrite'),
-            transaction3    = db.transaction(['settingsStore'], 'readwrite'),
-            playerStore     = transaction.objectStore('playerStore'),
-            managerStore    = transaction2.objectStore('managerStore'),
-            settingsStore   = transaction3.objectStore('settingsStore'),
-            newItem = {numRounds: numRounds.value, currRound: 1, currManager: 0, numManagers: managerCount, tracker: 0};
-            request = settingsStore.add(newItem);
+        let playerTransaction   = db.transaction(['playerStore'], 'readwrite'),
+            managerTransaction  = db.transaction(['managerStore'], 'readwrite'),
+            settingsTransaction = db.transaction(['settingsStore'], 'readwrite'),
+            playerStore         = playerTransaction.objectStore('playerStore'),
+            managerStore        = managerTransaction.objectStore('managerStore'),
+            settingsStore       = settingsTransaction.objectStore('settingsStore'),
+            newItem             = {numRounds: numRounds.value, currRound: 1, currManager: 0, numManagers: managerCount, tracker: 0};
+            request             = settingsStore.add(newItem);
 
         for(const value of players){
-            let request = playerStore.add(value);
+            let request     = playerStore.add(value);
+        };
+
+        playerStore.openCursor().onsuccess = function(e) {
+            let cursor = e.target.result;
+            if(cursor) {
+                const   updatePlayer                = cursor.value;
+                        updatePlayer.manager        = 99,
+                        updatePlayer.drafted        = 0,
+                        updatePlayer.roundDrafted   = 0;
+                let     request                     = cursor.update(updatePlayer);
+
+                request.onsuccess = function() {
+                    console.log('Init Player Data Loaded');
+                }
+            }
+            else {
+                console.log('Init Player Data Displayed');
+            }
         };
 
         for(const [i,value] of managerInput.entries()){
@@ -100,12 +118,12 @@ window.onload = function() {
         request.onsuccess = function() {
             console.log('Draft Has Loaded');
         };
-        transaction.oncomplete = function() {
+        playerTransaction.oncomplete = function() {
             console.log('Data Stores Updated');
 
             asyncDisplay();
         };
-        transaction.onerror = function() {
+        playerTransaction.onerror = function() {
         console.log('Data Store Error');
         };
     };
@@ -120,15 +138,11 @@ window.onload = function() {
                 const   tableRow                    = document.createElement('tr'),
                         adpData                     = document.createElement('td'),
                         nameData                    = document.createElement('td'),
-                        posData                    = document.createElement('td'),
+                        posData                     = document.createElement('td'),
                         teamData                    = document.createElement('td'),
                         updatePlayer                = cursor.value,
                         draftBtn                    = document.createElement('button');
-                        updatePlayer.manager        = 99,
-                        updatePlayer.drafted        = 0,
-                        updatePlayer.roundDrafted   = 0;
-
-                const   request                 = cursor.update(updatePlayer);
+                let     request                     = cursor.update(updatePlayer);
 
                 request.onsuccess = function() {
                     console.log('Player Data Loaded');
@@ -284,6 +298,7 @@ window.onload = function() {
             console.log('Draft Button Error')
         };
         playerRequest.onsuccess = function(event) {
+            
             let data = event.target.result;
             data.manager = currManager;
             data.drafted = 1;
@@ -294,6 +309,7 @@ window.onload = function() {
                 console.log('Manager Change Error')
             };
             requestUpdate.onsuccess = function(event) {
+                console.log('Draft Player Success');
                 playerTracker.innerText = `${currManager.innerText} drafted ${data.name}`;
             };
         }; 
@@ -325,7 +341,31 @@ window.onload = function() {
     };
 
     function displayDraftedPlayer() {
+        const   transaction = db.transaction(['playerStore'], 'readwrite');
+        let     playerStore = transaction.objectStore('playerStore');
         
+        playerStore.openCursor().onsuccess = function(e) {
+            let cursor = e.target.result;
+            if(cursor) {
+                const   updatePlayer    = cursor.value,
+                        request         = cursor.update(updatePlayer);
+
+                request.onsuccess = function() {
+                    console.log('Player Data Loaded');
+                }
+                adpData.textContent     = cursor.value.adp;
+                nameData.textContent    = cursor.value.name;
+                posData.textContent     = cursor.value.pos;
+                teamData.textContent    = cursor.value.team;
+
+                
+            } 
+            else {
+                console.log('Player Data Displayed');
+            }
+            
+        };
+
     }
 
     async function asyncDisplay() {//DISPLAY PLAYERS AND MANAGER AFTER GLOBALS RUN

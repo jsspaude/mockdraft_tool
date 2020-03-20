@@ -14,45 +14,50 @@
     <p>All of the keepers are already inputted. Just follow along and draft. Last player drafted appears in red in case you get lost.</p>
     <p class="signoff">Your Commish,<br> - Jess</p>
   </header>
-  <section id="settings-contaienr" data-js="settings">
-    <article class='settings-select'>
-      <label for="number-of-managers">Number Of Managers</label>
-      <select id="number-of-managers" name="number-of-managers">
-        <option value="10">10 Managers</option>
-        <option value="12">12 Managers</option>
-        <option value="14">14 Managers</option>
-        <option value="16">16 Managers</option>
-      </select>
-      <button data-js="manNameBtn">SUBMIT</button>
-      <div class='manager-input-container' data-js="managerInputContainer">
-      
-      </div>
-      <form class="start-draft" data-js="startDraft">
-        <input data-js="numRounds" placeholder="# of Rounds" type="text" required>
-        <input value="START DRAFT" type="submit">
-      </form>
-      <button data-js="resetBtn">RESET</button>
-    </article>
-  </section>
-  <section id="info-container">
-    <article>
-      <h2>Round</h2>
-      <h3 data-js="roundTracker"></h3>
-      <div>
-        <h2 data-js="managerTracker" class="currentTeam"></h2>
-        <h4 class="currentPlayer" data-js="playerTracker"></h4>
-      </div>
-    </article>
-  </section>
-  <section id="player-list-container">
-    <article id="player-list" data-js="playerList">
-      <table data-js="playerTable">
+  <main>
+    <section id="settings-container" data-js="settings">
+      <article class='settings-select'>
+        <label for="number-of-managers">Number Of Managers</label>
+        <select id="number-of-managers" name="number-of-managers">
+          <option value="10">10 Managers</option>
+          <option value="12">12 Managers</option>
+          <option value="14">14 Managers</option>
+          <option value="16">16 Managers</option>
+        </select>
+        <button data-js="manNameBtn">SUBMIT</button>
+        <div class='manager-input-container' data-js="managerInputContainer">
+        
+        </div>
+        <form class="start-draft" data-js="startDraft">
+          <input data-js="numRounds" placeholder="# of Rounds" type="text" required>
+          <input value="START DRAFT" type="submit">
+        </form>
+        <button data-js="resetBtn">RESET</button>
+      </article>
+    </section>
+    <section id="info-container">
+      <article>
+        <h2>Round</h2>
+        <h3 data-js="roundTracker"></h3>
+        <div>
+          <h2 data-js="managerTracker" class="currentTeam"></h2>
+          <h4 class="currentPlayer" data-js="playerTracker"></h4>
+        </div>
+      </article>
+    </section>
+    <section id="player-list-container">
+      <article id="player-list" data-js="playerList">
+        <table data-js="playerTable">
 
-      </table>
-    </article>
-  </section>
-  <section id="manager-container" data-js="managerContainer">
-  </section>
+        </table>
+      </article>
+    </section>
+    <section id="manager-container" data-js="managerContainer">
+    </section>
+  </main>
+  <footer>
+    
+  </footer>
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
   <script src="js/index.js"></script>
 </body>

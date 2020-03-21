@@ -31,10 +31,10 @@ request.onload = function() {
 window.onload = function() {
     let request = window.indexedDB.open('mockDraft', 1);
     request.onerror = function() {
-        console.log('MockDraft Failed to Open');
+        // console.log('MockDraft Failed to Open');
     };
     request.onsuccess = function() {
-        console.log('MockDraft Data Inputted');
+        // console.log('MockDraft Data Inputted');
         db = request.result;
         asyncDisplay();
     };
@@ -53,7 +53,7 @@ window.onload = function() {
             settingsStore.createIndex('numManagers', 'numManagers', { unique: false });
             settingsStore.createIndex('tracker', 'tracker', { unique: false });
             managerStore.createIndex('managerNum', 'managerNum', {unique: true});
-        console.log('MockDraft Stores Added');
+        // console.log('MockDraft Stores Added');
     };
     //STORE USER SETTINGS CALL
     namesButton.addEventListener("click", initSettings);
@@ -103,35 +103,35 @@ window.onload = function() {
                 let     request                     = cursor.update(updatePlayer);
 
                 request.onsuccess = function() {
-                    console.log('Init Player Data Loaded');
+                    // console.log('Init Player Data Loaded');
                 }
             }
             else {
-                console.log('Init Player Data Displayed');
+                // console.log('Init Player Data Displayed');
             }
         };
 
         for(const [i,value] of managerInput.entries()){
-            let newItem = { managerName: value.value, managerNum: i };
+            let newItem = { managerName: value.value, managerNum: i, playerName:[], playerPos: [], playerTeam:[] };
             let request = managerStore.add(newItem);
         };
         request.onsuccess = function() {
-            console.log('Draft Has Loaded');
+            // console.log('Draft Has Loaded');
         };
         playerTransaction.oncomplete = function() {
-            console.log('Data Stores Updated');
+            // console.log('Data Stores Updated');
 
             asyncDisplay();
         };
         playerTransaction.onerror = function() {
-        console.log('Data Store Error');
+        // console.log('Data Store Error');
         };
     };
 
     function displayPlayers() {//DISPLAY PLAYER DATA
         const   transaction = db.transaction(['playerStore'], 'readwrite');
         let     playerStore = transaction.objectStore('playerStore');
-        
+       
         playerStore.openCursor().onsuccess = function(e) {
             let cursor = e.target.result;
             if(cursor) {
@@ -145,8 +145,9 @@ window.onload = function() {
                 let     request                     = cursor.update(updatePlayer);
 
                 request.onsuccess = function() {
-                    console.log('Player Data Loaded');
+                    // console.log('Player Data Loaded');
                 }
+
                 tableRow.appendChild(adpData);
                 tableRow.appendChild(nameData);
                 tableRow.appendChild(posData);
@@ -164,7 +165,7 @@ window.onload = function() {
                 cursor.continue();
             } 
             else {
-                console.log('Player Data Displayed');
+                // console.log('Player Data Displayed');
             }
         };
     }
@@ -179,7 +180,6 @@ window.onload = function() {
                         table       = document.createElement('table'),
                         managerData = document.createElement('th');
                 let     draftData;
-
                 article.appendChild(table);
                 table.appendChild(managerData);
                 addRows();
@@ -224,7 +224,7 @@ window.onload = function() {
                 }
             } 
             else {
-                console.log('Managers Displayed');
+                // console.log('Managers Displayed');
             }
         };
     }
@@ -249,7 +249,7 @@ window.onload = function() {
 
             rounds = parseInt(data.numRounds);
             managerRequest.onerror = function(event) {
-                console.log('Manager Tracker Update Error');
+                // console.log('Manager Tracker Update Error');
             };
     
             managerRequest.onsuccess = function(event) {
@@ -284,37 +284,69 @@ window.onload = function() {
     };
 
     function draftPlayer(draftBtn) {//UPDATE DATA ON DRAFT BUTTON CLICK
-        let playerTransaction       = db.transaction(["playerStore"], "readwrite"),
-            playerStore             = playerTransaction.objectStore("playerStore"),
+        let playerTransaction       = db.transaction(['playerStore'], 'readwrite'),
+            playerStore             = playerTransaction.objectStore('playerStore'),
             playerKey               = parseInt(draftBtn.target.parentElement.getAttribute('data-playerkey')),
             playerRequest           = playerStore.get(playerKey),
             playerTracker           = document.querySelector('[data-js="playerTracker"]'),
-            settingsTransaction     = db.transaction(["settingsStore"], "readwrite"),
-            settingsStore           = settingsTransaction.objectStore("settingsStore"),
-            settingsTrackerIndex    = settingsStore.index('tracker');
-            settingsRequest         = settingsTrackerIndex.get(0);
+            settingsTransaction     = db.transaction(['settingsStore'], 'readwrite'),
+            settingsStore           = settingsTransaction.objectStore('settingsStore'),
+            settingsTrackerIndex    = settingsStore.index('tracker'),
+            settingsRequest         = settingsTrackerIndex.get(0),
+            playerName,
+            playerPos;
         
+            // DO NEXT: add playername and pos to manager store using managerNum index
+
         playerRequest.onerror = function(event) {
-            console.log('Draft Button Error')
+            // console.log('Draft Button Error')
         };
-        playerRequest.onsuccess = function(event) {
-            
-            let data = event.target.result;
+        playerRequest.onsuccess = async function(event) {
+            let data                    = event.target.result;
+                managerTransaction      = db.transaction(['managerStore'], 'readwrite'),
+                managerStore            = managerTransaction.objectStore('managerStore'),
+                managerIndex            = managerStore.index('managerNum'),
+                managerRequest          = managerIndex.get(currManager);
+
+            playerName = data.name;
+            playerPos = data.pos;
             data.manager = currManager;
             data.drafted = 1;
             data.roundDrafted = currRound;
 
             let requestUpdate = playerStore.put(data);
             requestUpdate.onerror = function(event) {
-                console.log('Manager Change Error')
+                // console.log('Manager Change Error')
             };
-            requestUpdate.onsuccess = function(event) {
-                console.log('Draft Player Success');
+            requestUpdate.onsuccess = async function(event) {
+                // console.log('Draft Player Success');
                 playerTracker.innerText = `${currManager.innerText} drafted ${data.name}`;
             };
+
+            managerRequest.onerror = function(event) {
+                // console.log('Draft Player managerRequest Error');
+            }
+    
+            managerRequest.onsuccess = await function(event) {
+                let data = event.target.result;
+                    data.playerName.push(playerName);
+                    data.playerPos.push(playerPos);
+    
+                let requestUpdate = managerStore.put(data);
+                
+    
+                requestUpdate.onerror = function(event) {
+                    // console.log('Draft Player Manager Request Update Success');
+                    
+                };
+                requestUpdate.onsuccess = function(event) {
+                    // console.log('Draft Player Manager Request Update Success');
+                    console.log(currManager);
+                };
+            }
         }; 
         settingsRequest.onerror = function(event) {
-            console.log('Manager Tracker Error');
+            // console.log('Manager Tracker Error');
         };
         settingsRequest.onsuccess = function(event) {
             let data = event.target.result;
@@ -332,7 +364,7 @@ window.onload = function() {
                 requestUpdate = settingsStore.put(data);
             }
             requestUpdate.onerror = function(event) {
-                console.log('Manager Tracker Error')
+                // console.log('Manager Tracker Error')
             };
             requestUpdate.onsuccess = function(event) {
                 asyncDisplay();
@@ -342,7 +374,13 @@ window.onload = function() {
 
     function displayDraftedPlayer() {
         const   transaction = db.transaction(['playerStore'], 'readwrite');
-        let     playerStore = transaction.objectStore('playerStore');
+        let     playerStore = transaction.objectStore('playerStore'),
+                adpData,
+                nameData,
+                posData,
+                teamData,
+                managerData,
+                draftedData;
         
         playerStore.openCursor().onsuccess = function(e) {
             let cursor = e.target.result;
@@ -351,17 +389,28 @@ window.onload = function() {
                         request         = cursor.update(updatePlayer);
 
                 request.onsuccess = function() {
-                    console.log('Player Data Loaded');
+                    // console.log('Player Data Loaded');
                 }
-                adpData.textContent     = cursor.value.adp;
-                nameData.textContent    = cursor.value.name;
-                posData.textContent     = cursor.value.pos;
-                teamData.textContent    = cursor.value.team;
 
+                if(updatePlayer.drafted == 1) {
+                    adpData     = cursor.value.adp;
+                    nameData    = cursor.value.name;
+                    posData     = cursor.value.pos;
+                    teamData    = cursor.value.team;
+                }
+                // const drafted = await displayDraftedPlayer();
+                
+
+                // function displayDraftedPlayer() {
+                //     if(manager !== 99) {
+                        console.log('test');
+                //         document.querySelector('[data-manager="0"]').children(document.querySelector(`[data-pos="${pos}"]`)).innerText = cursor.value;
+                //     }
+                // }
                 
             } 
             else {
-                console.log('Player Data Displayed');
+                // console.log('Player Data Displayed');
             }
             
         };
@@ -389,3 +438,4 @@ window.onload = function() {
 };
 
 
+//TO DO - NOTES: If new round start manager back at 0 or end depending on round (snake)

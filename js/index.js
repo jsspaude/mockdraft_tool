@@ -15,9 +15,11 @@ let     managerCount,
         currRound,
         currManagerName,
         db,
-        players;
-        requestURL          = 'js/draft_data.json';
-        request             = new XMLHttpRequest();
+        players,
+        rounds;
+
+        requestURL              = 'js/draft_data.json';
+        request                 = new XMLHttpRequest();
 
 //IMPORT JSON
 request.open('GET', requestURL);
@@ -78,8 +80,18 @@ window.onload = function() {
         managerInput = document.querySelectorAll('[data-js="managerName"]');
     }
 
+    // const objectStoreVars = (storeName, storeIndex, value) => {
+    //     let transaction = db.transaction([`${storeName}`]),
+    //         objectStore = transaction.objectStore(`${storeName}`);
+    //         console.log(transaction,objectStore);
+    //         return transaction, objectStore;
+    // }
+
+    // objectStoreVars('playerStore');
+
     function addData(e) {//ADD PLAYER DATA + CREATE INDEXES
         e.preventDefault();
+
         let playerTransaction   = db.transaction(['playerStore'], 'readwrite'),
             managerTransaction  = db.transaction(['managerStore'], 'readwrite'),
             settingsTransaction = db.transaction(['settingsStore'], 'readwrite'),
@@ -87,10 +99,15 @@ window.onload = function() {
             managerStore        = managerTransaction.objectStore('managerStore'),
             settingsStore       = settingsTransaction.objectStore('settingsStore'),
             newItem             = {numRounds: numRounds.value, currRound: 1, currManager: 0, numManagers: managerCount, tracker: 0};
-            request             = settingsStore.add(newItem);
+            settingsRequest     = settingsStore.add(newItem);
 
         for(const value of players){
-            let request     = playerStore.add(value);
+            let request = playerStore.add(value);
+        };
+
+        for(const [i,value] of managerInput.entries()){
+            let newItem = { managerName: value.value, managerNum: i, playerName:[], playerPos: [], playerTeam:[] };
+            let request = managerStore.add(newItem);
         };
 
         playerStore.openCursor().onsuccess = function(e) {
@@ -111,28 +128,23 @@ window.onload = function() {
             }
         };
 
-        for(const [i,value] of managerInput.entries()){
-            let newItem = { managerName: value.value, managerNum: i, playerName:[], playerPos: [], playerTeam:[] };
-            let request = managerStore.add(newItem);
-        };
-        request.onsuccess = function() {
-            // console.log('Draft Has Loaded');
-        };
         playerTransaction.oncomplete = function() {
             // console.log('Data Stores Updated');
-
             asyncDisplay();
         };
+        
         playerTransaction.onerror = function() {
         // console.log('Data Store Error');
         };
     };
 
-    function displayPlayers() {//DISPLAY PLAYER DATA
+
+
+    const displayPlayers = () => {//DISPLAY PLAYER DATA
         const   transaction = db.transaction(['playerStore'], 'readwrite');
         let     playerStore = transaction.objectStore('playerStore');
        
-        playerStore.openCursor().onsuccess = function(e) {
+        playerStore.openCursor().onsuccess = (e) => {
             let cursor = e.target.result;
             if(cursor) {
                 const   tableRow                    = document.createElement('tr'),
@@ -144,7 +156,7 @@ window.onload = function() {
                         draftBtn                    = document.createElement('button');
                 let     request                     = cursor.update(updatePlayer);
 
-                request.onsuccess = function() {
+                request.onsuccess = () => {
                     // console.log('Player Data Loaded');
                 }
 
@@ -161,7 +173,7 @@ window.onload = function() {
                 tableRow.setAttribute('data-manager', 99);
                 tableRow.appendChild(draftBtn);
                 draftBtn.textContent = 'DRAFT';
-                draftBtn.onclick = draftPlayer;
+                draftBtn.addEventListener('click', throttle(draftPlayer,1000));
                 cursor.continue();
             } 
             else {
@@ -170,58 +182,26 @@ window.onload = function() {
         };
     }
 
-    function displayManagers() {//DISPLAY MANAGER DATA
+    const displayManagers = () => {//DISPLAY MANAGER DATA
         let managerStore    = db.transaction('managerStore').objectStore('managerStore');
 
-        managerStore.openCursor().onsuccess = function(e) {
+        managerStore.openCursor().onsuccess = async (e) => {
             let cursor = e.target.result;
             if(cursor) {
                 const   article     = document.createElement('article'),
                         table       = document.createElement('table'),
-                        managerData = document.createElement('th');
-                let     draftData;
-                article.appendChild(table);
-                table.appendChild(managerData);
-                addRows();
-                managerContainer.appendChild(article);
-                displayNames();
-                table.setAttribute('data-manager', cursor.value.managerNum);
+                        managerData = document.createElement('th'),
+                        appendTable = async () => {
+                                        article.appendChild(table);
+                                        table.appendChild(managerData);
+                                        managerContainer.appendChild(article);
+                                        table.setAttribute('data-manager', cursor.value.managerNum);
+                                    };     
+                                    
+                appendTable();
+                await addRows(table,cursor.value);
+                await displayNames(cursor.value, managerData);
                 cursor.continue();
-
-                function addRows() {
-                    for(let i= 0; i < rounds; i++) {
-                        const draftRow      = document.createElement('tr');
-                        table.appendChild(draftRow);
-
-                        for(let i= 0; i < 2; i++) {
-                            draftData = document.createElement('td');
-                            draftRow.appendChild(draftData);
-                            draftData.setAttribute('data-td', i);
-                        }
-
-                        if(i>8) {
-                            draftRow.firstChild.innerText = 'BENCH';
-                            draftData.parentElement.children[1].setAttribute('data-pos', 'bench');
-                        }
-                        else{
-                            draftRow.firstElementChild.innerText = positions[i].toUpperCase();
-                            draftData.parentElement.children[1].setAttribute('data-pos', positions[i]);
-                        }
-                    }
-                };
-
-                function displayNames() {
-                    if(cursor.value.managerName == "") {
-                        managerData.innerText = `Manager ${cursor.value.managerNum}`;
-                    }
-                    else{
-                        managerData.innerText = cursor.value.managerName;
-                    }
-                };
-
-                function displayPlayers() {
-                    
-                }
             } 
             else {
                 // console.log('Managers Displayed');
@@ -229,14 +209,14 @@ window.onload = function() {
         };
     }
 
-    function displayInfo() {//DISPLAY GLOBAL DATA
+    const displayInfo = () => {//DISPLAY GLOBAL DATA
         let settingsTransaction     = db.transaction(["settingsStore"], "readwrite"),
             settingsStore           = settingsTransaction.objectStore("settingsStore"),
             settingsTrackerIndex    = settingsStore.index('tracker'),
             settingsRequest         = settingsTrackerIndex.get(0);
 
-        settingsRequest.onsuccess = function(event) {
-            let data                    = event.target.result;
+        settingsRequest.onsuccess = (e) => {
+            let data                    = e.target.result;
                 currRound               = data.currRound;
                 currManager             = data.currManager;
                 roundTracker.innerText  = currRound;
@@ -248,12 +228,12 @@ window.onload = function() {
                 currName;
 
             rounds = parseInt(data.numRounds);
-            managerRequest.onerror = function(event) {
+            managerRequest.onerror = (e) => {
                 // console.log('Manager Tracker Update Error');
             };
     
-            managerRequest.onsuccess = function(event) {
-                let data = event.target.result;
+            managerRequest.onsuccess = (e) => {
+                let data = e.target.result;
                 currName = data.managerName;
                 if(currName === "") {
                     managerTracker.innerText = `Manager ${currManager}`;
@@ -265,91 +245,89 @@ window.onload = function() {
         };
     }
 
-    function clearData() {//CLEAR ALL STORES
-        let managerTransaction      = db.transaction(["managerStore"], "readwrite"),
-            playerTransaction       = db.transaction(["playerStore"], "readwrite");
-            settingsTransaction     = db.transaction(["settingsStore"], "readwrite");
-            managerStore            = managerTransaction.objectStore("managerStore");
-            playerStore             = playerTransaction.objectStore("playerStore");
-            settingsStore           = settingsTransaction.objectStore("settingsStore");
-            managerRequest          = managerStore.clear();
-            playerRequest           = playerStore.clear();
-            settingsRequest         = settingsStore.clear();
-      
-        playerTable.innerHTML="";
-        managerContainer.innerHTML="";
-        managerInputContainer.innerHTML="";
-        managerTracker.innerHTML="";
-        roundTracker.innerHTML="";
+    const clearData = () => {//CLEAR ALL STORES
+        let managerTransaction                  = db.transaction(["managerStore"], "readwrite"),
+            playerTransaction                   = db.transaction(["playerStore"], "readwrite"),
+            settingsTransaction                 = db.transaction(["settingsStore"], "readwrite"),
+            managerStore                        = managerTransaction.objectStore("managerStore"),
+            playerStore                         = playerTransaction.objectStore("playerStore"),
+            settingsStore                       = settingsTransaction.objectStore("settingsStore");
+
+            managerRequest                      = managerStore.clear();
+            playerRequest                       = playerStore.clear();
+            settingsRequest                     = settingsStore.clear();
+            playerTable.innerHTML               ="";
+            managerContainer.innerHTML          ="";
+            managerInputContainer.innerHTML     ="";
+            managerTracker.innerHTML            ="";
+            roundTracker.innerHTML              ="";
     };
 
-    function draftPlayer(draftBtn) {//UPDATE DATA ON DRAFT BUTTON CLICK
+    const draftPlayer = (draftBtn) => {//UPDATE DATA ON DRAFT BUTTON CLICK
         let playerTransaction       = db.transaction(['playerStore'], 'readwrite'),
             playerStore             = playerTransaction.objectStore('playerStore'),
             playerKey               = parseInt(draftBtn.target.parentElement.getAttribute('data-playerkey')),
             playerRequest           = playerStore.get(playerKey),
-            playerTracker           = document.querySelector('[data-js="playerTracker"]'),
-            settingsTransaction     = db.transaction(['settingsStore'], 'readwrite'),
-            settingsStore           = settingsTransaction.objectStore('settingsStore'),
-            settingsTrackerIndex    = settingsStore.index('tracker'),
-            settingsRequest         = settingsTrackerIndex.get(0),
             playerName,
             playerPos;
-        
-            // DO NEXT: add playername and pos to manager store using managerNum index
 
-        playerRequest.onerror = function(event) {
+        playerRequest.onerror = (e) => {
             // console.log('Draft Button Error')
         };
-        playerRequest.onsuccess = async function(event) {
-            let data                    = event.target.result;
+        playerRequest.onsuccess = async (e) => {
+            let data                    = e.target.result;
                 managerTransaction      = db.transaction(['managerStore'], 'readwrite'),
                 managerStore            = managerTransaction.objectStore('managerStore'),
                 managerIndex            = managerStore.index('managerNum'),
-                managerRequest          = managerIndex.get(currManager);
+                managerRequest          = managerIndex.get(currManager),
+                settingsTransaction     = db.transaction(['settingsStore'], 'readwrite'),
+                settingsStore           = settingsTransaction.objectStore('settingsStore'),
+                settingsTrackerIndex    = settingsStore.index('tracker'),
+                settingsRequest         = settingsTrackerIndex.get(0);
 
-            playerName = data.name;
-            playerPos = data.pos;
-            data.manager = currManager;
-            data.drafted = 1;
-            data.roundDrafted = currRound;
-
-            let requestUpdate = playerStore.put(data);
-            requestUpdate.onerror = function(event) {
-                // console.log('Manager Change Error')
-            };
-            requestUpdate.onsuccess = async function(event) {
-                // console.log('Draft Player Success');
-                playerTracker.innerText = `${currManager.innerText} drafted ${data.name}`;
-            };
-
-            managerRequest.onerror = function(event) {
-                // console.log('Draft Player managerRequest Error');
-            }
-    
-            managerRequest.onsuccess = await function(event) {
-                let data = event.target.result;
-                    data.playerName.push(playerName);
-                    data.playerPos.push(playerPos);
-    
-                let requestUpdate = managerStore.put(data);
-                
-    
-                requestUpdate.onerror = function(event) {
-                    // console.log('Draft Player Manager Request Update Success');
-                    
-                };
-                requestUpdate.onsuccess = function(event) {
-                    // console.log('Draft Player Manager Request Update Success');
-                    console.log(currManager);
-                };
-            }
+                await getPlayerVariables(data,playerStore);
+                await updateManagerArrays(managerRequest, managerStore);
+                await updateSettings(settingsRequest, settingsStore);
+                await displayDrafted();
         }; 
-        settingsRequest.onerror = function(event) {
+    };
+
+    function displayDrafted() {
+        let managerTransaction      = db.transaction(['managerStore'], 'readwrite'),
+            managerStore            = managerTransaction.objectStore('managerStore');
+
+        managerStore.openCursor().onsuccess = async (e) => {
+            let cursor = e.target.result;
+           
+            if(cursor) {
+
+                let td = document.querySelectorAll('[data-pos][data-manager]');
+                let position = cursor.value.playerPos;
+
+                console.log(position);
+
+                cursor.continue();
+            }
+            else {
+                // console.log('Managers Displayed');
+            }
+        };
+            
+        // for(const [i,value] of td.entries()){
+        //     console.log(value);
+        //     if(value[i].innerText === ""){
+        //         td.innerHTML = playerName;
+        //         break;
+        //     }
+        // }
+    };
+
+    const updateSettings = (request, objectStore) => {
+        request.onerror = (e) => {
             // console.log('Manager Tracker Error');
         };
-        settingsRequest.onsuccess = function(event) {
-            let data = event.target.result;
+        request.onsuccess = (e) => {
+            let data = e.target.result;
             let numManagers = parseInt(data.numManagers) -1,
                 requestUpdate;
 
@@ -358,83 +336,129 @@ window.onload = function() {
             }
             if(isEven(data.currRound)){
                 data.currManager = data.currManager -= 1;
-                requestUpdate = settingsStore.put(data);
-            }else{
-                data.currManager = data.currManager += 1;
-                requestUpdate = settingsStore.put(data);
+                requestUpdate = objectStore.put(data);
             }
-            requestUpdate.onerror = function(event) {
+            else{
+                data.currManager = data.currManager += 1;
+                requestUpdate = objectStore.put(data);
+            }
+            requestUpdate.onerror = (e) => {
                 // console.log('Manager Tracker Error')
             };
-            requestUpdate.onsuccess = function(event) {
-                asyncDisplay();
+            requestUpdate.onsuccess = (e) => {   
+                asyncDraft();
             };
         } 
-    };
-
-    function displayDraftedPlayer() {
-        const   transaction = db.transaction(['playerStore'], 'readwrite');
-        let     playerStore = transaction.objectStore('playerStore'),
-                adpData,
-                nameData,
-                posData,
-                teamData,
-                managerData,
-                draftedData;
-        
-        playerStore.openCursor().onsuccess = function(e) {
-            let cursor = e.target.result;
-            if(cursor) {
-                const   updatePlayer    = cursor.value,
-                        request         = cursor.update(updatePlayer);
-
-                request.onsuccess = function() {
-                    // console.log('Player Data Loaded');
-                }
-
-                if(updatePlayer.drafted == 1) {
-                    adpData     = cursor.value.adp;
-                    nameData    = cursor.value.name;
-                    posData     = cursor.value.pos;
-                    teamData    = cursor.value.team;
-                }
-                // const drafted = await displayDraftedPlayer();
-                
-
-                // function displayDraftedPlayer() {
-                //     if(manager !== 99) {
-                        console.log('test');
-                //         document.querySelector('[data-manager="0"]').children(document.querySelector(`[data-pos="${pos}"]`)).innerText = cursor.value;
-                //     }
-                // }
-                
-            } 
-            else {
-                // console.log('Player Data Displayed');
-            }
-            
-        };
-
     }
 
-    async function asyncDisplay() {//DISPLAY PLAYERS AND MANAGER AFTER GLOBALS RUN
+    const updateManagerArrays = (request, objectStore) => {
+        request.onerror = (e) => {
+            // console.log('Draft Player managerRequest Error');
+        };
+
+        request.onsuccess = (e) => {
+            let data = e.target.result;
+                data.playerName.push(playerName);
+                data.playerPos.push(playerPos.toLowerCase());
+
+            let requestUpdate = objectStore.put(data);
+            
+            requestUpdate.onerror = (e) => {
+                console.log('Draft Player Manager Request Update Success');
+                
+            };
+            requestUpdate.onsuccess = (e) => {
+                console.log('Draft Player Manager Request Update Success');
+            };
+        };
+    };
+
+    const asyncDisplay = async () => {//DISPLAY PLAYERS AND MANAGER AFTER GLOBALS RUN
         const info = displayInfo();
         const players = await displayPlayers();
         const managers = await displayManagers();
-    
-    }
+        const drafted = await displayDrafted();
+    };
 
-    async function clearDisplay() {//CLEAR STORES THEN RESET DISPLAY
+    const asyncDraft = async () => {//DISPLAY PLAYERS AND MANAGER AFTER GLOBALS RUN
+        const info = displayInfo();
+        const players = await displayPlayers();
+    };
+
+    const clearDisplay = async () => {//CLEAR STORES THEN RESET DISPLAY
         const clear = clearData();
         const display = await asyncDisplay();
-    }
+    };
 
-    function isEven(value) {//HELPER FOR ROUND TRACKING
+    const getPlayerVariables = (data, store) => {
+        playerName          = data.name;
+        playerPos           = data.pos;
+        data.manager        = currManager;
+        data.drafted        = 1;
+        data.roundDrafted   = currRound;
+
+        let requestUpdate = store.put(data);
+        requestUpdate.onerror = (e) => {
+            // console.log('Manager Change Error')
+        };
+        requestUpdate.onsuccess = (e) => {
+            // console.log('Draft Player Success');
+            document.querySelector('[data-js="playerTracker"]').innerText = `${currManager.innerText} drafted ${data.name}`;
+        };
+    };
+
+    const isEven = (value) => {//HELPER FOR ROUND TRACKING
         if (value%2 == 0)
             return true;
         else
             return false;
-    }
+    };
+
+    const displayNames = (value, element) => {//TO DO - MOVE FUNCTION TO HELPER FUNCTIONS PASS cursor.value as (value)
+        if(value.managerName == "") {
+            element.innerText = `Manager ${value.managerNum}`;
+        }
+        else{
+            element.innerText = value.managerName;
+        }
+    };
+
+    const addRows = (parent, value) => {
+        for(let i= 0; i < rounds; i++) {
+            const draftRow      = document.createElement('tr');
+            parent.appendChild(draftRow);
+
+            for(let i= 0; i < 2; i++) {
+                draftData = document.createElement('td');
+                draftRow.appendChild(draftData);
+                draftData.setAttribute('data-td', i);
+            }
+
+            if(i>8) {
+                draftRow.firstChild.innerText = 'BENCH';
+                draftData.parentElement.children[1].setAttribute('data-pos', 'bench');
+                draftData.parentElement.children[1].setAttribute('data-manager', value.managerNum);
+            }
+            else{
+                draftRow.firstElementChild.innerText = positions[i].toUpperCase();
+                draftData.parentElement.children[1].setAttribute('data-pos', positions[i]);
+                draftData.parentElement.children[1].setAttribute('data-manager', value.managerNum);
+            }
+        };
+    };
+
+    const throttle = (func, limit) => {
+        let inThrottle
+        return function() {
+          const args = arguments
+          const context = this
+          if (!inThrottle) {
+            func.apply(context, args)
+            inThrottle = true
+            setTimeout(() => inThrottle = false, limit)
+          }
+        };
+    };
 };
 
 

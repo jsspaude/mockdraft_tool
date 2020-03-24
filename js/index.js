@@ -102,12 +102,12 @@ window.onload = function() {
             settingsRequest     = settingsStore.add(newItem);
 
         for(const value of players){
-            let request = playerStore.add(value);
+            playerStore.add(value);
         };
 
         for(const [i,value] of managerInput.entries()){
             let newItem = { managerName: value.value, managerNum: i, playerName:[], playerPos: [], playerTeam:[] };
-            let request = managerStore.add(newItem);
+            managerStore.add(newItem);
         };
 
         playerStore.openCursor().onsuccess = function(e) {
@@ -117,11 +117,9 @@ window.onload = function() {
                         updatePlayer.manager        = 99,
                         updatePlayer.drafted        = 0,
                         updatePlayer.roundDrafted   = 0;
-                let     request                     = cursor.update(updatePlayer);
-
-                request.onsuccess = function() {
-                    // console.log('Init Player Data Loaded');
-                }
+                
+                cursor.update(updatePlayer);
+                cursor.continue();
             }
             else {
                 // console.log('Init Player Data Displayed');
@@ -132,54 +130,45 @@ window.onload = function() {
             // console.log('Data Stores Updated');
             asyncDisplay();
         };
-        
-        playerTransaction.onerror = function() {
-        // console.log('Data Store Error');
-        };
     };
 
 
 
-    const displayPlayers = () => {//DISPLAY PLAYER DATA
+    const displayPlayers = async () => {//DISPLAY PLAYER DATA
         const   transaction = db.transaction(['playerStore'], 'readwrite');
-        let     playerStore = transaction.objectStore('playerStore');
+        let     playerStore = transaction.objectStore('playerStore'),
+                draftBtn,
+                draft       = await draftBtn.forEach((item) => item.addEventListener('click', throttle(draftPlayer,1000)));
+        
        
-        playerStore.openCursor().onsuccess = (e) => {
+       playerStore.openCursor().onsuccess = await function(e){
             let cursor = e.target.result;
             if(cursor) {
-                const   tableRow                    = document.createElement('tr'),
-                        adpData                     = document.createElement('td'),
-                        nameData                    = document.createElement('td'),
-                        posData                     = document.createElement('td'),
-                        teamData                    = document.createElement('td'),
-                        updatePlayer                = cursor.value,
-                        draftBtn                    = document.createElement('button');
-                let     request                     = cursor.update(updatePlayer);
+                const   tableRow        = document.createElement('tr'),
+                        updatePlayer    = cursor.value;
+                        markup          = 
+                        `<tr data-playerKey=${cursor.value.id} data-manager=${cursor.value.manager}>
+                            <td>${cursor.value.adp}</td>
+                            <td>${cursor.value.name}</td>
+                            <td>${cursor.value.pos}</td>
+                            <td>${cursor.value.team}</td>
+                            <button data-js='draftBtn'>DRAFT</button>
+                        </tr>`;
+                draftBtn                = [...document.querySelectorAll('[data-js="draftBtn"]')],
 
-                request.onsuccess = () => {
-                    // console.log('Player Data Loaded');
-                }
-
-                tableRow.appendChild(adpData);
-                tableRow.appendChild(nameData);
-                tableRow.appendChild(posData);
-                tableRow.appendChild(teamData);
+                cursor.update(updatePlayer);
+                tableRow.innerHTML = markup;
                 playerTable.appendChild(tableRow);
-                adpData.textContent     = cursor.value.adp;
-                nameData.textContent    = cursor.value.name;
-                posData.textContent     = cursor.value.pos;
-                teamData.textContent    = cursor.value.team;
-                tableRow.setAttribute('data-playerKey', cursor.value.id);
-                tableRow.setAttribute('data-manager', 99);
-                tableRow.appendChild(draftBtn);
-                draftBtn.textContent = 'DRAFT';
-                draftBtn.addEventListener('click', throttle(draftPlayer,1000));
                 cursor.continue();
             } 
             else {
                 // console.log('Player Data Displayed');
             }
         };
+
+        console.log(draftBtn);
+
+        
     }
 
     const displayManagers = () => {//DISPLAY MANAGER DATA
@@ -266,7 +255,8 @@ window.onload = function() {
     const draftPlayer = (draftBtn) => {//UPDATE DATA ON DRAFT BUTTON CLICK
         let playerTransaction       = db.transaction(['playerStore'], 'readwrite'),
             playerStore             = playerTransaction.objectStore('playerStore'),
-            playerKey               = parseInt(draftBtn.target.parentElement.getAttribute('data-playerkey')),
+            playerKey               = parseInt(draftBtn.target.parentElement.getAttribute('data-playerkey'));
+            console.log(playerKey);
             playerRequest           = playerStore.get(playerKey),
             playerName,
             playerPos;

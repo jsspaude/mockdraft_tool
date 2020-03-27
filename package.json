@@ -1,0 +1,40 @@
+{
+  "name": "mockdraft",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "build": "webpack --progress --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jsspaude/mockdraft_tool.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jsspaude/mockdraft_tool/issues"
+  },
+  "homepage": "https://github.com/jsspaude/mockdraft_tool#readme",
+  "devDependencies": {
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "babel-loader": "^8.1.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-react": "^7.19.0",
+    "terser-webpack-plugin": "^2.3.5",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
+  },
+  "dependencies": {
+    "babel-eslint": "^10.1.0",
+    "idb": "^5.0.1",
+    "insane": "^2.6.2",
+    "jsonp": "^0.2.1",
+    "lodash": "^4.17.15",
+    "terser": "^4.6.7"
+  }
+}

@@ -1,5 +1,3 @@
-export const openDB = window.indexedDB.open('mockDraft', 1);
-const test = 'test';
+export const draftDataURL = './js/draft_data.json';
 
-export default 'openDB';
-console.log(test);
+export default { draftDataURL };

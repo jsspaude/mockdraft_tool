@@ -17,27 +17,27 @@ let db;
 let players;
 let rounds;
 
-const requestURL = 'js/draft_data.json';
-const request = new XMLHttpRequest();
-
 // IMPORT JSON
-request.open('GET', requestURL);
-request.responseType = 'json';
-request.send();
-request.onload = () => {
-  players = request.response;
-};
+function addPlayerData(db) {
+  const tx = db.transaction('playerStore', 'readwrite');
+  fetch('./js/draft_data.json')
+    .then((response) => response.json())
+    .then((data) => data.reduce((prev, d) => prev.then(() => tx.store.add({ d }), Promise.resolve())))
+    .catch((err) => {
+      console.log(err);
+    });
+}
 // START DB
 window.onload = function () {
-  const req = window.indexedDB.open('mockDraft', 1);
-  req.onerror = function () {
+  const DBOpenRequest = window.indexedDB.open('mockDraft', 1);
+  DBOpenRequest.onerror = function () {
     // console.log('MockDraft Failed to Open');
   };
-  req.onsuccess = function () {
+  DBOpenRequest.onsuccess = function () {
     // console.log('MockDraft Data Inputted');
-    db = req.result;
+    db = DBOpenRequest.result;
   };
-  request.onupgradeneeded = function (e) {
+  DBOpenRequest.onupgradeneeded = function (e) {
     db = e.target.result;
     const playerStore = db.createObjectStore('playerStore', { keyPath: 'id', autoIncrement: true });
     const managerStore = db.createObjectStore('managerStore', { keyPath: 'id', autoIncrement: true });

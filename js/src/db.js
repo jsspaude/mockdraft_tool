@@ -11,7 +11,7 @@ let dbNamespace;
 
 // SET UP THE DATABASE
 
-function setupDB(namespace) {
+function setupDB(namespace, stores) {
   return new Promise(((resolve, reject) => {
     if (namespace !== dbNamespace) {
       db = null;
@@ -30,10 +30,7 @@ function setupDB(namespace) {
 
     dbReq.onupgradeneeded = (event) => {
       db = event.target.result;
-
-      const stores = ['playerStore', 'managerStore', 'settingsStore'];
-      // eslint-disable-next-line no-restricted-syntax
-      for (const store of stores) {
+      stores.forEach((store) => {
         if (!db.objectStoreNames.contains(`${store}`)) {
           let objectStore = db.createObjectStore(`${store}`, { autoIncrement: true });
           if (store === 'playerStore') {
@@ -45,21 +42,21 @@ function setupDB(namespace) {
             objectStore.createIndex('managerNum', 'managerNum', { unique: true });
           }
           if (store === 'settingsStore') {
-            objectStore.createIndex('numRounds', 'numRounds', { unique: false });
+            objectStore.createIndex('rounds', 'rounds', { unique: false });
             objectStore.createIndex('currRound', 'currRound', { unique: false });
             objectStore.createIndex('currManager', 'currManager', { unique: false });
             objectStore.createIndex('numManagers', 'numManagers', { unique: false });
-            objectStore.createIndex('tracker', 'tracker', { unique: false });
+            objectStore.createIndex('id', 'id', { unique: false });
           }
         } else {
           let objectStore = dbReq.transaction.objectStore(`${store}`);
         }
-      }
+      });
     };
 
     dbReq.onsuccess = (event) => {
       db = event.target.result;
-      resolve();
+      resolve(db);
     };
     dbReq.onerror = (event) => {
       reject(new Error(`err${event.target.errorCode}`));
@@ -74,22 +71,58 @@ async function getPlayerData() {
   return response.json();
 }
 
+// RETRIEVE DATA FROM OBJECTSTORE (objectStore, data key, index name)
+async function getData(store, ind, data) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([`${store}`], 'readwrite');
+    const objectStore = tx.objectStore(`${store}`);
+    const index = objectStore.index(`${ind}`);
+    const req = index.get(`${data}`);
+
+    req.onsuccess = () => {
+      console.log(`${data} retrieved`);
+      resolve(req.result);
+    };
+    req.onerror = (event) => {
+      reject(new Error(`error storing ${data} ${event.target.errorCode}`));
+    };
+  });
+}
+
 // ADD PASSED DATA OR REPORT ERROR
 function addData(store, data, item) {
   return new Promise((resolve, reject) => {
-    let tx = db.transaction([`${store}`], 'readwrite');
-    let objectStore = tx.objectStore(`${store}`);
+    const tx = db.transaction([`${store}`], 'readwrite');
+    const objectStore = tx.objectStore(`${store}`);
     if (data) {
-      let req = data.forEach(element => objectStore.put(element));
+      data.forEach((element) => objectStore.put(element));
     }
     if (item) {
-      let req = objectStore.put(item);
+      objectStore.put(item);
     }
 
     tx.oncomplete = resolve;
     tx.onerror = (event) => {
-      reject(new Error(`error storing note ${event.target.errorCode}`));
+      reject(new Error(`error storing ${data} ${event.target.errorCode}`));
     };
+  });
+}
+
+function clearStore(stores) {
+  const storeLoop = (store) => {
+    let tx = db.transaction([`${store}`], 'readwrite');
+    let objectStore = tx.objectStore(`${store}`);
+    let req = objectStore.clear();
+
+    req.onsuccess = () => {
+      console.log(`${store} cleared`);
+    };
+    req.onerror = (e) => {
+      console.error(new Error(`error clearing store ${e.target.errorCode}`));
+    };
+  };
+  stores.forEach(async (store) => {
+    await storeLoop(store);
   });
 }
 
@@ -100,11 +133,13 @@ async function main() {
 }
 
 // SETUP DB ASYNC CALL
-export async function startDraft() {
-  const setup = await setupDB('mockDraft');
-  const getD = await main();
+async function setupDraft() {
+  const players = await getPlayerData();
+  const addD = await addData('playerStore', players);
 }
 
 
-export default { startDraft };
-export { addData };
+export default { setupDB };
+export {
+  addData, clearStore, setupDraft, setupDB, getData,
+};

@@ -164,17 +164,18 @@ window.onload = function () {
 
   const displayManagers = () => { // DISPLAY MANAGER DATA
     const managerStore = db.transaction('managerStore').objectStore('managerStore');
-
+    console.log('test');
     managerStore.openCursor().onsuccess = async (e) => {
       const cursor = e.target.result;
       if (cursor) {
+        console.log('test');
         const article = document.createElement('article');
         const table = document.createElement('table');
         const managerData = document.createElement('th');
         const appendTable = async () => {
           article.appendChild(table);
           table.appendChild(managerData);
-          managerContainer.appendChild(article);
+          document.querySelector('[data-js="managerContainer"]').appendChild(article);
           table.setAttribute('data-manager', cursor.value.managerNum);
         };
 

@@ -27,22 +27,22 @@ const addRows = (parent, value) => {
 };
 
 
-const displayData = (db, store, mark, container) => {
-  const tx = db.transaction([`${store}`], 'readwrite');
-  const objectStore = tx.objectStore(`${store}`);
-  const cont = container;
+function displayData() {
+  console.log('test');
+}
 
-  objectStore.openCursor().onsuccess = async (e) => {
-    const cursor = e.target.result;
-    if (cursor) {
-      const markup = mark;
-      cont.innerHTML = markup;
-      cursor.continue();
-    } else {
-      console.log('All Managers Displayed');
-    }
-  };
-};
+function managerMarkup(data) {
+  const markup = `
+  <article data-js='manager '>
+  <tr data-playerKey=${data} data-manager=${data}>
+  <td>${cursor.value.adp}</td>
+  <td>${cursor.value.name}</td>
+  <td>${cursor.value.pos}</td>
+  <td>${cursor.value.team}</td>
+  <button data-playerKey=${cursor.value.id} data-manager=${cursor.value.manager} data-js='draftBtn'>DRAFT</button>
+</tr>`;
+}
+
 
 export default { displayData };
 export { displayData };

@@ -89,6 +89,28 @@ async function getData(store, ind, data) {
   });
 }
 
+
+function cursorData(store, cursorValues) {
+    const tx = db.transaction([`${store}`], 'readwrite');
+    const objectStore = tx.objectStore(`${store}`);
+    objectStore.openCursor().onsuccess = async (e) => {
+      const cursor = e.target.result;
+      const cursorArray = [];
+      if (cursor) {
+        cursorArray.push(cursor.value);
+        console.log(cursor);
+        cursor.continue();
+      } else {
+        console.log('All Managers Displayed');
+      }
+      
+
+    };
+    objectStore.onerror = (e) => {
+
+    };
+}
+
 // ADD PASSED DATA OR REPORT ERROR
 function addData(store, data, item) {
   return new Promise((resolve, reject) => {
@@ -141,5 +163,5 @@ async function setupDraft() {
 
 export default { setupDB };
 export {
-  addData, clearStore, setupDraft, setupDB, getData,
+  addData, clearStore, setupDraft, setupDB, getData, cursorData,
 };

@@ -1,4 +1,4 @@
-import { addData, getData } from './db';
+import { addData, getData, cursorData } from './db';
 import { displayData } from './view';
 
 
@@ -47,19 +47,30 @@ function createManagerInputs() {
 // RUN FUNCTIONS
 async function storeSettings() {
   const getValues = await getUserValues();
-  await createManagerInputs();
+  const manInputs = await createManagerInputs();
   await addData('settingsStore', '', {
     ...getValues, id: 'tracker', currManager: 0, currRound: 0,
   });
   await getData('settingsStore', 'id', 'tracker');
+  console.log(manInputs);
+  return [manInputs, getValues];
 }
 
 async function startDraft(db) {
+  const cursorValues = [];
   const inputs = [...document.querySelectorAll('[data-js="managerInput"]')];
   const res = [...inputs.map((v) => v.value)];
   const resUpdated = Array.from(res, (item, i) => item || `Manager ${i}`);
-  await addData('managerStore', resUpdated);
-  await displayData(db, 'managerStore', document.querySelector('[data-js="managerContainer"]'));
+  const managerLength = resUpdated.map((v, i) => {
+    const myObj = {};
+    myObj.managerNum = i;
+    myObj.managerName = v;
+    return myObj;
+  });
+  await addData('managerStore', managerLength);
+  await cursorData('managerStore', ['managerName', 'managerNum']);
+  console.log(cursorValues);
+  // await displayData(db, 'managerStore', document.querySelector('[data-js="managerContainer"]'));
 }
 
 export default { storeSettings };

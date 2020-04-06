@@ -1,34 +1,18 @@
-const isEven = (value) => { // HELPER FOR ROUND TRACKING
-  if (value % 2 == 0) return true;
-  return false;
-};
+import { dbGetCursorData } from './db';
+import { chunkArray as configChunkArray } from './config';
 
-const addRows = (parent, value) => {
-  for (let i = 0; i < rounds; i++) {
-    const draftRow = document.createElement('tr');
-    parent.appendChild(draftRow);
+// USE CURSOR TO EXTRACT - (cursor.value.values, desired objectStore, keys
+async function viewData() {
+  const managerCursorKeys = ['managerNum', 'managerName'];
+  let managerDisplayData;
+  await dbGetCursorData('managerStore', managerCursorKeys)
+    .then((values) => configChunkArray(values, managerCursorKeys.length))
+    .then((result) => { managerDisplayData = result; });
+  // await displayData(db, 'managerStore', document.querySelector('[data-js="managerContainer"]'));
+}
 
-    for (let i = 0; i < 2; i++) {
-      draftData = document.createElement('td');
-      draftRow.appendChild(draftData);
-      draftData.setAttribute('data-td', i);
-    }
+function displayData(data, markup) {
 
-    if (i > 8) {
-      draftRow.firstChild.innerText = 'BENCH';
-      draftData.parentElement.children[1].setAttribute('data-pos', 'bench');
-      draftData.parentElement.children[1].setAttribute('data-manager', value.managerNum);
-    } else {
-      draftRow.firstElementChild.innerText = positions[i].toUpperCase();
-      draftData.parentElement.children[1].setAttribute('data-pos', positions[i]);
-      draftData.parentElement.children[1].setAttribute('data-manager', value.managerNum);
-    }
-  }
-};
-
-
-function displayData() {
-  console.log('test');
 }
 
 function managerMarkup(data) {
@@ -44,5 +28,5 @@ function managerMarkup(data) {
 }
 
 
-export default { displayData };
-export { displayData };
+export default { viewData };
+export { viewData };

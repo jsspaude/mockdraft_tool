@@ -1,5 +1,11 @@
 import { draftDataURL as url } from './config';
 
+/** ******************
+
+ DATABASE MANAGEMENT
+
+******************** */
+
 let db;
 let dbNamespace;
 
@@ -83,15 +89,13 @@ function dbGetCursorData(store, keys) {
     objectStore.openCursor().onsuccess = async (e) => {
       const cursor = e.target.result;
       if (cursor) {
-        cursorArray.push(keys.forEach((k, index) => {
-          console.log(k);
+        keys.forEach((k, index) => {
           const myobj = {};
           myobj[keys[index]] = cursor.value[k];
-          // console.log(myobj);
+          cursorArray.push(myobj);
           return myobj;
-        }));
-        cursor.continue();
-        // console.log(cursorArray);
+        });
+        await cursor.continue();
       } else {
         console.log('All Managers Displayed');
         resolve(cursorArray);
@@ -102,6 +106,16 @@ function dbGetCursorData(store, keys) {
     };
   });
 }
+
+// .then((object) => {
+//   console.log(object);
+//   cursorArray.map((v, i) => {
+//     const myObj = {};
+//     myObj.managerNum = i;
+//     myObj.managerName = v;
+//     return myObj;
+//   });
+// });
 
 // ADD PASSED DATA OR REPORT ERROR
 function dbAddData(store, data, item) {

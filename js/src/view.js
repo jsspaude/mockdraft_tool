@@ -8,6 +8,7 @@ async function viewData() {
   await dbGetCursorData('managerStore', managerCursorKeys)
     .then((values) => configChunkArray(values, managerCursorKeys.length))
     .then((result) => { managerDisplayData = result; });
+    console.log(managerDisplayData);
   // await displayData(db, 'managerStore', document.querySelector('[data-js="managerContainer"]'));
 }
 

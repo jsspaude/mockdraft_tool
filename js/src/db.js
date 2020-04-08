@@ -63,7 +63,7 @@ function dbSetup(namespace, stores) {
   }));
 }
 
-// RETRIEVE DATA FROM OBJECTSTORE (objectStore, data key, index name)
+// RETRIEVE DATA FROM OBJECTSTORE USING GET (objectStore, data key, index name)
 async function dbGetData(store, ind, data) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
@@ -80,7 +80,7 @@ async function dbGetData(store, ind, data) {
   });
 }
 
-
+// RETRIEVE DATA FROM OBJECTSTORE USING CURSOR (objectStore, keys requested)
 function dbGetCursorData(store, keys) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
@@ -105,6 +105,29 @@ function dbGetCursorData(store, keys) {
       reject(console.error(`error with cursor ${store} ${e.target.errorCode}`));
     };
   });
+}
+
+// COLLECT CURSOR DATA INTO AN ARRAY
+async function collectCursorData(store, keys) {
+  const cursorKeys = keys;
+  const cursorDataArray = [];
+  await dbGetCursorData(store, cursorKeys)
+    .then((values) => {
+      values.forEach((value, i) => {
+        if ((i - 1) % (cursorKeys.length)) {
+          cursorKeys.forEach((item, index) => {
+            console.log(index);
+            const cursorObject = { ...value, ...values[i + index] };
+            if (index === cursorKeys.length - 1) {
+              return cursorDataArray.push(cursorObject);
+            }
+            return cursorObject;
+          });
+        }
+        return cursorDataArray;
+      });
+    });
+  return cursorDataArray;
 }
 
 // .then((object) => {
@@ -163,5 +186,5 @@ async function dbAddPlayerData() {
 
 export default { dbSetup };
 export {
-  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData,
+  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData, collectCursorData,
 };

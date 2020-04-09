@@ -97,7 +97,7 @@ function dbGetCursorData(store, keys) {
         });
         await cursor.continue();
       } else {
-        console.log('All Managers Displayed');
+        console.log(`All ${store} Items Displayed`);
         resolve(cursorArray);
       }
     };
@@ -115,20 +115,25 @@ async function collectCursorData(store, keys) {
     .then((values) => {
       values.forEach((value, i) => {
         if ((i - 1) % (cursorKeys.length)) {
-          cursorKeys.forEach((item, index) => {
-            console.log(index);
-            const cursorObject = { ...value, ...values[i + index] };
-            if (index === cursorKeys.length - 1) {
-              return cursorDataArray.push(cursorObject);
-            }
-            return cursorObject;
-          });
-        }
-        return cursorDataArray;
+          const cursorObject = { ...value, ...values[i + 1] };
+          cursorDataArray.push(cursorObject);
+        } else;
       });
     });
   return cursorDataArray;
 }
+
+// YOU ARE HERE -> trying to use this function below to loop into the function above to output x amounts of ...values
+
+const valuesGenerator = (iterator, objects) => {
+  const test = Array(iterator).fill().map((_, i) => i * i);
+  const valuesArray = [];
+  test.forEach((item, i) => {
+    const myObj = { ...objects[i] };
+    valuesArray.push(myObj);
+  });
+  console.log(valuesArray);
+};
 
 // .then((object) => {
 //   console.log(object);

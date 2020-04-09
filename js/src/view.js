@@ -136,16 +136,9 @@ async function viewData() {
       displayData(result[i], managerMarkup, document.querySelector('[data-js="managerContainer"]'));
     });
   });
-  await collectCursorData('playerStore', ['manager', 'adp', 'name', 'pos', 'team']).then((result) => {
-    console.log(result);
-    // result.forEach((item, i) => {
-    //   displayData(result[i], managerMarkup, document.querySelector('[data-js="managerContainer"]'));
-    // });
-  });
+  await collectCursorData('playerStore', ['manager', 'adp', 'name', 'pos', 'team']);
+// .then((result) => {result.forEach((item, i) => {displayData(result[i], managerMarkup, document.querySelector('[data-js="managerContainer"]'));});});
 }
-
-// USE CURSOR TO EXTRACT - maybe change to collectCursorData and store in db file, 
-// break this and view into separate functions
 
 export default { viewData };
 export { viewData };

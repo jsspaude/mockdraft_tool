@@ -1,4 +1,4 @@
-import { draftDataURL as url } from './config';
+import { draftDataURL as url, chunk } from './config';
 
 /** ******************
 
@@ -89,9 +89,9 @@ function dbGetCursorData(store, keys) {
     objectStore.openCursor().onsuccess = async (e) => {
       const cursor = e.target.result;
       if (cursor) {
-        keys.forEach((k, index) => {
+        keys.forEach((k) => {
           const myobj = {};
-          myobj[keys[index]] = cursor.value[k];
+          myobj[k] = cursor.value[k];
           cursorArray.push(myobj);
           return myobj;
         });
@@ -110,42 +110,13 @@ function dbGetCursorData(store, keys) {
 // COLLECT CURSOR DATA INTO AN ARRAY
 async function collectCursorData(store, keys) {
   const cursorKeys = keys;
-  const cursorDataArray = [];
+  let cursorDataArray;
   await dbGetCursorData(store, cursorKeys)
-    .then((values) => {
-      values.forEach((value, i) => {
-        if ((i - 1) % (cursorKeys.length)) {
-          const cursorObject = { ...value, ...values[i + 1] };
-          cursorDataArray.push(cursorObject);
-        } else;
-      });
-    });
+    .then((values) => chunk(values, cursorKeys.length))
+    .then((array) => { cursorDataArray = array; return cursorDataArray; });
   return cursorDataArray;
 }
 
-// YOU ARE HERE -> trying to use this function below to loop into the function above to output x amounts of ...values
-
-const valuesGenerator = (iterator, objects) => {
-  const test = Array(iterator).fill().map((_, i) => i * i);
-  const valuesArray = [];
-  test.forEach((item, i) => {
-    const myObj = { ...objects[i] };
-    valuesArray.push(myObj);
-  });
-  console.log(valuesArray);
-};
-
-// .then((object) => {
-//   console.log(object);
-//   cursorArray.map((v, i) => {
-//     const myObj = {};
-//     myObj.managerNum = i;
-//     myObj.managerName = v;
-//     return myObj;
-//   });
-// });
-
-// ADD PASSED DATA OR REPORT ERROR
 function dbAddData(store, data, item) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');

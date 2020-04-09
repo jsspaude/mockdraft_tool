@@ -19,9 +19,24 @@ const throttle = (func, limit) => {
   };
 };
 
+function catObjects(array) {
+  if (array.length === 0) {
+    return {};
+  }
+  const obj = array.pop();
+  return Object.assign(obj, catObjects(array));
+}
+
+const chunk = (arr, chunkSize, cache = []) => {
+  const tmp = [...arr];
+  if (chunkSize <= 0) return cache;
+  while (tmp.length) cache.push(tmp.splice(0, chunkSize));
+  return cache;
+};
+
 
 export default { draftDataURL };
 
 export {
-  draftDataURL, stores, isEven,
+  draftDataURL, stores, isEven, catObjects, chunk,
 };

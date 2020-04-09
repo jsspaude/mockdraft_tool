@@ -1,4 +1,5 @@
-import { dbGetCursorData, collectCursorData } from './db';
+import { collectCursorData } from './db';
+import { catObjects } from './config';
 
 
 function displayData(data, markup, container) {
@@ -132,11 +133,14 @@ function playersMarkup(data) {
 
 async function viewData() {
   await collectCursorData('managerStore', ['managerNum', 'managerName']).then((result) => {
-    result.forEach((item, i) => {
-      displayData(result[i], managerMarkup, document.querySelector('[data-js="managerContainer"]'));
+    result.forEach((object) => {
+      const data = catObjects(object);
+      displayData(data, managerMarkup, document.querySelector('[data-js="managerContainer"]'));
     });
   });
-  await collectCursorData('playerStore', ['manager', 'adp', 'name', 'pos', 'team']);
+  await collectCursorData('playerStore', ['manager', 'adp', 'name', 'pos', 'team']).then((result) => {
+    console.log(result);
+  });
 // .then((result) => {result.forEach((item, i) => {displayData(result[i], managerMarkup, document.querySelector('[data-js="managerContainer"]'));});});
 }
 

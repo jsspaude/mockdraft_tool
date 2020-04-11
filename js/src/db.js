@@ -81,7 +81,7 @@ async function dbGetData(store, ind, data) {
 }
 
 // RETRIEVE DATA FROM OBJECTSTORE USING CURSOR (objectStore, keys requested)
-function dbGetCursorData(store, keys) {
+function dbGetCursorData(store, keys, primary) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
     const objectStore = tx.objectStore(`${store}`);
@@ -95,6 +95,9 @@ function dbGetCursorData(store, keys) {
           cursorArray.push(myobj);
           return myobj;
         });
+        if (primary) {
+          cursorArray.push({ primaryKey: cursor.primaryKey });
+        }
         await cursor.continue();
       } else {
         console.log(`All ${store} Items Displayed`);
@@ -108,11 +111,14 @@ function dbGetCursorData(store, keys) {
 }
 
 // COLLECT CURSOR DATA INTO AN ARRAY
-async function collectCursorData(store, keys) {
-  const cursorKeys = keys;
+async function collectCursorData(store, keys, primary) {
   let cursorDataArray;
-  await dbGetCursorData(store, cursorKeys)
-    .then((values) => chunk(values, cursorKeys.length))
+  let { length } = keys;
+  if (primary) {
+    length = keys.length + 1;
+  } else;
+  await dbGetCursorData(store, keys, primary)
+    .then((values) => chunk(values, length))
     .then((array) => { cursorDataArray = array; return cursorDataArray; });
   return cursorDataArray;
 }
@@ -153,6 +159,38 @@ function dbStoreClear(stores) {
   });
 }
 
+// PUT DYNAMIC DRAFT DATA IN STORE
+// HERE - you are creating a put data to store settings data (untested yet)
+function putData(store, data, keys, value) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction([`${store}`], 'readwrite');
+    const objectStore = tx.objectStore(`${store}`);
+    console.log(data);
+    const request = objectStore.get(parseInt(data, 10));
+
+    request.onerror = (e) => {
+      // console.log('Draft Player managerRequest Error');
+      reject();
+    };
+
+    request.onsuccess = (e) => {
+      const d = e.target.result;
+      d[keys] = value;
+
+      const requestUpdate = objectStore.put(d, parseInt(data, 10));
+
+      requestUpdate.onerror = (e) => {
+        console.log('Draft Player Manager Request Update Success');
+        reject();
+      };
+      requestUpdate.onsuccess = (e) => {
+        console.log('Draft Player Manager Request Update Success');
+        resolve();
+      };
+    };
+  });
+}
+
 // SETUP DB ASYNC CALL
 async function dbAddPlayerData() {
   const players = await fetch(url).then((response) => response.json());
@@ -162,5 +200,5 @@ async function dbAddPlayerData() {
 
 export default { dbSetup };
 export {
-  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData, collectCursorData,
+  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData, collectCursorData, putData,
 };

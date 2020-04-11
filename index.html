@@ -1,67 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang='en'>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!-- <link href="https://fonts.googleapis.com/css?family=Lato|Rock+Salt&display=swap" rel="stylesheet"> -->
-    <link rel="stylesheet" href="styles.css"> 
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+    <!-- <link href='https://fonts.googleapis.com/css?family=Lato|Rock+Salt&display=swap' rel='stylesheet'> -->
+    <link rel='stylesheet' href='styles.css'> 
     <title>Sweatalus Mock Draft</title>
 </head>
 <body>
   <header>
     <h1>Sweatalus Fantasy Football Mock Draft Simulator</h1>
     <p>All of the keepers are already inputted. Just follow along and draft. Last player drafted appears in red in case you get lost.</p>
-    <p class="signoff">Your Commish,<br> - Jess</p>
+    <p class='signoff'>Your Commish,<br> - Jess</p>
   </header>
   <main>
-    <section id="settings-container" data-js="settings">
+    <section id='settings-container' data-js='settings'>
       <article class='settings-select'>
-        <form data-js="settingsForm">
-          <input data-js="numRounds" placeholder="# of Rounds" type="number" required>
-          <label for="number-of-managers">Number Of Managers</label>
-          <select id="number-of-managers" data-js="numManagers" name="number-of-managers" required>
-            <option value="10">10 Managers</option>
-            <option value="4">4 Managers</option>
-            <option value="12">12 Managers</option>
-            <option value="14">14 Managers</option>
-            <option value="16">16 Managers</option>
+        <form data-js='settingsForm'>
+          <input data-js='numRounds' placeholder='# of Rounds' type='number' required>
+          <label for='number-of-managers'>Number Of Managers</label>
+          <select id='number-of-managers' data-js='numManagers' name='number-of-managers' required>
+            <option value='10'>10 Managers</option>
+            <option value='4'>4 Managers</option>
+            <option value='12'>12 Managers</option>
+            <option value='14'>14 Managers</option>
+            <option value='16'>16 Managers</option>
           </select>
-          <input value="SUBMIT SETTINGS" type="submit">
+          <input value='SUBMIT SETTINGS' type='submit'>
         </form>
-        <button data-js="resetBtn">RESET</button>
-        <div class='manager-input-container' data-js="managerInputContainer">
+        <button data-js='resetBtn'>RESET</button>
+        <div class='manager-input-container' data-js='managerInputContainer'>
         
         </div>
-        <form class="start-draft" data-js="startDraft">
-          <input value="START DRAFT" type="submit">
+        <form class='start-draft' data-js='startDraft'>
+          <input value='START DRAFT' type='submit'>
         </form>
       </article>
     </section>
-    <section id="info-container">
-      <article>
-        <h2>Round</h2>
-        <h3 data-js="roundTracker"></h3>
-        <div>
-          <h2 data-js="managerTracker" class="currentTeam"></h2>
-          <h4 class="currentPlayer" data-js="playerTracker"></h4>
-        </div>
-      </article>
+    <section id='settings-container' data-js='settingsContainer'>
     </section>
-    <section id="player-list-container">
-      <article id="player-list" data-js="playerList">
-        <table data-js="playerTable">
+    <section id='player-list-container'>
+      <article id='player-list' data-js='playerList'>
+        <table data-js='playerTable'>
 
         </table>
       </article>
     </section>
-    <section id="manager-container" data-js="managerContainer">
+    <section id='manager-container' data-js='managerContainer'>
     </section>
   </main>
   <footer>
 
   </footer>
-  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> -->
-  <script src="js/dist/bundle.js"></script>
+  <!-- <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script> -->
+  <script src='js/dist/bundle.js'></script>
 </body>
 </html>

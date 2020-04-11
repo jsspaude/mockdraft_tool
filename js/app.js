@@ -1,10 +1,10 @@
 import regeneratorRuntime from "regenerator-runtime";
 
 import {
-  dbAddPlayerData, dbStoreClear, dbSetup, dbAddData, dbGetData,
+  dbAddPlayerData, dbStoreClear, dbSetup, dbAddData, dbGetData, putData,
 } from './src/db';
-import { stores } from './src/config';
-import { viewData } from './src/view';
+import { stores, catObjects } from './src/config';
+import { viewData, currSettingsArray } from './src/view';
 
 // VARIABLES
 const settingsForm = document.querySelector('[data-js="settingsForm"]');
@@ -65,6 +65,28 @@ async function storeTextInputs() {
   await dbAddData('managerStore', managerStoreData);
 }
 
+function collectPlayerData(player, curr) {
+  const draftedData = [player.dataset.player, player.dataset.pos, player.dataset.team];
+  const primary = player.dataset.key;
+  const currSettings = catObjects(currSettingsArray);
+  // eslint-disable-next-line no-param-reassign
+  player.dataset.manager = curr;
+  console.log(primary);
+  console.log(currSettings);
+  putData('playerStore', primary, 'manager', currSettings.currManager);
+  return draftedData;
+}
+
+function activateDraftButtons() {
+  const draftButton = document.querySelectorAll('[data-js="draftBtn"]');
+  const currSettings = catObjects(currSettingsArray);
+  draftButton.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      collectPlayerData(btn, currSettings.currManager);
+    });
+  });
+}
+
 // SETUP DB
 window.onload = async () => { await dbSetup('mockDraft', stores).then((x) => { db = x; }); };
 // APPLY USER SETTINGS
@@ -83,5 +105,6 @@ resetButton.addEventListener('click', () => {
 startForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   await storeTextInputs(db);
-  viewData();
+  await viewData();
+  activateDraftButtons();
 });

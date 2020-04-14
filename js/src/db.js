@@ -53,9 +53,25 @@ function dbSetup(namespace, stores) {
         }
       });
     };
-    dbReq.onsuccess = (event) => {
+    dbReq.onsuccess = async (event) => {
       db = event.target.result;
-      resolve(db);
+      const tx = db.transaction(['settingsStore'], 'readwrite');
+      const objectStore = tx.objectStore('settingsStore');
+      const ind = objectStore.index('id');
+      const requestUpdate = ind.get('tracker');
+
+      requestUpdate.onsuccess = () => {
+        let inProgress;
+        if (requestUpdate.result === undefined) {
+          inProgress = false;
+        } else {
+          inProgress = true;
+        }
+        resolve([db, inProgress]);
+      };
+      requestUpdate.onerror = (event) => {
+        console.log('err');
+      };
     };
     dbReq.onerror = (event) => {
       reject(new Error(`err${event.target.errorCode}`));
@@ -64,13 +80,12 @@ function dbSetup(namespace, stores) {
 }
 
 // RETRIEVE DATA FROM OBJECTSTORE USING GET (objectStore, data key, index name)
-async function dbGetData(store, ind, data) {
+async function dbGetData(store, index, data) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
     const objectStore = tx.objectStore(`${store}`);
-    const index = objectStore.index(`${ind}`);
-    const req = index.get(`${data}`);
-
+    const ind = objectStore.index(`${index}`);
+    const req = ind.get(data);
     req.onsuccess = () => {
       resolve(req.result);
     };
@@ -160,33 +175,51 @@ function dbStoreClear(stores) {
 }
 
 // PUT DYNAMIC DRAFT DATA IN STORE
-// HERE - you are creating a put data to store settings data (untested yet)
-function putData(store, data, keys, value) {
+function putData(store, primeKey, keys, value) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
     const objectStore = tx.objectStore(`${store}`);
-    console.log(data);
-    const request = objectStore.get(parseInt(data, 10));
+    const request = objectStore.get(parseInt(primeKey, 10));
 
-    request.onerror = (e) => {
-      // console.log('Draft Player managerRequest Error');
+    request.onerror = () => {
       reject();
     };
 
     request.onsuccess = (e) => {
-      const d = e.target.result;
-      d[keys] = value;
+      const data = e.target.result;
+      if (keys) {
+        data[keys] = value;
 
-      const requestUpdate = objectStore.put(d, parseInt(data, 10));
+        const requestUpdate = objectStore.put(data, parseInt(primeKey, 10));
 
-      requestUpdate.onerror = (e) => {
-        console.log('Draft Player Manager Request Update Success');
-        reject();
-      };
-      requestUpdate.onsuccess = (e) => {
-        console.log('Draft Player Manager Request Update Success');
-        resolve();
-      };
+        requestUpdate.onerror = () => {
+          reject();
+        };
+        requestUpdate.onsuccess = () => {
+          resolve();
+        };
+      } else if (data.player === undefined) {
+        data.player = value;
+        const newObject = { ...data };
+        const requestUpdate = objectStore.put(newObject, parseInt(primeKey, 10));
+        requestUpdate.onerror = () => {
+          reject();
+        };
+        requestUpdate.onsuccess = () => {
+          resolve(newObject);
+        };
+      } else {
+        const playerData = [{...data}, { ...data.player }];
+        playerData.push({ ...value });
+        console.log(playerData);
+        const requestUpdate = objectStore.put(playerData, parseInt(primeKey, 10));
+        requestUpdate.onerror = () => {
+          reject();
+        };
+        requestUpdate.onsuccess = () => {
+          resolve(playerData);
+        };
+      }
     };
   });
 }
@@ -197,8 +230,8 @@ async function dbAddPlayerData() {
   await dbAddData('playerStore', players);
 }
 
-
 export default { dbSetup };
 export {
-  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData, collectCursorData, putData,
+  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData, 
+  collectCursorData, putData,
 };

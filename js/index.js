@@ -137,12 +137,12 @@ window.onload = function () {
     const playerStore = transaction.objectStore('playerStore');
 
 
-    playerStore.openCursor().onsuccess = await function (e) {
+    playerStore.openCursor().onsuccess = function (e) {
       const cursor = e.target.result;
       if (cursor) {
         const tableRow = document.createElement('tr');
         const updatePlayer = cursor.value;
-        markup = `<tr data-playerKey=${cursor.value.id} data-manager=${cursor.value.manager}>
+        const markup = `<tr data-playerKey=${cursor.value.id} data-manager=${cursor.value.manager}>
                             <td>${cursor.value.adp}</td>
                             <td>${cursor.value.name}</td>
                             <td>${cursor.value.pos}</td>
@@ -164,11 +164,10 @@ window.onload = function () {
 
   const displayManagers = () => { // DISPLAY MANAGER DATA
     const managerStore = db.transaction('managerStore').objectStore('managerStore');
-    console.log('test');
+
     managerStore.openCursor().onsuccess = async (e) => {
       const cursor = e.target.result;
       if (cursor) {
-        console.log('test');
         const article = document.createElement('article');
         const table = document.createElement('table');
         const managerData = document.createElement('th');

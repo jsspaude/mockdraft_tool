@@ -5,7 +5,7 @@ import {
 } from './src/db';
 import { stores, catObjects } from './src/config';
 import {
-  displayData, playersMarkup, managersMarkup, settingsMarkup, displayDrafted,
+  displayData, playersMarkup, managersMarkup, settingsMarkup, draftedMarkup,
 } from './src/view';
 
 // VARIABLES
@@ -71,15 +71,18 @@ async function storeTextInputs() {
 }
 
 // CHANGE PLAYER MANAGER DATA
-function updatePlayerData(player, curr) {
-  const draftedData = { name: player.dataset.name, pos: player.dataset.pos, team: player.dataset.team };
+function updatePlayerData(player) {
+  const position = player.dataset.pos;
+  const draftedData = {
+    name: player.dataset.name,
+    team: player.dataset.team,
+  };
+  const playerObj = { [position]: draftedData };
   const primary = player.dataset.key;
-  // eslint-disable-next-line no-param-reassign
-  player.dataset.manager = curr;
-  putData('playerStore', parseInt(primary, 10), 'manager', currSettings.currManager);
-  return draftedData;
-}
 
+  putData('playerStore', parseInt(primary, 10), 'manager', currSettings.currManager);
+  return playerObj;
+}
 
 /* ADD CLICK EVENT TO DRAFT BUTTONS THEN PERFORM DRAFTING ACTIONS:
 -click event is added to all player buttons, this click event then triggers:
@@ -93,13 +96,12 @@ function activateDraftButtons(array) {
   draftButton.forEach((btn) => {
     btn.addEventListener('click', async () => {
       const playerButton = updatePlayerData(btn, currSettings.currManager);
-      console.log(playerButton);
       const primary = array[currSettings.currManager].primaryKey;
-      await putData('managerStore', parseInt(primary, 10), undefined, playerButton)
-        .then((object) => {
-          
-          displayDrafted();
-        });
+      console.log(playerButton);
+      await putData('managerStore', parseInt(primary, 10), 'players', playerButton).then((data) => {console.log(data.players);});
+      await collectCursorData('managerStore', ['managerNum', 'managerName', 'players'], 'true').then((result) => { console.log(result);
+        draftedMarkup(result[currSettings.currManager], currSettings.currManager);
+      });
     });
   });
 }
@@ -112,7 +114,7 @@ async function collectAndDisplayData(array) {
       displayData(data, playersMarkup, document.querySelector('[data-js="playerTable"]'));
     });
   });
-  await collectCursorData('managerStore', ['managerNum', 'managerName', 'player'], 'true').then((result) => {
+  await collectCursorData('managerStore', ['managerNum', 'managerName', 'players'], 'true').then((result) => {
     result.forEach((object) => {
       const data = catObjects(object);
       array.push(data);
@@ -169,3 +171,8 @@ startForm.addEventListener('submit', async (e) => {
   await collectAndDisplayData(managerStoreArray);
   activateDraftButtons(managerStoreArray);
 });
+
+
+/* Where You're At:
+managerStore.players into arrays of player positions
+*/

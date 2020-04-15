@@ -19,6 +19,14 @@ const throttle = (func, limit) => {
   };
 };
 
+function isIterable(obj) {
+  // checks for null and undefined
+  if (obj == null) {
+    return false;
+  }
+  return typeof obj[Symbol.iterator] === 'function';
+}
+
 function catObjects(array) {
   if (array.length === 0) {
     return {};
@@ -38,5 +46,5 @@ const chunk = (arr, chunkSize, cache = []) => {
 export default { draftDataURL };
 
 export {
-  draftDataURL, stores, isEven, catObjects, chunk,
+  draftDataURL, stores, isEven, catObjects, chunk, isIterable,
 };

@@ -1,4 +1,4 @@
-import { draftDataURL as url, chunk } from './config';
+import { draftDataURL as url, chunk, isIterable } from './config';
 
 /** ******************
 
@@ -185,41 +185,25 @@ function putData(store, primeKey, keys, value) {
       reject();
     };
 
-    request.onsuccess = (e) => {
+    request.onsuccess = async (e) => {
       const data = e.target.result;
-      if (keys) {
+      if (data[keys] === undefined) {
         data[keys] = value;
-
-        const requestUpdate = objectStore.put(data, parseInt(primeKey, 10));
-
-        requestUpdate.onerror = () => {
-          reject();
-        };
-        requestUpdate.onsuccess = () => {
-          resolve();
-        };
-      } else if (data.player === undefined) {
-        data.player = value;
-        const newObject = { ...data };
-        const requestUpdate = objectStore.put(newObject, parseInt(primeKey, 10));
-        requestUpdate.onerror = () => {
-          reject();
-        };
-        requestUpdate.onsuccess = () => {
-          resolve(newObject);
-        };
+      } else if (isIterable(data[keys])) {
+        const dataArray = [...data[keys], value];
+        data[keys] = dataArray;
       } else {
-        const playerData = [{...data}, { ...data.player }];
-        playerData.push({ ...value });
-        console.log(playerData);
-        const requestUpdate = objectStore.put(playerData, parseInt(primeKey, 10));
-        requestUpdate.onerror = () => {
-          reject();
-        };
-        requestUpdate.onsuccess = () => {
-          resolve(playerData);
-        };
+        const dataArray = [data[keys], value];
+        data[keys] = dataArray;
       }
+      const requestUpdate = objectStore.put(data, parseInt(primeKey, 10));
+
+      requestUpdate.onerror = () => {
+        reject();
+      };
+      requestUpdate.onsuccess = () => {
+        resolve(data);
+      };
     };
   });
 }
@@ -232,6 +216,6 @@ async function dbAddPlayerData() {
 
 export default { dbSetup };
 export {
-  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData, 
+  dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData,
   collectCursorData, putData,
 };

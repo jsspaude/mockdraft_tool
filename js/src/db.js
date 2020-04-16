@@ -115,7 +115,6 @@ function dbGetCursorData(store, keys, primary) {
         }
         await cursor.continue();
       } else {
-        console.log(`All ${store} Items Displayed`);
         resolve(cursorArray);
       }
     };
@@ -173,6 +172,8 @@ function dbStoreClear(stores) {
     await storeLoop(store);
   });
 }
+
+// HERE istead of array of objects, do an object of objects with key position.
 
 // PUT DYNAMIC DRAFT DATA IN STORE
 function putData(store, primeKey, keys, value) {

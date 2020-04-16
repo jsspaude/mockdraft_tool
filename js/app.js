@@ -1,4 +1,4 @@
-import regeneratorRuntime from "regenerator-runtime";
+import regeneratorRuntime from 'regenerator-runtime';
 
 import {
   dbAddPlayerData, dbStoreClear, dbSetup, dbAddData, dbGetData, putData, collectCursorData,
@@ -72,16 +72,15 @@ async function storeTextInputs() {
 
 // CHANGE PLAYER MANAGER DATA
 function updatePlayerData(player) {
-  const position = player.dataset.pos;
   const draftedData = {
     name: player.dataset.name,
+    pos: player.dataset.pos,
     team: player.dataset.team,
   };
-  const playerObj = { [position]: draftedData };
   const primary = player.dataset.key;
 
   putData('playerStore', parseInt(primary, 10), 'manager', currSettings.currManager);
-  return playerObj;
+  return draftedData;
 }
 
 /* ADD CLICK EVENT TO DRAFT BUTTONS THEN PERFORM DRAFTING ACTIONS:
@@ -97,11 +96,16 @@ function activateDraftButtons(array) {
     btn.addEventListener('click', async () => {
       const playerButton = updatePlayerData(btn, currSettings.currManager);
       const primary = array[currSettings.currManager].primaryKey;
-      console.log(playerButton);
-      await putData('managerStore', parseInt(primary, 10), 'players', playerButton).then((data) => {console.log(data.players);});
-      await collectCursorData('managerStore', ['managerNum', 'managerName', 'players'], 'true').then((result) => { console.log(result);
-        draftedMarkup(result[currSettings.currManager], currSettings.currManager);
-      });
+      await putData('managerStore', parseInt(primary, 10), 'players', playerButton)
+        .then((data) => {
+          const positions = ['QB', 'RB', 'WR', 'TE', 'FLEX', 'K', 'DST', 'BENCH'];
+          const playerArray = [];
+          positions.forEach((pos) => {
+            const player = data.players.filter((player) => player.pos === pos);
+            playerArray.push(player);
+          });
+        });
+      await collectCursorData('managerStore', ['managerNum', 'managerName', 'players'], 'true');
     });
   });
 }

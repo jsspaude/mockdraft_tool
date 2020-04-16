@@ -20,13 +20,12 @@ async function draftedMarkup(data, currManager) {
     const players = result.map((item) => item.players)
       .filter((el) => el != null)
       .reduce((array) => array);
-    console.log(players);
     return players;
   }).then((players) => players.forEach((player) => {
-    const position = player.pos.toLowerCase();
-    const td = document.querySelectorAll(`[data-drafted-pos="${position}"][data-manager="${currManager}"]`);
-    // eslint-disable-next-line no-param-reassign
-    td.forEach((d) => { d.innerHTML = player.name; });
+    // const position = player.pos.toLowerCase();
+    // const td = document.querySelectorAll(`[data-drafted-pos="${position}"][data-manager="${currManager}"]`);
+    // // eslint-disable-next-line no-param-reassign
+    // td.forEach((d) => { d.innerHTML = player.name; });
   }));
 }
 

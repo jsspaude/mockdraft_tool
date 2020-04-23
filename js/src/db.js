@@ -86,6 +86,7 @@ async function dbGetData(store, index, data) {
     const objectStore = tx.objectStore(`${store}`);
     const ind = objectStore.index(`${index}`);
     const req = ind.get(data);
+
     req.onsuccess = () => {
       resolve(req.result);
     };
@@ -104,12 +105,14 @@ function dbGetCursorData(store, keys, primary) {
     objectStore.openCursor().onsuccess = async (e) => {
       const cursor = e.target.result;
       if (cursor) {
-        keys.forEach((k) => {
-          const myobj = {};
-          myobj[k] = cursor.value[k];
-          cursorArray.push(myobj);
-          return myobj;
-        });
+        if (keys !== undefined) {
+          keys.forEach((k) => {
+            const myobj = {};
+            myobj[k] = cursor.value[k];
+            cursorArray.push(myobj);
+            return myobj;
+          });
+        }
         if (primary) {
           cursorArray.push({ primaryKey: cursor.primaryKey });
         }
@@ -125,6 +128,7 @@ function dbGetCursorData(store, keys, primary) {
 }
 
 // COLLECT CURSOR DATA INTO AN ARRAY
+// possible change - look at subing getAll for all of this - perceived workload 5 of 10
 async function collectCursorData(store, keys, primary) {
   let cursorDataArray;
   let { length } = keys;
@@ -173,8 +177,6 @@ function dbStoreClear(stores) {
   });
 }
 
-// HERE istead of array of objects, do an object of objects with key position.
-
 // PUT DYNAMIC DRAFT DATA IN STORE
 function putData(store, primeKey, keys, value) {
   return new Promise((resolve, reject) => {
@@ -188,14 +190,18 @@ function putData(store, primeKey, keys, value) {
 
     request.onsuccess = async (e) => {
       const data = e.target.result;
-      if (data[keys] === undefined) {
-        data[keys] = value;
-      } else if (isIterable(data[keys])) {
-        const dataArray = [...data[keys], value];
-        data[keys] = dataArray;
+      if (store !== 'settingsStore') {
+        if (data[keys] === undefined) {
+          data[keys] = value;
+        } else if (isIterable(data[keys])) {
+          const dataArray = [...data[keys], value];
+          data[keys] = dataArray;
+        } else {
+          const dataArray = [data[keys], value];
+          data[keys] = dataArray;
+        }
       } else {
-        const dataArray = [data[keys], value];
-        data[keys] = dataArray;
+        data[keys] = value;
       }
       const requestUpdate = objectStore.put(data, parseInt(primeKey, 10));
 

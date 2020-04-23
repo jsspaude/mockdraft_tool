@@ -2,11 +2,10 @@ import regeneratorRuntime from 'regenerator-runtime';
 
 import {
   dbAddPlayerData, dbStoreClear, dbSetup, dbAddData, dbGetData, putData, collectCursorData,
+  dbGetCursorData,
 } from './src/db';
-import { stores, catObjects } from './src/config';
-import {
-  displayData, playersMarkup, managersMarkup, settingsMarkup, draftedMarkup,
-} from './src/view';
+import { stores, catObjects, groupBy } from './src/config';
+import { displayMarkup } from './src/view';
 
 // VARIABLES
 const settingsForm = document.querySelector('[data-js="settingsForm"]');
@@ -83,56 +82,71 @@ function updatePlayerData(player) {
   return draftedData;
 }
 
-/* ADD CLICK EVENT TO DRAFT BUTTONS THEN PERFORM DRAFTING ACTIONS:
--click event is added to all player buttons, this click event then triggers:
-- putting player data in proper manager store record
-- displaying data in html
-- updating currSettings
-- storing currSettings
-*/
-function activateDraftButtons(array) {
-  const draftButton = document.querySelectorAll('[data-js="draftBtn"]');
-  draftButton.forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const playerButton = updatePlayerData(btn, currSettings.currManager);
-      const primary = array[currSettings.currManager].primaryKey;
-      await putData('managerStore', parseInt(primary, 10), 'players', playerButton)
-        .then((data) => {
-          const positions = ['QB', 'RB', 'WR', 'TE', 'FLEX', 'K', 'DST', 'BENCH'];
-          const playerArray = [];
-          positions.forEach((pos) => {
-            const player = data.players.filter((player) => player.pos === pos);
-            playerArray.push(player);
-          });
-        });
-      await collectCursorData('managerStore', ['managerNum', 'managerName', 'players'], 'true');
-    });
-  });
+async function currSettingsTracking() {
+  currSettings.currManager += 1;
+  await putData('settingsStore', currSettings.primaryKey, 'currManager', currSettings.currManager);
 }
 
+async function draftPutDisplay(key, object) {
+  const container = document.querySelector(`article[data-manager="${currSettings.currManager}"]`);
+  await putData('managerStore', key, 'players', object)
+    .then((data) => {
+      const d = data;
+      const positionGroup = groupBy(data.players, 'pos');
+      d.players = positionGroup;
+      return d;
+    })
+    .then((result) => {
+      const newDisplay = displayMarkup(result, 'manager', document.querySelector('[data-js="managerContainer"]')); 
+      container.innerHTML = newDisplay;
+      currSettingsTracking();
+    });
+}
+
+// HERE - found out that issue with not showing players on relod is because when there is only one player on a team it does not show on realod
+
+// ADD CLICK EVENT TO DRAFT BUTTONS THEN PERFORM DRAFTING ACTIONS:
+function activateDraftButtons() {
+  const playerTable = document.querySelector('[data-js="playerTable"]');
+  playerTable.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (e.target.tagName === 'BUTTON') {
+      const storedPlayerData = updatePlayerData(e.target, currSettings.currManager);
+      const primary = await dbGetCursorData('managerStore', undefined, true);
+      draftPutDisplay(primary[currSettings.currManager].primaryKey, storedPlayerData);
+    }
+    e.stopPropagation();
+  }, false);
+}
+
+
 // COLLECT DATA FROM DB INTO ARRAYS AND DISPLAY
-async function collectAndDisplayData(array) {
+async function collectAndDisplayData(init) {
   await collectCursorData('playerStore', ['manager', 'adp', 'name', 'pos', 'team'], 'true').then((result) => {
     result.forEach((object) => {
       const data = catObjects(object);
-      displayData(data, playersMarkup, document.querySelector('[data-js="playerTable"]'));
+      displayMarkup(data, 'players', document.querySelector('[data-js="playerTable"]'), init);
     });
+  });
+  await collectCursorData('settingsStore', ['currManager', 'currRound', 'rounds', 'managerCount'], 'true').then((result) => {
+    let data;
+    result.forEach((object) => {
+      data = catObjects(object);
+      displayMarkup(data, 'settings', document.querySelector('[data-js="settingsContainer"]'), init);
+    });
+    currSettings = data;
+    return data;
   });
   await collectCursorData('managerStore', ['managerNum', 'managerName', 'players'], 'true').then((result) => {
     result.forEach((object) => {
       const data = catObjects(object);
-      array.push(data);
-      displayData(data, managersMarkup, document.querySelector('[data-js="managerContainer"]'));
+      if (data.players !== undefined) {
+        const positionGroup = groupBy(data.players, 'pos');
+        data.players = positionGroup;
+      }
+      console.log(data.players);
+      displayMarkup(data, 'manager', document.querySelector('[data-js="managerContainer"]'), init);
     });
-  });
-  await collectCursorData('settingsStore', ['currManager', 'currRound']).then((result) => {
-    let data;
-    result.forEach((object) => {
-      data = catObjects(object);
-      displayData(data, settingsMarkup, document.querySelector('[data-js="settingsContainer"]'));
-    });
-    currSettings = data;
-    return data;
   });
 }
 
@@ -143,12 +157,8 @@ window.onload = async () => {
     .then((x) => {
       [db] = x;
       if (x[1]) {
-        const managerStoreArray = [];
-        const display = async () => {
-          await collectAndDisplayData(managerStoreArray);
-          activateDraftButtons(managerStoreArray);
-        };
-        display();
+        collectAndDisplayData(true);
+        activateDraftButtons();
       }
     });
 };
@@ -170,10 +180,9 @@ resetButton.addEventListener('click', () => {
 // START APP
 startForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const managerStoreArray = [];
   await storeTextInputs(db);
-  await collectAndDisplayData(managerStoreArray);
-  activateDraftButtons(managerStoreArray);
+  await collectAndDisplayData(true);
+  activateDraftButtons();
 });
 
 

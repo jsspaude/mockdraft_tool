@@ -1,16 +1,20 @@
 import regeneratorRuntime from 'regenerator-runtime';
 
 import {
-  dbAddPlayerData, dbStoreClear, dbSetup, dbAddData, dbGetData, putData, collectCursorData,
+  dbAddPlayerData, dbStoreClear, dbSetup, dbAddData, dbGetData, dbPutData, collectCursorData,
   dbGetCursorData,
 } from './src/db';
-import { stores, catObjects, groupBy } from './src/config';
+
+import { draftDataURL as url, stores, catObjects, groupBy } from './src/config';
 import { displayMarkup } from './src/view';
+import { IndexedDB } from './src/model';
 
 // VARIABLES
-const settingsForm = document.querySelector('[data-js="settingsForm"]');
-const resetButton = document.querySelector('[data-js="resetBtn"');
-const startForm = document.querySelector('[data-js="startDraft"');
+const buttons = {
+  settingsForm: document.querySelector('[data-js="settingsForm"]'),
+  resetButton: document.querySelector('[data-js="resetBtn"'),
+  startForm: document.querySelector('[data-js="startDraft"'),
+};
 let currSettings;
 let userValues = [];
 let db;
@@ -78,18 +82,18 @@ function updatePlayerData(player) {
   };
   const primary = player.dataset.key;
 
-  putData('playerStore', parseInt(primary, 10), 'manager', currSettings.currManager);
+  dbPutData('playerStore', parseInt(primary, 10), 'manager', currSettings.currManager);
   return draftedData;
 }
 
 async function currSettingsTracking() {
   currSettings.currManager += 1;
-  await putData('settingsStore', currSettings.primaryKey, 'currManager', currSettings.currManager);
+  await dbPutData('settingsStore', currSettings.primaryKey, 'currManager', currSettings.currManager);
 }
 
 async function draftPutDisplay(key, object) {
   const container = document.querySelector(`article[data-manager="${currSettings.currManager}"]`);
-  await putData('managerStore', key, 'players', object)
+  await dbPutData('managerStore', key, 'players', object)
     .then((data) => {
       const d = data;
       const positionGroup = groupBy(data.players, 'pos');
@@ -102,8 +106,6 @@ async function draftPutDisplay(key, object) {
       currSettingsTracking();
     });
 }
-
-// HERE - found out that issue with not showing players on relod is because when there is only one player on a team it does not show on realod
 
 // ADD CLICK EVENT TO DRAFT BUTTONS THEN PERFORM DRAFTING ACTIONS:
 function activateDraftButtons() {
@@ -144,7 +146,6 @@ async function collectAndDisplayData(init) {
         const positionGroup = groupBy(data.players, 'pos');
         data.players = positionGroup;
       }
-      console.log(data.players);
       displayMarkup(data, 'manager', document.querySelector('[data-js="managerContainer"]'), init);
     });
   });
@@ -161,24 +162,31 @@ window.onload = async () => {
         activateDraftButtons();
       }
     });
+  // const players = await fetch(url).then((response) => response.json());
+  // const newDB = new IndexedDB('mock', 1, [{ name: 'playerStore', option: { autoIncrement: true } }, { name: 'managerStore', option: { autoIncrement: true } }, { name: 'settingsStore', option: { autoIncrement: true } }]);
+  // await newDB.openDB();
+  // await newDB.addData('playerStore', players);
+  // await newDB.getAllData('playerStore');
+  // collectAndDisplayData(true);
+  // activateDraftButtons();
 };
 
 // APPLY USER SETTINGS
-settingsForm.addEventListener('submit', async (e) => {
+buttons.settingsForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   await storeUserSettings(db).then((x) => { userValues = x; });
   await dbAddPlayerData();
 });
 
 // RESET APP - clear stores and inputs, etc
-resetButton.addEventListener('click', () => {
+buttons.resetButton.addEventListener('click', () => {
   dbStoreClear(stores);
-  settingsForm.reset();
+  buttons.settingsForm.reset();
   userValues[0].forEach((value) => { value.parentNode.removeChild(value); });
 });
 
 // START APP
-startForm.addEventListener('submit', async (e) => {
+buttons.startForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   await storeTextInputs(db);
   await collectAndDisplayData(true);
@@ -186,6 +194,4 @@ startForm.addEventListener('submit', async (e) => {
 });
 
 
-/* Where You're At:
-managerStore.players into arrays of player positions
-*/
+// GOAL const app = new Controller(new Model(), new View())

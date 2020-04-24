@@ -47,9 +47,6 @@ function dbSetup(namespace, stores) {
             objectStore.createIndex('numManagers', 'numManagers', { unique: false });
             objectStore.createIndex('id', 'id', { unique: false });
           }
-        } else {
-          // eslint-disable-next-line no-unused-vars
-          const objectStore = dbReq.transaction.objectStore(`${store}`);
         }
       });
     };
@@ -69,9 +66,6 @@ function dbSetup(namespace, stores) {
         }
         resolve([db, inProgress]);
       };
-      requestUpdate.onerror = (event) => {
-        console.log('err');
-      };
     };
     dbReq.onerror = (event) => {
       reject(new Error(`err${event.target.errorCode}`));
@@ -79,8 +73,37 @@ function dbSetup(namespace, stores) {
   }));
 }
 
+// class Test {
+//   constructor(store, index, data) {
+//     this.db = db;
+//     this.store = store;
+//     this.index = index;
+//     this.data = data;
+//   }
+
+//   dbData() {
+//     return new Promise((resolve, reject) => {
+//       console.log(this.store);
+//       const tx = this.db.transaction([`${this.store}`], 'readwrite');
+//       const objectStore = tx.objectStore(`${this.store}`);
+//       const ind = objectStore.index(`${this.index}`);
+//       const req = ind.get(this.data);
+
+//       req.onsuccess = () => {
+//         resolve(req.result);
+//       };
+//       req.onerror = (e) => {
+//         reject(new Error(`error storing ${this.data} ${e.target.errorCode}`));
+//       };
+//     });
+//   }
+// }
+
+
+// console.log(settingsStore.dbData());
+
 // RETRIEVE DATA FROM OBJECTSTORE USING GET (objectStore, data key, index name)
-async function dbGetData(store, index, data) {
+function dbGetData(store, index, data) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
     const objectStore = tx.objectStore(`${store}`);
@@ -95,6 +118,7 @@ async function dbGetData(store, index, data) {
     };
   });
 }
+
 
 // RETRIEVE DATA FROM OBJECTSTORE USING CURSOR (objectStore, keys requested)
 function dbGetCursorData(store, keys, primary) {
@@ -138,6 +162,7 @@ async function collectCursorData(store, keys, primary) {
   await dbGetCursorData(store, keys, primary)
     .then((values) => chunk(values, length))
     .then((array) => { cursorDataArray = array; return cursorDataArray; });
+    console.log(cursorDataArray);
   return cursorDataArray;
 }
 
@@ -178,7 +203,7 @@ function dbStoreClear(stores) {
 }
 
 // PUT DYNAMIC DRAFT DATA IN STORE
-function putData(store, primeKey, keys, value) {
+function dbPutData(store, primeKey, keys, value) {
   return new Promise((resolve, reject) => {
     const tx = db.transaction([`${store}`], 'readwrite');
     const objectStore = tx.objectStore(`${store}`);
@@ -224,5 +249,5 @@ async function dbAddPlayerData() {
 export default { dbSetup };
 export {
   dbAddData, dbStoreClear, dbAddPlayerData, dbSetup, dbGetData, dbGetCursorData,
-  collectCursorData, putData,
+  collectCursorData, dbPutData,
 };

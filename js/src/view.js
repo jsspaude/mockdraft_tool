@@ -28,7 +28,7 @@ function benchTest(data) {
   return benchArray;
 }
 
-function displayMarkup(data, markup, container, init) {
+export default function displayMarkup(data, markup, container, init) {
   const cont = container;
   let newMarkup = '';
   if (markup === 'manager') {
@@ -115,5 +115,4 @@ function displayMarkup(data, markup, container, init) {
   return newMarkup;
 }
 
-export default { displayMarkup };
 export { displayMarkup };

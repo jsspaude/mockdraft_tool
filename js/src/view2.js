@@ -28,7 +28,7 @@ function benchTest() {
 }
 
 
-export default class Model {
+export default class View {
   constructor(data) {
     this.data = data;
   }
@@ -122,4 +122,4 @@ export default class Model {
   }
 }
 
-export { Model };
+export { View };

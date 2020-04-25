@@ -1,12 +1,13 @@
-import { draftDataURL as url, chunk, isIterable } from './config';
-
-
 export default class IndexedDB {
-  constructor(dbName, dbVersion, stores) {
-    this.db;
+  constructor(dbName, dbVersion, stores, db) {
+    this.db = db;
     this.dbName = dbName;
     this.dbVersion = dbVersion;
     this.stores = stores;
+  }
+
+  getDB() {
+    return this.db;
   }
 
   openDB(callback = (() => {})) {
@@ -103,8 +104,8 @@ export default class IndexedDB {
           resolve(cursorArray);
         }
       };
-      objectStore.onerror = (e) => {
-        reject(console.error(`error with cursor ${store} ${e.target.errorCode}`));
+      objectStore.onerror = () => {
+        reject();
       };
     });
   }

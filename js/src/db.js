@@ -162,7 +162,6 @@ async function collectCursorData(store, keys, primary) {
   await dbGetCursorData(store, keys, primary)
     .then((values) => chunk(values, length))
     .then((array) => { cursorDataArray = array; return cursorDataArray; });
-    console.log(cursorDataArray);
   return cursorDataArray;
 }
 

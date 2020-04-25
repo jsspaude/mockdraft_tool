@@ -5,8 +5,9 @@ import {
   dbGetCursorData,
 } from './src/db';
 
-import { draftDataURL as url, stores, catObjects, groupBy } from './src/config';
+import { draftDataURL as url, objectStores, catObjects, groupBy } from './src/config';
 import { displayMarkup } from './src/view';
+import { View } from './src/view2';
 import { IndexedDB } from './src/model';
 
 // VARIABLES
@@ -153,45 +154,65 @@ async function collectAndDisplayData(init) {
 
 // SETUP DB:
 // on load setupDB, if settingsStore has data then display draft data
-window.onload = async () => {
-  await dbSetup('mockDraft', stores)
-    .then((x) => {
-      [db] = x;
-      if (x[1]) {
-        collectAndDisplayData(true);
-        activateDraftButtons();
-      }
+
+class Controller {
+  constructor(model, view) {
+    this.model = model;
+    this.view = view;
+  }
+
+  async init() {
+    await this.model.openDB();
+    await fetch(url).then(async (response) => {
+      this.model.addData('playerStore', await response.json());
     });
-  // const players = await fetch(url).then((response) => response.json());
-  // const newDB = new IndexedDB('mock', 1, [{ name: 'playerStore', option: { autoIncrement: true } }, { name: 'managerStore', option: { autoIncrement: true } }, { name: 'settingsStore', option: { autoIncrement: true } }]);
-  // await newDB.openDB();
-  // await newDB.addData('playerStore', players);
-  // await newDB.getAllData('playerStore');
-  // collectAndDisplayData(true);
-  // activateDraftButtons();
-};
+    this.model.getAllData('playerStore').then((result) => console.log(result));
+  }
+}
 
-// APPLY USER SETTINGS
-buttons.settingsForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  await storeUserSettings(db).then((x) => { userValues = x; });
-  await dbAddPlayerData();
-});
+window.onload = () => { new Controller(new IndexedDB('mock', 1, objectStores), new View()).init(); };
 
-// RESET APP - clear stores and inputs, etc
-buttons.resetButton.addEventListener('click', () => {
-  dbStoreClear(stores);
-  buttons.settingsForm.reset();
-  userValues[0].forEach((value) => { value.parentNode.removeChild(value); });
-});
+console.log(Controller.model);
 
-// START APP
-buttons.startForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  await storeTextInputs(db);
-  await collectAndDisplayData(true);
-  activateDraftButtons();
-});
+// window.onload = async () => {
+//   // await dbSetup('mockDraft', stores)
+//   //   .then((x) => {
+//   //     [db] = x;
+//   //     if (x[1]) {
+//   //       collectAndDisplayData(true);
+//   //       activateDraftButtons();
+//   //     }
+//   //   });
+//   const players = await fetch(url).then((response) => response.json());
+//   const newDB = new IndexedDB('mock', 1, [{ name: 'playerStore', option: { autoIncrement: true } }, { name: 'managerStore', option: { autoIncrement: true } }, { name: 'settingsStore', option: { autoIncrement: true } }]);
+//   await newDB.openDB();
+//   await newDB.addData('playerStore', players);
+//   await newDB.getAllData('playerStore');
+//   collectAndDisplayData(true);
+//   activateDraftButtons();
+
+//   // APPLY USER SETTINGS
+//   buttons.settingsForm.addEventListener('submit', async (e) => {
+//     e.preventDefault();
+//     await storeUserSettings(newDB.getDB).then((x) => { userValues = x; });
+//     await dbAddPlayerData();
+//   });
+
+//   // RESET APP - clear stores and inputs, etc
+//   buttons.resetButton.addEventListener('click', () => {
+//     dbStoreClear(stores);
+//     buttons.settingsForm.reset();
+//     userValues[0].forEach((value) => { value.parentNode.removeChild(value); });
+//   });
+
+//   // START APP
+//   buttons.startForm.addEventListener('submit', async (e) => {
+//     e.preventDefault();
+//     await storeTextInputs(newDB.getDB);
+//     await collectAndDisplayData(true);
+//     activateDraftButtons();
+//   });
+// };
 
 
-// GOAL const app = new Controller(new Model(), new View())
+// // GOAL const app = new Controller(new Model(), new View())

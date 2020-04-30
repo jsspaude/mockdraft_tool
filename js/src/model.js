@@ -1,13 +1,23 @@
+import { draftDataURL as url } from './config';
+
 export default class IndexedDB {
-  constructor(dbName, dbVersion, stores, db) {
-    this.db = db;
+  constructor(dbName, dbVersion, stores) {
     this.dbName = dbName;
     this.dbVersion = dbVersion;
     this.stores = stores;
+    this.players = fetch(url)
+      .then((request) => request.json())
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   getDB() {
     return this.db;
+  }
+
+  bindDBChanged(callback) {
+    this.DBChanged = callback;
   }
 
   openDB(callback = (() => {})) {
@@ -68,15 +78,17 @@ export default class IndexedDB {
 
   getAllData(store) {
     return new Promise((resolve, reject) => {
-      const tx = this.db.transaction([`${store}`], 'readwrite');
-      const objectStore = tx.objectStore(`${store}`);
-      const req = objectStore.getAll();
-      req.onsuccess = () => {
-        resolve(req.result);
-      };
-      req.onerror = () => {
-        reject();
-      };
+      if (this.db) {
+        const tx = this.db.transaction([`${store}`], 'readwrite');
+        const objectStore = tx.objectStore(`${store}`);
+        const req = objectStore.getAll();
+        req.onsuccess = () => {
+          resolve(req.result);
+        };
+        req.onerror = () => {
+          reject();
+        };
+      }
     });
   }
 

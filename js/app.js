@@ -11,11 +11,6 @@ import { View } from './src/view2';
 import { IndexedDB } from './src/model';
 
 // VARIABLES
-const buttons = {
-  settingsForm: document.querySelector('[data-js="settingsForm"]'),
-  resetButton: document.querySelector('[data-js="resetBtn"'),
-  startForm: document.querySelector('[data-js="startDraft"'),
-};
 let currSettings;
 let userValues = [];
 let db;
@@ -159,20 +154,75 @@ class Controller {
   constructor(model, view) {
     this.model = model;
     this.view = view;
+    this.view.bindInputs(this.handleInputs);
+    this.view.bindReset(this.handleReset);
+    this.view.bindStart(this.handleStart);
+    this.view.bindDraft(this.handleDraft);
   }
 
   async init() {
     await this.model.openDB();
-    await fetch(url).then(async (response) => {
-      this.model.addData('playerStore', await response.json());
+    await this.model.getAllData('playerStore')
+      .then((request) => {
+        request.forEach((item) => {
+          this.view.displayMarkup(item, 'players', document.querySelector('[data-js="playerTable"]'), true);
+        });
+      });
+    await this.model.getAllData('managerStore')
+      .then((request) => {
+        request.forEach((item) => {
+          this.view.displayMarkup(item, 'manager', document.querySelector('[data-js="managerContainer"]'), true);
+        });
+      });
+    await this.model.getAllData('settingsStore')
+      .then((request) => {
+        request.forEach((item) => {
+          this.view.displayMarkup(item, 'settings', document.querySelector('[data-js="settingsContainer"]'), true);
+        });
+      });
+  }
+
+  handleInputs = (data) => {
+    const newObj = {
+      numManagers: data[0], rounds: data[1], currManager: 0, currRound: 0,
+    };
+    this.model.addData('settingsStore', undefined, newObj);
+  }
+
+  handleStart = async (data) => {
+    this.model.players.then((request) => {
+      request.forEach((item) => {
+        this.view.displayMarkup(item, 'players', document.querySelector('[data-js="playerTable"]'), true);
+      });
+      this.model.addData('playerStore', request, undefined);
     });
-    this.model.getAllData('playerStore').then((result) => console.log(result));
+    await this.model.addData('managerStore', data);
+    await this.model.getAllData('managerStore')
+      .then((request) => {
+        request.forEach((item) => {
+          this.view.displayMarkup(item, 'manager', document.querySelector('[data-js="managerContainer"]'), true);
+        });
+      });
+    await this.model.getAllData('settingsStore')
+      .then((request) => {
+        request.forEach((item) => {
+          this.view.displayMarkup(item, 'settings', document.querySelector('[data-js="settingsContainer"]'), true);
+        });
+      });
+  }
+
+  handleReset = () => {
+    this.model.storeClear(['playerStore', 'managerStore', 'settingsStore']);
+  }
+
+  handleDraft = (data) => {
+    console.log(data);
   }
 }
 
-window.onload = () => { new Controller(new IndexedDB('mock', 1, objectStores), new View()).init(); };
-
-console.log(Controller.model);
+window.onload = () => {
+  const app = new Controller(new IndexedDB('mock', 1, objectStores), new View()).init();
+};
 
 // window.onload = async () => {
 //   // await dbSetup('mockDraft', stores)

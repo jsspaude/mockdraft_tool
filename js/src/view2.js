@@ -74,6 +74,7 @@ export default class View {
         const myObj = {};
         myObj.managerNum = i;
         myObj.managerName = v;
+        myObj.players = undefined;
         return myObj;
       });
       handler(managerStoreData);
@@ -84,7 +85,8 @@ export default class View {
     this.displayContainer1.addEventListener('click', async (e) => {
       e.preventDefault();
       if (e.target.tagName === 'BUTTON') {
-        handler(e.target.dataset);
+        const obj = e.target.dataset;
+        handler({ ...obj });
       }
       e.stopPropagation();
     }, false);
@@ -174,7 +176,7 @@ export default class View {
           <td>${data.adp}</td>
           <td>${data.team}</td>
           <td> 
-            <button data-js='draftBtn' data-key='${data.primaryKey}' data-manager='${data.managerNum}' data-adp='${data.adp}' data-name='${data.name}' data-team='${data.team}' data-pos='${data.pos}'>DRAFT</button> 
+            <button data-key='${data.primaryKey}' data-manager='${data.managerNum}' data-adp='${data.adp}' data-name='${data.name}' data-team='${data.team}' data-pos='${data.pos}'>DRAFT</button> 
           </td>
         </tr>`;
     }

@@ -11,7 +11,7 @@ import { View } from './src/view2';
 import { IndexedDB } from './src/model';
 
 // VARIABLES
-let currSettings;
+// let currSettings;
 let userValues = [];
 let db;
 
@@ -190,11 +190,13 @@ class Controller {
   }
 
   handleStart = async (data) => {
-    this.model.players.then((request) => {
+    await this.model.players.then((request) => {
+      this.model.addData('playerStore', request, undefined);
+    });
+    this.model.getAllData('playerStore').then((request) => {
       request.forEach((item) => {
         this.view.displayMarkup(item, 'players', document.querySelector('[data-js="playerTable"]'), true);
       });
-      this.model.addData('playerStore', request, undefined);
     });
     await this.model.addData('managerStore', data);
     await this.model.getAllData('managerStore')
@@ -215,8 +217,28 @@ class Controller {
     this.model.storeClear(['playerStore', 'managerStore', 'settingsStore']);
   }
 
-  handleDraft = (data) => {
+  handleDraft = async (data) => {
     console.log(data);
+    const primary = await data.key;
+    await this.model.getAllData('settingsStore').then(async (request) => {
+      const prime = await request[0].primaryKey;
+      const { currManager } = await request[0];
+      const container = document.querySelector(`article[data-manager="${currManager}"]`);
+      const primes = await this.model.getCursorData('managerStore', undefined, true);
+      this.model.putData('playerStore', parseInt(primary, 10), 'manager', currManager);
+      await this.model.putData('settingsStore', parseInt(prime, 10), 'currManager', (currManager + 1));
+      this.model.putData('managerStore', primes[currManager].primaryKey, 'players', 'test')
+        .then((stuff) => {
+          // const d = data;
+          // const positionGroup = groupBy(data.players, 'pos');
+          // d.players = positionGroup;
+          // return d;
+        });
+        // .then((result) => {
+        //   const newDisplay = displayMarkup(result, 'manager', document.querySelector('[data-js="managerContainer"]')); 
+        //   container.innerHTML = newDisplay;
+        // });
+    });
   }
 }
 
@@ -266,3 +288,6 @@ window.onload = () => {
 
 
 // // GOAL const app = new Controller(new Model(), new View())
+
+
+// NEED TO DO: change manager and round on draft click, display drafted

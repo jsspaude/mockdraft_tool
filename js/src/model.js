@@ -1,4 +1,4 @@
-import { draftDataURL as url } from './config';
+import { draftDataURL as url, isIterable } from './config';
 
 export default class IndexedDB {
   constructor(dbName, dbVersion, stores) {
@@ -58,6 +58,24 @@ export default class IndexedDB {
     });
   }
 
+  testGet(store, index, data) {
+    return new Promise((resolve, reject) => {
+      if (this.db && index) {
+        const tx = this.db.transaction([`${store}`], 'readwrite');
+        const objectStore = tx.objectStore(`${store}`);
+        const ind = objectStore.index(`${index}`);
+        const req = ind.getAll(data);
+
+        req.onsuccess = () => {
+          resolve(req.result);
+        };
+        req.onerror = (e) => {
+          reject(new Error(`error storing ${data} ${e.target.errorCode}`));
+        };
+      }
+    });
+  }
+
   getData(store, index, data) {
     return new Promise((resolve, reject) => {
       if (this.db && index) {
@@ -82,6 +100,32 @@ export default class IndexedDB {
         const tx = this.db.transaction([`${store}`], 'readwrite');
         const objectStore = tx.objectStore(`${store}`);
         const req = objectStore.getAll();
+        req.onsuccess = async () => {
+          const arr1 = await req.result;
+          const reqUpdate = objectStore.getAllKeys();
+          reqUpdate.onsuccess = () => {
+            const arr2 = reqUpdate.result;
+            const newObj = arr1.map((item, index) => {
+              const data = item;
+              data.primaryKey = arr2[index];
+              return newObj;
+            });
+            resolve(req.result);
+          };
+        };
+        req.onerror = () => {
+          reject();
+        };
+      }
+    });
+  }
+
+  getAllKeys(store) {
+    return new Promise((resolve, reject) => {
+      if (this.db) {
+        const tx = this.db.transaction([`${store}`], 'readwrite');
+        const objectStore = tx.objectStore(`${store}`);
+        const req = objectStore.getAllKeys();
         req.onsuccess = () => {
           resolve(req.result);
         };
@@ -141,19 +185,35 @@ export default class IndexedDB {
     });
   }
 
+  testPut(store, primeKey) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction([`${store}`], 'readwrite');
+      const objectStore = tx.objectStore(`${store}`);
+      const request = objectStore.get(primeKey);
+      request.onerror = () => {
+        reject();
+      };
+
+      request.onsuccess = async () => {
+        const data = request.result;
+        console.log(data);
+      };
+    });
+  }
+
   // PUT DYNAMIC DRAFT DATA IN STORE
   putData(store, primeKey, keys, value) {
     return new Promise((resolve, reject) => {
       const tx = this.db.transaction([`${store}`], 'readwrite');
       const objectStore = tx.objectStore(`${store}`);
       const request = objectStore.get(parseInt(primeKey, 10));
-
       request.onerror = () => {
         reject();
       };
 
-      request.onsuccess = async (e) => {
-        const data = e.target.result;
+      request.onsuccess = async () => {
+        const data = request.result;
+        console.log(data);
         if (store !== 'settingsStore') {
           if (data[keys] === undefined) {
             data[keys] = value;

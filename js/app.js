@@ -218,26 +218,25 @@ class Controller {
   }
 
   handleDraft = async (data) => {
-    console.log(data);
-    const primary = await data.key;
+    const primary = parseInt(data.key, 10);
     await this.model.getAllData('settingsStore').then(async (request) => {
       const prime = await request[0].primaryKey;
       const { currManager } = await request[0];
       const container = document.querySelector(`article[data-manager="${currManager}"]`);
       const primes = await this.model.getCursorData('managerStore', undefined, true);
-      this.model.putData('playerStore', parseInt(primary, 10), 'manager', currManager);
       await this.model.putData('settingsStore', parseInt(prime, 10), 'currManager', (currManager + 1));
-      this.model.putData('managerStore', primes[currManager].primaryKey, 'players', 'test')
-        .then((stuff) => {
-          // const d = data;
-          // const positionGroup = groupBy(data.players, 'pos');
-          // d.players = positionGroup;
-          // return d;
+      await this.model.getByPrimary('playerStore', primary)
+        .then((item) => {
+          this.model.putData('managerStore', primes[currManager].primaryKey, 'players', item)
+            .then(async (result) => {
+              const resultUpdate = await result;
+              resultUpdate.players = groupBy(result.players, 'pos');
+              return resultUpdate;
+            })
+            .then((result) => {
+              container.innerHTML = displayMarkup(result, 'manager', document.querySelector('[data-js="managerContainer"]'));
+            });
         });
-        // .then((result) => {
-        //   const newDisplay = displayMarkup(result, 'manager', document.querySelector('[data-js="managerContainer"]')); 
-        //   container.innerHTML = newDisplay;
-        // });
     });
   }
 }

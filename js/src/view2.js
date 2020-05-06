@@ -1,4 +1,5 @@
 function positionTest(data, pos, posNum) {
+  console.log(data.players);
   if (data.players === undefined || data.players[pos] === undefined
       || this.data.players[pos][posNum] === undefined) {
     return '';
@@ -126,7 +127,7 @@ export default class View {
               <th>${data.managerName}</th>
               <tr>
                 <td>QB</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'QB', 0, 1)}</td>
+                <td data-manager=${data.managerNum}>${data.players.name}</td>
               </tr>
               <tr>
                 <td>RB</td>

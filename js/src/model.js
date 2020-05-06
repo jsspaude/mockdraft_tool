@@ -94,6 +94,21 @@ export default class IndexedDB {
     });
   }
 
+  getKey(store, key, data) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction([`${store}`], 'readwrite');
+      const objectStore = tx.objectStore(`${store}`);
+      const req = objectStore.getKey(key);
+      req.onsuccess = () => {
+        console.log(req.result);
+        resolve(req.result);
+      };
+      req.onerror = (e) => {
+        reject(new Error(`error storing ${data} ${e.target.errorCode}`));
+      };
+    });
+  }
+
   getAllData(store) {
     return new Promise((resolve, reject) => {
       if (this.db) {
@@ -133,6 +148,24 @@ export default class IndexedDB {
           reject();
         };
       }
+    });
+  }
+
+  getByPrimary(store, primary) {
+    return new Promise((resolve, reject) => {
+      const tx = this.db.transaction([`${store}`], 'readwrite');
+      const objectStore = tx.objectStore(`${store}`);
+      objectStore.openCursor().onsuccess = async (e) => {
+        const cursor = e.target.result;
+        if (cursor.primaryKey === primary) {
+          resolve(cursor.value);
+        } else {
+          await cursor.continue();
+        }
+      };
+      objectStore.onerror = () => {
+        reject();
+      };
     });
   }
 
@@ -213,7 +246,6 @@ export default class IndexedDB {
 
       request.onsuccess = async () => {
         const data = request.result;
-        console.log(data);
         if (store !== 'settingsStore') {
           if (data[keys] === undefined) {
             data[keys] = value;

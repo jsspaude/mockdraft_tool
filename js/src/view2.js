@@ -1,23 +1,19 @@
 import { positions } from './config'; // HERE - positions is a user setting to be added later so switch to a handler event - similiar to other user settings
 
-// HERE - rebuild position test to run only once and then spit out to proper td, right now it is running for each position
+// HERE - Filter new mapped array into POS categories, you can mix Bench Test into here as well.
 
 function positionTest(data) {
   if (data.players === undefined) {
     console.log('');
     return '';
   }
-  if (data.players.length === undefined) {
-    const displayData = data.players;
-    const displayDataKey = data.players.pos;
-    console.log({ [displayDataKey]: displayData });
-    return { [displayDataKey]: displayData };
-  }
-
-  data.players.forEach((item) => console.log(item.pos));
-  return data.players;
+  return data.players.map((item) => {
+    const newObjKey = item.pos;
+    const newObjVal = item.name;
+    const newObj = { [newObjKey]: newObjVal };
+    return newObj;
+  }).filter();
 }
-
 // CHECKS IF MAXNUMBER OF POSITION FILLED THEN CREATES BENCH ARRAY FOR BENCH DISPLAY
 
 // HERE get array of values pased on data.players.pos, if length is greater than positions # (i.e. positions.RB.value)

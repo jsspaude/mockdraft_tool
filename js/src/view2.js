@@ -1,22 +1,34 @@
-function positionTest(data, pos, posNum) {
-  console.log(data.players);
-  if (data.players === undefined || data.players[pos] === undefined
-      || this.data.players[pos][posNum] === undefined) {
+import { positions } from './config'; // HERE - positions is a user setting to be added later so switch to a handler event - similiar to other user settings
+
+// HERE - rebuild position test to run only once and then spit out to proper td, right now it is running for each position
+
+function positionTest(data) {
+  if (data.players === undefined) {
+    console.log('');
     return '';
   }
-  return this.data.players[pos][posNum].name;
+  if (data.players.length === undefined) {
+    const displayData = data.players;
+    const displayDataKey = data.players.pos;
+    console.log({ [displayDataKey]: displayData });
+    return { [displayDataKey]: displayData };
+  }
+
+  data.players.forEach((item) => console.log(item.pos));
+  return data.players;
 }
 
 // CHECKS IF MAXNUMBER OF POSITION FILLED THEN CREATES BENCH ARRAY FOR BENCH DISPLAY
+
+// HERE get array of values pased on data.players.pos, if length is greater than positions # (i.e. positions.RB.value)
+// add to benchArray, have bench be an if statement and display array
+// for flex do if (benchArray.pos !=== QB) { display benchArray[0]} or create flexArray as well it can be a map/filter of bench Array;
 function benchTest(data) {
   if (data.players === undefined) {
     return '';
   }
   const benchArray = [];
-  const maxPos = {
-    QB: 1, RB: 2, WR: 2, TE: 1, K: 1, DST: 1, FLEX: 1,
-  };
-  Object.entries(maxPos).forEach((pos) => {
+  Object.entries(positions).forEach((pos) => {
     if (data.players[`${pos[0]}`] !== undefined) {
       data.players[`${pos[0]}`].forEach((item, i) => {
         if (i + 1 > pos[1]) {
@@ -93,33 +105,21 @@ export default class View {
     }, false);
   }
 
-  // function activateDraftButtons() {
-  //   const playerTable = document.querySelector('[data-js="playerTable"]');
-  //   playerTable.addEventListener('click', async (e) => {
-  //     e.preventDefault();
-  //     if (e.target.tagName === 'BUTTON') {
-  //       const storedPlayerData = updatePlayerData(e.target, currSettings.currManager);
-  //       const primary = await dbGetCursorData('managerStore', undefined, true);
-  //       draftPutDisplay(primary[currSettings.currManager].primaryKey, storedPlayerData);
-  //     }
-  //     e.stopPropagation();
-  //   }, false);
-  // }
-
 
   displayMarkup(data, markup, container, init) {
     const cont = container;
     let newMarkup = '';
     if (markup === 'manager') {
-      const benchArray = benchTest(data);
-      let bench = '';
-      if (benchArray === undefined || benchArray.length === 0) {
-        bench = '';
-      } else {
-        benchArray.forEach((item) => {
-          bench += `<li>${item.name}</li>`;
-        });
-      }
+      positionTest(data);
+      // const benchArray = benchTest(data);
+      // let bench = '';
+      // if (benchArray === undefined || benchArray.length === 0) {
+      //   bench = '';
+      // } else {
+      //   benchArray.forEach((item) => {
+      //     bench += `<li>${item.name}</li>`;
+      //   });
+      // }
 
       newMarkup = `
           <article id=${data.managerName.replace(/\s+/g, '')} data-manager=${data.managerNum}>
@@ -127,41 +127,41 @@ export default class View {
               <th>${data.managerName}</th>
               <tr>
                 <td>QB</td>
-                <td data-manager=${data.managerNum}>${data.players.name}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>RB</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'RB', 0, 2)}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>RB</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'RB', 1, 2)}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>WR</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'WR', 0, 2)}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>WR</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'WR', 1, 2)}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>TE</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'TE', 0, 1)}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>K</td>
-                <td data-manager=${data.managerNum}>${positionTest(data, 'K', 0, 1)}</td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>D/ST</td>
-                <td data-manager=${data.managerNum}${positionTest(data, 'DST', 0, 1)}></td>
+                <td data-manager=${data.managerNum}></td>
               </tr>
               <tr>
                 <td>BENCH</td>
                 <td data-manager=${data.managerNum}>
                   <ul>
-                    ${bench}
+       
                   </ul>
                 </td>
               </tr>

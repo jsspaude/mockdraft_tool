@@ -1,6 +1,9 @@
 const draftDataURL = './js/draft_data.json';
 const stores = ['playerStore', 'managerStore', 'settingsStore'];
 const objectStores = [{ name: 'playerStore', option: { autoIncrement: true } }, { name: 'managerStore', option: { autoIncrement: true } }, { name: 'settingsStore', option: { autoIncrement: true } }];
+const positions = {
+  QB: 1, RB: 2, WR: 2, TE: 1, K: 1, DST: 1, FLEX: 1,
+};
 
 function isEven(value) {
   if (value % 2 === 0) return true;
@@ -50,5 +53,5 @@ function groupBy(objectArray, property) {
 export default { draftDataURL };
 
 export {
-  draftDataURL, stores, objectStores, isEven, catObjects, chunk, isIterable, groupBy,
+  draftDataURL, stores, objectStores, positions, isEven, catObjects, chunk, isIterable, groupBy,
 };

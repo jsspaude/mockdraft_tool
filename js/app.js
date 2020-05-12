@@ -1,5 +1,5 @@
 import regeneratorRuntime from 'regenerator-runtime';
-import { objectStores, groupBy } from './src/config';
+import { objectStores, counter } from './src/config';
 import { View } from './src/view2';
 import { IndexedDB } from './src/model';
 
@@ -21,27 +21,31 @@ class Controller {
     await this.model.getAllData('playerStore')
       .then((request) => {
         request.forEach((item) => {
-          this.view.displayMarkup(item, 'players', document.querySelector('[data-js="playerTable"]'), true);
+          this.view.displayMarkup(item, 'players');
         });
       });
     await this.model.getAllData('managerStore')
       .then((request) => {
         request.forEach((item) => {
-          console.log(item);
-          this.view.displayMarkup(item, 'manager', document.querySelector('[data-js="managerContainer"]'), true);
+          this.view.displayMarkup(item, 'manager');
+        });
+        request.forEach(async (item) => {
+          await this.view.createTables(item);
+          this.view.populateTables(item);
         });
       });
     await this.model.getAllData('settingsStore')
       .then((request) => {
         request.forEach((item) => {
-          this.view.displayMarkup(item, 'settings', document.querySelector('[data-js="settingsContainer"]'), true);
+          this.view.displayMarkup(item, 'settings');
         });
       });
   }
 
   handleInputs = (data) => {
+    console.log(data);
     const newObj = {
-      numManagers: data[0], rounds: data[1], currManager: 0, currRound: 0,
+      numManagers: data[1], rounds: data[0], currManager: 0, currRound: 1,
     };
     this.model.addData('settingsStore', undefined, newObj);
   }
@@ -52,20 +56,23 @@ class Controller {
     });
     this.model.getAllData('playerStore').then((request) => {
       request.forEach((item) => {
-        this.view.displayMarkup(item, 'players', document.querySelector('[data-js="playerTable"]'), true);
+        this.view.displayMarkup(item, 'players');
       });
     });
     await this.model.addData('managerStore', data);
     await this.model.getAllData('managerStore')
       .then((request) => {
         request.forEach((item) => {
-          this.view.displayMarkup(item, 'manager', document.querySelector('[data-js="managerContainer"]'), true);
+          this.view.displayMarkup(item, 'manager');
+        });
+        request.forEach((item) => {
+          this.view.createTables(item);
         });
       });
     await this.model.getAllData('settingsStore')
       .then((request) => {
         request.forEach((item) => {
-          this.view.displayMarkup(item, 'settings', document.querySelector('[data-js="settingsContainer"]'), true);
+          this.view.displayMarkup(item, 'settings');
         });
       });
   }
@@ -79,23 +86,30 @@ class Controller {
     await this.model.getAllData('settingsStore').then(async (request) => {
       const prime = await request[0].primaryKey;
       const { currManager } = await request[0];
-      const container = await document.querySelector(`article[data-manager="${currManager}"]`);
-      console.log(document.querySelector(`article[data-manager="${currManager}"]`));
       const primes = await this.model.getCursorData('managerStore', undefined, true);
-      // await this.model.putData('settingsStore', parseInt(prime, 10), 'currManager', (currManager + 1));
+      await counter(currManager, request[0].numManagers, request[0].currRound)
+        .then((response) => {
+          console.log(response);
+          this.model.putData('settingsStore', parseInt(prime, 10), 'currManager', response.curr);
+          this.model.putData('settingsStore', parseInt(prime, 10), 'currRound', response.round);
+        });
       await this.model.getByPrimary('playerStore', primary)
         .then((item) => {
-          this.model.putData('managerStore', primes[currManager].primaryKey, 'players', item)
-            .then(async (result) => {
-              const resultUpdate = await result;
-              resultUpdate.players = groupBy(result.players, 'pos');
-              return resultUpdate;
-            })
-            .then((result) => {
-              console.log(result);
-              console.log(container);
-              container.innerHTML = this.view.displayMarkup(result, 'manager', document.querySelector('[data-js="managerContainer"]'));
+          this.model.putData('managerStore', primes[currManager].primaryKey, 'players', item);
+        });
+      await this.model.getAllData('settingsStore')
+        .then((response) => {
+          response.forEach((item) => {
+            this.view.displayMarkup(item, 'settings');
+          });
+        });
+      await this.model.getAllData('managerStore')
+        .then((result) => {
+          if (result.find(({ managerNum }) => managerNum === currManager)) {
+            result.forEach((item) => {
+              this.view.populateTables(item);
             });
+          }
         });
     });
   }

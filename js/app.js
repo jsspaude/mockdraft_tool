@@ -26,10 +26,8 @@ class Controller {
       });
     await this.model.getAllData('managerStore')
       .then((request) => {
-        request.forEach((item) => {
-          this.view.displayMarkup(item, 'manager');
-        });
         request.forEach(async (item) => {
+          await this.view.displayMarkup(item, 'manager');
           await this.view.createTables(item);
           this.view.populateTables(item);
         });
@@ -43,7 +41,6 @@ class Controller {
   }
 
   handleInputs = (data) => {
-    console.log(data);
     const newObj = {
       numManagers: data[1], rounds: data[0], currManager: 0, currRound: 1,
     };
@@ -89,7 +86,6 @@ class Controller {
       const primes = await this.model.getCursorData('managerStore', undefined, true);
       await counter(currManager, request[0].numManagers, request[0].currRound)
         .then((response) => {
-          console.log(response);
           this.model.putData('settingsStore', parseInt(prime, 10), 'currManager', response.curr);
           this.model.putData('settingsStore', parseInt(prime, 10), 'currRound', response.round);
         });
@@ -107,7 +103,8 @@ class Controller {
         .then((result) => {
           if (result.find(({ managerNum }) => managerNum === currManager)) {
             result.forEach((item) => {
-              this.view.populateTables(item);
+              this.view.populateTables(item)
+                .then((array) => { this.view.populateBenchLive(array, item.managerNum); });
             });
           }
         });

@@ -148,44 +148,95 @@ export default class View {
     });
   }
 
-  async populateTables(data) {
-    const benchArray = [];
-    const table = this.displayContainer2.querySelector(`table[data-manager="${data.managerNum}"]`);
-    if (data.players !== undefined) {
-      const players = await groupBy(data.players, 'pos');
-      Object.keys(players).forEach((key) => {
-        const tableRows = table.querySelectorAll(`tr[data-pos="${key}"]`);
-        tableRows.forEach((row, i) => {
-          const newCell = document.createElement('td');
-          if (players[key][i] !== undefined) {
-            newCell.innerHTML = players[key][i].name;
-            if (row.children.length === 1) {
-              row.append(newCell);
-            }
-          }
-        });
-      });
-      [players].forEach((player) => {
-        Object.keys(player).forEach((pos) => {
-          players[pos].forEach((item, i) => {
-            if (i + 1 > this.positions[pos]) {
-              benchArray.push(item);
-            }
+  populateTables(data) {
+    console.log(data);
+    return new Promise((resolve) => {
+      const table = this.displayContainer2.querySelector(`table[data-manager="${data.managerNum}"]`);
+      if (data.players !== undefined) {
+        const players = groupBy(data.players, 'pos');
+        [players].forEach((player) => {
+          Object.keys(player).forEach((pos) => {
+            const tableRows = table.querySelectorAll(`tr[data-pos="${pos}"]`);
+            tableRows.forEach((row, i) => {
+              const newCell = document.createElement('td');
+              if (players[pos][i] !== undefined) {
+                newCell.innerHTML = players[pos][i].name;
+                if (row.children.length === 1) {
+                  row.append(newCell);
+                }
+              }
+            });
           });
+          const benchArray = Object.keys(player).map((pos) => players[pos])
+            .reduce((accumulator, currentValue, i) => {
+              const { pos } = currentValue;
+              if (i + 1 > this.positions[pos]) {
+                return i;
+              } return '';
+            })
+            .filter((value) => Object.keys(value).length !== 0)
+            .sort((a, b) => {
+              if (a.pos < b.pos) {
+                return 1;
+              }
+              if (a.pos > b.pos) {
+                return -1;
+              }
+              return 0;
+            });
+            console.log(benchArray);
+          resolve(benchArray);
         });
+      }
+    });
+  }
+
+  async populateBenchInit(array, displayData) {
+    if (array !== undefined) {
+      array.forEach((item, i) => {
+        const table = this.displayContainer2.querySelector(`table[data-manager="${displayData}"]`);
+        const flex = table.querySelector('tr[data-pos="FLEX"]');
+        if (i === 0) {
+          const newCell = document.createElement('td');
+          newCell.innerHTML = item.name;
+          flex.append(newCell);
+        } else {
+          const newRow = document.createElement('tr');
+          const newLabel = document.createElement('td');
+          const newCell = document.createElement('td');
+          newCell.innerHTML = item.name;
+          newLabel.innerHTML = 'BENCH';
+          newRow.append(newLabel);
+          newRow.append(newCell);
+          table.append(newRow);
+        }
       });
     }
-    if (benchArray !== []) {
-      benchArray.forEach((bench) => {
-        const benchRow = document.createElement('tr');
-        const benchLabel = document.createElement('td');
-        const benchCell = document.createElement('td');
-        benchCell.innerHTML = bench.name;
-        benchLabel.innerHTML = 'BENCH';
-        benchRow.append(benchLabel);
-        benchRow.append(benchCell);
-        table.append(benchRow);
+  }
+
+  async populateBenchLive(array, data) {
+    if (array !== undefined) {
+      console.log(array);
+      const benchArray = array.map((item, i) => {
+        return item;
+        // const table = this.displayContainer2.querySelector(`table[data-manager="${displayData}"]`);
+        // const flex = table.querySelector('tr[data-pos="FLEX"]');
+        // if (i === 0) {
+        //   const newCell = document.createElement('td');
+        //   newCell.innerHTML = item.name;
+        //   flex.append(newCell);
+        // } else {
+        //   const newRow = document.createElement('tr');
+        //   const newLabel = document.createElement('td');
+        //   const newCell = document.createElement('td');
+        //   newCell.innerHTML = item.name;
+        //   newLabel.innerHTML = 'BENCH';
+        //   newRow.append(newLabel);
+        //   newRow.append(newCell);
+        //   table.append(newRow);
+        // }
       });
+      console.log(benchArray);
     }
   }
 }

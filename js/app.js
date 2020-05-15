@@ -14,6 +14,7 @@ class Controller {
     this.view.bindReset(this.handleReset);
     this.view.bindStart(this.handleStart);
     this.view.bindDraft(this.handleDraft);
+    this.view.bindAuto(this.handleAuto);
   }
 
   async init() {
@@ -29,7 +30,7 @@ class Controller {
         request.forEach(async (item) => {
           await this.view.displayMarkup(item, 'manager');
           await this.view.createTables(item);
-          this.view.populateTables(item);
+          this.view.populateTables(item, this.view.displayContainer2.querySelector(`table[data-manager="${item.managerNum}"]`));
         });
       });
     await this.model.getAllData('settingsStore')
@@ -79,6 +80,7 @@ class Controller {
   }
 
   handleDraft = async (data) => {
+    console.log(data);
     const primary = parseInt(data.key, 10);
     await this.model.getAllData('settingsStore').then(async (request) => {
       const prime = await request[0].primaryKey;
@@ -100,15 +102,19 @@ class Controller {
           });
         });
       await this.model.getAllData('managerStore')
-        .then((result) => {
-          if (result.find(({ managerNum }) => managerNum === currManager)) {
-            result.forEach((item) => {
-              this.view.populateTables(item)
-                .then((array) => { this.view.populateBenchLive(array, item.managerNum); });
-            });
-          }
-        });
+        .then((result) => result.find(({ managerNum }) => managerNum === currManager))
+        .then((table) => this.view.populateTables(table, this.view.displayContainer2.querySelector(`table[data-manager="${table.managerNum}"]`)));
     });
+  }
+
+  handleAuto = (data) => {
+    const buttons = document.querySelectorAll('button[data-key]');
+    const array = [...Array(data)].map((item, i) => {
+      const obj = buttons[i].dataset;
+      return ({ ...obj });
+    });
+    console.log(array);
+    array.forEach(async (item) => { await this.handleDraft(item); });
   }
 }
 

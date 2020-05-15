@@ -33,8 +33,9 @@ function createManagerInputs(i) {
 
 export default class View {
   constructor() {
-    this.intInput = document.querySelector('[data-js="numRounds"]');
-    this.optionInput = document.querySelector('[data-js="numManagers"]');
+    this.optionInput1 = document.querySelector('[data-js="numRounds"]');
+    this.optionInput2 = document.querySelector('[data-js="numManagers"]');
+    this.optionInput3 = document.querySelector('[data-js="numAuto"]');
     this.positions = positions;
     this.inputContainer = document.querySelector('[data-js="managerInputContainer"]');
     this.displayContainer1 = document.querySelector('[data-js="playerTable"]');
@@ -45,8 +46,15 @@ export default class View {
   bindInputs(handler) {
     document.querySelector('[data-js="settingsForm"]').addEventListener('submit', async (event) => {
       event.preventDefault();
-      [...Array(parseInt(this.optionInput.value, 10))].forEach((_, i) => createManagerInputs(i));
-      handler([parseInt(this.intInput.value, 10), parseInt(this.optionInput.value, 10)]);
+      [...Array(parseInt(this.optionInput2.value, 10))].forEach((_, i) => createManagerInputs(i));
+      handler([parseInt(this.optionInput1.value, 10), parseInt(this.optionInput2.value, 10)]);
+    });
+  }
+
+  bindAuto(handler) {
+    document.querySelector('[data-js="autoForm"]').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      handler(parseInt(this.optionInput3.value, 10));
     });
   }
 
@@ -148,7 +156,32 @@ export default class View {
     });
   }
 
-  populateTables(data) {
+  // eslint-disable-next-line class-methods-use-this
+  populateTables(data, container) {
+    return new Promise((resolve) => {
+      if (data.players !== undefined) {
+        const players = groupBy(data.players, 'pos');
+        const tableRows = container.querySelectorAll('tr[data-pos]');
+        // [players].forEach((player) => {
+        //   Object.keys(player).forEach((pos) => {
+        //     const tableRows = container.querySelectorAll(`tr[data-pos="${pos}"]`);
+        //     tableRows.forEach((row, i) => {
+        //       const newCell = document.createElement('td');
+        //       if (players[pos][i] !== undefined) {
+        //         newCell.innerHTML = players[pos][i].name;
+        //         if (row.children.length === 1) {
+        //           row.append(newCell);
+        //         }
+        //       }
+        //     });
+        //   });
+        // });
+      }
+      resolve();
+    });
+  }
+
+  populateTablesOrig(data) {
     console.log(data);
     return new Promise((resolve) => {
       const table = this.displayContainer2.querySelector(`table[data-manager="${data.managerNum}"]`);
@@ -169,9 +202,10 @@ export default class View {
           });
           const benchArray = Object.keys(player).map((pos) => players[pos])
             .reduce((accumulator, currentValue, i) => {
+              console.log(i);
               const { pos } = currentValue;
               if (i + 1 > this.positions[pos]) {
-                return i;
+                return currentValue;
               } return '';
             })
             .filter((value) => Object.keys(value).length !== 0)
@@ -184,7 +218,7 @@ export default class View {
               }
               return 0;
             });
-            console.log(benchArray);
+          console.log(benchArray);
           resolve(benchArray);
         });
       }

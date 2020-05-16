@@ -80,7 +80,6 @@ class Controller {
   }
 
   handleDraft = async (data) => {
-    console.log(data);
     const primary = parseInt(data.key, 10);
     await this.model.getAllData('settingsStore').then(async (request) => {
       const prime = await request[0].primaryKey;
@@ -107,14 +106,14 @@ class Controller {
     });
   }
 
-  handleAuto = (data) => {
+  handleAuto = async (data) => {
     const buttons = document.querySelectorAll('button[data-key]');
-    const array = [...Array(data)].map((item, i) => {
-      const obj = buttons[i].dataset;
-      return ({ ...obj });
-    });
-    console.log(array);
-    array.forEach(async (item) => { await this.handleDraft(item); });
+    const autoArray = await [...Array(data)].map((_, i) => ({ ...buttons[i].dataset }));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const item of autoArray) {
+      // eslint-disable-next-line no-await-in-loop
+      await this.handleDraft(item);
+    }
   }
 }
 

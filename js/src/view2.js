@@ -1,27 +1,5 @@
 import { positionsArray, groupBy, positions } from './config'; // HERE - positions is a user setting to be added later so switch to a handler event - similiar to other user settings
 
-// CHECKS IF MAXNUMBER OF POSITION FILLED THEN CREATES BENCH ARRAY FOR BENCH DISPLAY
-
-// HERE get array of values pased on data.players.pos, if length is greater than positions # (i.e. positions.RB.value)
-// add to benchArray, have bench be an if statement and display array
-// for flex do if (benchArray.pos !=== QB) { display benchArray[0]} or create flexArray as well it can be a map/filter of bench Array;
-// function benchTest(data) {
-//   if (data.players === undefined) {
-//     return '';
-//   }
-//   const benchArray = [];
-//   Object.entries(positions).forEach((pos) => {
-//     if (data.players[`${pos[0]}`] !== undefined) {
-//       data.players[`${pos[0]}`].forEach((item, i) => {
-//         if (i + 1 > pos[1]) {
-//           benchArray.push(item);
-//         }
-//       });
-//     }
-//   });
-//   return benchArray;
-// }
-
 // CREATE TEXT INPUTS
 function createManagerInputs(i) {
   const nameInput = document.createElement('input');
@@ -156,121 +134,56 @@ export default class View {
     });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  populateTables(data, container) {
+  populateTables(data, display) {
     return new Promise((resolve) => {
-      if (data.players !== undefined) {
-        const players = groupBy(data.players, 'pos');
-        const tableRows = container.querySelectorAll('tr[data-pos]');
-        // [players].forEach((player) => {
-        //   Object.keys(player).forEach((pos) => {
-        //     const tableRows = container.querySelectorAll(`tr[data-pos="${pos}"]`);
-        //     tableRows.forEach((row, i) => {
-        //       const newCell = document.createElement('td');
-        //       if (players[pos][i] !== undefined) {
-        //         newCell.innerHTML = players[pos][i].name;
-        //         if (row.children.length === 1) {
-        //           row.append(newCell);
-        //         }
-        //       }
-        //     });
-        //   });
-        // });
-      }
-      resolve();
+      const container = this.displayContainer2.querySelector(`table[data-manager="${display}"]`);
+      const groupedObjects = groupBy(data, 'pos');
+      const benchArray = Object.keys(groupedObjects).map((pos) => {
+        const tableRows = container.querySelectorAll(`tr[data-pos="${pos}"]`);
+        tableRows.forEach((row, i) => {
+          const newCell = document.createElement('td');
+          if (groupedObjects[pos][i] !== undefined && row.children.length === 1) {
+            newCell.innerHTML = groupedObjects[pos][i].name;
+            row.append(newCell);
+          }
+        });
+        const bench = groupedObjects[pos].map((item, i) => i >= this.positions[pos] && item)
+          .filter((result) => result !== false);
+        return bench;
+      }).reduce((a, b) => a.concat(b));
+      resolve(benchArray);
     });
   }
 
-  populateTablesOrig(data) {
-    console.log(data);
-    return new Promise((resolve) => {
-      const table = this.displayContainer2.querySelector(`table[data-manager="${data.managerNum}"]`);
-      if (data.players !== undefined) {
-        const players = groupBy(data.players, 'pos');
-        [players].forEach((player) => {
-          Object.keys(player).forEach((pos) => {
-            const tableRows = table.querySelectorAll(`tr[data-pos="${pos}"]`);
-            tableRows.forEach((row, i) => {
-              const newCell = document.createElement('td');
-              if (players[pos][i] !== undefined) {
-                newCell.innerHTML = players[pos][i].name;
-                if (row.children.length === 1) {
-                  row.append(newCell);
-                }
-              }
-            });
-          });
-          const benchArray = Object.keys(player).map((pos) => players[pos])
-            .reduce((accumulator, currentValue, i) => {
-              console.log(i);
-              const { pos } = currentValue;
-              if (i + 1 > this.positions[pos]) {
-                return currentValue;
-              } return '';
-            })
-            .filter((value) => Object.keys(value).length !== 0)
-            .sort((a, b) => {
-              if (a.pos < b.pos) {
-                return 1;
-              }
-              if (a.pos > b.pos) {
-                return -1;
-              }
-              return 0;
-            });
-          console.log(benchArray);
-          resolve(benchArray);
+  populateBench(array, display) {
+    const container = this.displayContainer2.querySelector(`table[data-manager="${display}"]`);
+    const flexContainer = container.querySelector('tr[data-pos="FLEX"]');
+    const flexIndex = array.findIndex(({ pos }) => pos !== 'QB', 'K', 'DST');
+    const benchArray = () => { array.splice(flexIndex, 1); return array; };
+    const createFlex = () => {
+      if (array) {
+        const newCell = document.createElement('td');
+        newCell.innerHTML = `${array[flexIndex].name}, ${array[flexIndex].pos} - ${array[flexIndex].team}`;
+        flexContainer.append(newCell);
+      }
+    };
+    if (flexContainer.children.length === 1) {
+      createFlex();
+      if (benchArray()) {
+        benchArray().forEach((item) => {
+          const newRow = document.createElement('tr');
+          const newCellLabel = document.createElement('td');
+          const newCellData = document.createElement('td');
+          newCellLabel.innerHTML = 'BENCH';
+          newCellLabel.setAttribute('data-js', 'bench');
+          newCellData.innerHTML = `${item.name}, ${item.pos} - ${item.team}`;
+          newRow.append(newCellLabel);
+          newRow.append(newCellData);
+          container.append(newRow);
         });
       }
-    });
-  }
-
-  async populateBenchInit(array, displayData) {
-    if (array !== undefined) {
-      array.forEach((item, i) => {
-        const table = this.displayContainer2.querySelector(`table[data-manager="${displayData}"]`);
-        const flex = table.querySelector('tr[data-pos="FLEX"]');
-        if (i === 0) {
-          const newCell = document.createElement('td');
-          newCell.innerHTML = item.name;
-          flex.append(newCell);
-        } else {
-          const newRow = document.createElement('tr');
-          const newLabel = document.createElement('td');
-          const newCell = document.createElement('td');
-          newCell.innerHTML = item.name;
-          newLabel.innerHTML = 'BENCH';
-          newRow.append(newLabel);
-          newRow.append(newCell);
-          table.append(newRow);
-        }
-      });
-    }
-  }
-
-  async populateBenchLive(array, data) {
-    if (array !== undefined) {
-      console.log(array);
-      const benchArray = array.map((item, i) => {
-        return item;
-        // const table = this.displayContainer2.querySelector(`table[data-manager="${displayData}"]`);
-        // const flex = table.querySelector('tr[data-pos="FLEX"]');
-        // if (i === 0) {
-        //   const newCell = document.createElement('td');
-        //   newCell.innerHTML = item.name;
-        //   flex.append(newCell);
-        // } else {
-        //   const newRow = document.createElement('tr');
-        //   const newLabel = document.createElement('td');
-        //   const newCell = document.createElement('td');
-        //   newCell.innerHTML = item.name;
-        //   newLabel.innerHTML = 'BENCH';
-        //   newRow.append(newLabel);
-        //   newRow.append(newCell);
-        //   table.append(newRow);
-        // }
-      });
-      console.log(benchArray);
+    } else {
+      console.log(container.querySelector('[data-js="bench"]'));
     }
   }
 }

@@ -30,7 +30,8 @@ class Controller {
         request.forEach(async (item) => {
           await this.view.displayMarkup(item, 'manager');
           await this.view.createTables(item);
-          this.view.populateTables(item, this.view.displayContainer2.querySelector(`table[data-manager="${item.managerNum}"]`));
+          await this.view.populateTables(item.players, item.managerNum)
+            .then((array) => this.view.populateBench(array, item.managerNum));
         });
       });
     await this.model.getAllData('settingsStore')
@@ -91,18 +92,13 @@ class Controller {
           this.model.putData('settingsStore', parseInt(prime, 10), 'currRound', response.round);
         });
       await this.model.getByPrimary('playerStore', primary)
-        .then((item) => {
-          this.model.putData('managerStore', primes[currManager].primaryKey, 'players', item);
-        });
+        .then((item) => this.model.putData('managerStore', primes[currManager].primaryKey, 'players', item));
       await this.model.getAllData('settingsStore')
-        .then((response) => {
-          response.forEach((item) => {
-            this.view.displayMarkup(item, 'settings');
-          });
-        });
+        .then((response) => response.forEach((item) => this.view.displayMarkup(item, 'settings')));
       await this.model.getAllData('managerStore')
         .then((result) => result.find(({ managerNum }) => managerNum === currManager))
-        .then((table) => this.view.populateTables(table, this.view.displayContainer2.querySelector(`table[data-manager="${table.managerNum}"]`)));
+        .then((result) => result.players && this.view.populateTables(result.players, result.managerNum)
+          .then((array) => this.view.populateBench(array, result.managerNum)));
     });
   }
 

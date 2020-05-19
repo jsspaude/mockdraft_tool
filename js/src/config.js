@@ -4,7 +4,7 @@ const draftDataURL = './js/draft_data.json';
 const stores = ['playerStore', 'managerStore', 'settingsStore'];
 const objectStores = [{ name: 'playerStore', option: { autoIncrement: true } }, { name: 'managerStore', option: { autoIncrement: true } }, { name: 'settingsStore', option: { autoIncrement: true } }];
 const positions = {
-  QB: 1, RB: 2, WR: 2, TE: 1, K: 1, DST: 1, FLEX: 1,
+  QB: 1, RB: 2, WR: 2, TE: 1, PK: 1, DST: 1, FLEX: 1,
 };
 
 function positionsArray(object) {

@@ -24,14 +24,21 @@ class Controller {
         request.forEach((item) => {
           this.view.displayMarkup(item, 'players');
         });
+        document.querySelectorAll('[data-js="true"').forEach((item) => {
+          const a = item;
+          console.log(a);
+          a.style.display = 'none';
+        });
       });
     await this.model.getAllData('managerStore')
       .then((request) => {
         request.forEach(async (item) => {
           await this.view.displayMarkup(item, 'manager');
           await this.view.createTables(item);
-          await this.view.populateTables(item.players, item.managerNum)
-            .then((array) => this.view.populateBench(array, item.managerNum));
+          if (item.players) {
+            await this.view.populateTables(item.players, item.managerNum);
+            await this.view.populateBench(item.players, item.managerNum);
+          }
         });
       });
     await this.model.getAllData('settingsStore')
@@ -80,7 +87,9 @@ class Controller {
     this.model.storeClear(['playerStore', 'managerStore', 'settingsStore']);
   }
 
-  handleDraft = async (data) => {
+  handleDraft = async (target) => {
+    this.target = target;
+    const data = { ...target.dataset };
     const primary = parseInt(data.key, 10);
     await this.model.getAllData('settingsStore').then(async (request) => {
       const prime = await request[0].primaryKey;
@@ -90,6 +99,7 @@ class Controller {
         .then((response) => {
           this.model.putData('settingsStore', parseInt(prime, 10), 'currManager', response.curr);
           this.model.putData('settingsStore', parseInt(prime, 10), 'currRound', response.round);
+          this.model.putData('playerStore', parseInt(primary, 10), 'drafted', true);
         });
       await this.model.getByPrimary('playerStore', primary)
         .then((item) => this.model.putData('managerStore', primes[currManager].primaryKey, 'players', item));
@@ -97,14 +107,19 @@ class Controller {
         .then((response) => response.forEach((item) => this.view.displayMarkup(item, 'settings')));
       await this.model.getAllData('managerStore')
         .then((result) => result.find(({ managerNum }) => managerNum === currManager))
-        .then((result) => result.players && this.view.populateTables(result.players, result.managerNum)
-          .then((array) => this.view.populateBench(array, result.managerNum)));
+        .then((result) => {
+          if (result.players) {
+            this.view.populateTables(result.players, result.managerNum);
+            this.view.populateBench(result.players, result.managerNum);
+          }
+        });
     });
+    this.target.parentElement.parentElement.style.display = 'none';
   }
 
   handleAuto = async (data) => {
     const buttons = document.querySelectorAll('button[data-key]');
-    const autoArray = await [...Array(data)].map((_, i) => ({ ...buttons[i].dataset }));
+    const autoArray = [...Array(data)].map((_, i) => buttons[i]);
     // eslint-disable-next-line no-restricted-syntax
     for (const item of autoArray) {
       // eslint-disable-next-line no-await-in-loop

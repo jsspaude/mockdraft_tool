@@ -67,8 +67,7 @@ export default class View {
     this.displayContainer1.addEventListener('click', async (e) => {
       e.preventDefault();
       if (e.target.tagName === 'BUTTON') {
-        const obj = e.target.dataset;
-        handler({ ...obj });
+        handler(e.target);
       }
       e.stopPropagation();
     }, false);
@@ -81,13 +80,13 @@ export default class View {
     if (markup === 'players') {
       container = this.displayContainer1;
       newMarkup = `
-        <tr>
+        <tr data-js='${data.drafted}'>
           <td data-name='${data.name}'>${data.name}</td>
           <td>${data.pos}</td>
           <td>${data.adp}</td>
           <td>${data.team}</td>
           <td> 
-            <button data-key='${data.primaryKey}' data-manager='${data.managerNum}' data-adp='${data.adp}' data-name='${data.name}' data-team='${data.team}' data-pos='${data.pos}'>DRAFT</button> 
+            <button class='' data-key='${data.primaryKey}' data-manager='${data.managerNum}' data-adp='${data.adp}' data-name='${data.name}' data-team='${data.team}' data-pos='${data.pos}'>DRAFT</button> 
           </td>
         </tr>`;
       container.innerHTML += newMarkup;
@@ -135,55 +134,62 @@ export default class View {
   }
 
   populateTables(data, display) {
-    return new Promise((resolve) => {
-      const container = this.displayContainer2.querySelector(`table[data-manager="${display}"]`);
-      const groupedObjects = groupBy(data, 'pos');
-      const benchArray = Object.keys(groupedObjects).map((pos) => {
-        const tableRows = container.querySelectorAll(`tr[data-pos="${pos}"]`);
-        tableRows.forEach((row, i) => {
-          const newCell = document.createElement('td');
-          if (groupedObjects[pos][i] !== undefined && row.children.length === 1) {
-            newCell.innerHTML = groupedObjects[pos][i].name;
-            row.append(newCell);
-          }
-        });
-        const bench = groupedObjects[pos].map((item, i) => i >= this.positions[pos] && item)
-          .filter((result) => result !== false);
-        return bench;
-      }).reduce((a, b) => a.concat(b));
-      resolve(benchArray);
+    const container = this.displayContainer2.querySelector(`table[data-manager="${display}"]`);
+    const groupedObjects = groupBy(data, 'pos');
+    Object.keys(groupedObjects).forEach((pos) => {
+      const tableRows = container.querySelectorAll(`tr[data-pos="${pos}"]`);
+      tableRows.forEach((row, i) => {
+        const newCell = document.createElement('td');
+        if (groupedObjects[pos][i] !== undefined && row.children.length === 1) {
+          newCell.innerHTML = groupedObjects[pos][i].name;
+          row.append(newCell);
+        }
+      });
     });
+    return data;
   }
 
-  populateBench(array, display) {
-    const container = this.displayContainer2.querySelector(`table[data-manager="${display}"]`);
-    const flexContainer = container.querySelector('tr[data-pos="FLEX"]');
-    const flexIndex = array.findIndex(({ pos }) => pos !== 'QB', 'K', 'DST');
-    const benchArray = () => { array.splice(flexIndex, 1); return array; };
-    const createFlex = () => {
-      if (array) {
-        const newCell = document.createElement('td');
-        newCell.innerHTML = `${array[flexIndex].name}, ${array[flexIndex].pos} - ${array[flexIndex].team}`;
-        flexContainer.append(newCell);
-      }
-    };
-    if (flexContainer.children.length === 1) {
-      createFlex();
-      if (benchArray()) {
-        benchArray().forEach((item) => {
+  async populateBench(array, display) {
+    if (array.length) {
+      const container = this.displayContainer2.querySelector(`table[data-manager="${display}"]`);
+      const flexContainer = container.querySelector('tr[data-pos="FLEX"]');
+      const flexIndex = array.findIndex(({ pos }) => pos !== 'QB', 'K', 'DST');
+      const newArray = Object.keys(this.positions).map((pos) => array
+        .filter((item, i) => item.pos === pos && i - 1 > this.positions[pos])).flat();
+      const intersection = array.filter((a) => newArray.indexOf(a) !== -1);
+      if (newArray.length) {
+        if (flexContainer.children.length === 1) {
+          const newCell = document.createElement('td');
+          newCell.innerHTML = `${array[flexIndex].name}, ${array[flexIndex].pos} - ${array[flexIndex].team}`;
+          flexContainer.append(newCell);
+          array.splice(flexIndex, 1);
+          if (intersection) {
+            intersection.forEach((item) => {
+              const newRow = document.createElement('tr');
+              const newCellLabel = document.createElement('td');
+              const newCellData = document.createElement('td');
+              newCellLabel.innerHTML = 'BENCH';
+              newCellLabel.setAttribute('data-js', 'bench');
+              newCellData.innerHTML = `${item.name}, ${item.pos} - ${item.team}`;
+              newRow.append(newCellLabel);
+              newRow.append(newCellData);
+              container.append(newRow);
+            });
+          }
+        } else {
+          await intersection.splice(flexIndex, 1);
+          const benchArray = await array[array.length - 1];
           const newRow = document.createElement('tr');
           const newCellLabel = document.createElement('td');
           const newCellData = document.createElement('td');
           newCellLabel.innerHTML = 'BENCH';
           newCellLabel.setAttribute('data-js', 'bench');
-          newCellData.innerHTML = `${item.name}, ${item.pos} - ${item.team}`;
+          newCellData.innerHTML = `${benchArray.name}, ${benchArray.pos} - ${benchArray.team}`;
           newRow.append(newCellLabel);
           newRow.append(newCellData);
           container.append(newRow);
-        });
+        }
       }
-    } else {
-      console.log(container.querySelector('[data-js="bench"]'));
     }
   }
 }

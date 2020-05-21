@@ -1,4 +1,4 @@
-import { draftDataURL as url, isIterable } from './config';
+import { draftDataURL as url } from './config';
 
 export default class IndexedDB {
   constructor(dbName, dbVersion, stores) {
@@ -58,24 +58,6 @@ export default class IndexedDB {
     });
   }
 
-  testGet(store, index, data) {
-    return new Promise((resolve, reject) => {
-      if (this.db && index) {
-        const tx = this.db.transaction([`${store}`], 'readwrite');
-        const objectStore = tx.objectStore(`${store}`);
-        const ind = objectStore.index(`${index}`);
-        const req = ind.getAll(data);
-
-        req.onsuccess = () => {
-          resolve(req.result);
-        };
-        req.onerror = (e) => {
-          reject(new Error(`error storing ${data} ${e.target.errorCode}`));
-        };
-      }
-    });
-  }
-
   getData(store, index, data) {
     return new Promise((resolve, reject) => {
       if (this.db && index) {
@@ -100,7 +82,6 @@ export default class IndexedDB {
       const objectStore = tx.objectStore(`${store}`);
       const req = objectStore.getKey(key);
       req.onsuccess = () => {
-        console.log(req.result);
         resolve(req.result);
       };
       req.onerror = (e) => {
@@ -218,22 +199,6 @@ export default class IndexedDB {
     });
   }
 
-  testPut(store, primeKey) {
-    return new Promise((resolve, reject) => {
-      const tx = this.db.transaction([`${store}`], 'readwrite');
-      const objectStore = tx.objectStore(`${store}`);
-      const request = objectStore.get(primeKey);
-      request.onerror = () => {
-        reject();
-      };
-
-      request.onsuccess = async () => {
-        const data = request.result;
-        console.log(data);
-      };
-    });
-  }
-
   // PUT DYNAMIC DRAFT DATA IN STORE
   putData(store, primeKey, keys, value) {
     return new Promise((resolve, reject) => {
@@ -249,7 +214,7 @@ export default class IndexedDB {
         if (store !== 'settingsStore') {
           if (data[keys] === undefined) {
             data[keys] = value;
-          } else if (isIterable(data[keys])) {
+          } else if (data[keys].length) {
             const dataArray = [...data[keys], value];
             data[keys] = dataArray;
           } else {
@@ -279,9 +244,6 @@ export default class IndexedDB {
 
       req.onsuccess = () => {
         console.log(`${store} cleared`);
-      };
-      req.onerror = (e) => {
-        console.error(new Error(`error clearing store ${e.target.errorCode}`));
       };
     };
     stores.forEach(async (store) => {

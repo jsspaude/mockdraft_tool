@@ -37,3 +37,7 @@ footer {
 #manager-container > article {
     width:33%;
 }
+
+[data-drafted='true'] {
+    display:none;
+}

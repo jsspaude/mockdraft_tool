@@ -2,6 +2,11 @@
 import React from 'react';
 import Papa from 'papaparse';
 import PropTypes from 'prop-types';
+import { Router } from '@reach/router';
+import SignIn from './SignIn';
+import SignUp from './SignUp';
+import ProfilePage from './ProfilePage';
+import PasswordReset from './PasswordReset';
 import Header from './Header';
 import Settings from './Settings';
 import CurrentStatus from './CurrentStatus';
@@ -9,12 +14,13 @@ import PlayerList from './PlayerList';
 import Managers from './Managers';
 import ManagerNames from './ManagerNames';
 import { fetchCsv } from '../helpers';
+import base from '../base';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: [],
+      player_data: {},
       userSettings: {},
       showComponent: { settings: true, managerNames: false },
       managerData: {},
@@ -35,11 +41,11 @@ class App extends React.Component {
     if (localStorageRef) {
       this.setState({ userSettings: JSON.parse(localStorageRef) });
     }
-    // this.ref = base.syncState(`${params.storeId}/fishes`, {
-    //   context: this,
-    //   state: 'fishes',
-    // });
     this.getCsvData();
+    this.ref = base.syncState(`${params.draftName}/data`, {
+      context: this,
+      state: 'player_data',
+    });
   }
 
   componentDidUpdate() {
@@ -60,7 +66,8 @@ class App extends React.Component {
   }
 
   getData(result) {
-    this.setState({ data: result.data });
+    console.log(result);
+    this.setState({ player_data: result.data });
   }
 
   async getCsvData() {
@@ -69,8 +76,10 @@ class App extends React.Component {
     Papa.parse(csvData, {
       complete: this.getData,
       header: true,
+      dynamicTyping: true,
       transformHeader(h) {
-        return h.toLowerCase();
+        const newH = h.replace(/[^A-Z0-9]+/gi, '_');
+        return newH.toLowerCase();
       },
     });
   }
@@ -105,7 +114,7 @@ class App extends React.Component {
             />
           ))}
         <CurrentStatus />
-        <PlayerList data={this.state.data} />
+        <PlayerList data={this.state.player_data} />
         <Managers />
       </div>
     );

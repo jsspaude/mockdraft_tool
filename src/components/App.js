@@ -2,11 +2,6 @@
 import React from 'react';
 import Papa from 'papaparse';
 import PropTypes from 'prop-types';
-import { Router } from '@reach/router';
-import SignIn from './SignIn';
-import SignUp from './SignUp';
-import ProfilePage from './ProfilePage';
-import PasswordReset from './PasswordReset';
 import Header from './Header';
 import Settings from './Settings';
 import CurrentStatus from './CurrentStatus';

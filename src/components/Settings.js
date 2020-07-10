@@ -16,7 +16,6 @@ class Settings extends React.Component {
 
   static propTypes = {
     onSettingsChange: PropTypes.func,
-    hideSettings: PropTypes.func,
   };
 
   handleChange(e) {
@@ -26,7 +25,6 @@ class Settings extends React.Component {
       managers: this.managersRef.current.value,
     };
     this.props.onSettingsChange(settings);
-    this.props.hideSettings();
   }
 
   render() {

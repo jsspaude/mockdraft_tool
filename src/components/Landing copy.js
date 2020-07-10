@@ -6,7 +6,9 @@ import base, { firebaseApp } from '../base';
 import Settings from './Settings';
 import Login from './Login';
 
-class LandingPage extends React.Component {
+export const AuthContext = React.createContext(null);
+
+class Landing extends React.Component {
   static propTypes = {};
 
   state = {
@@ -15,13 +17,12 @@ class LandingPage extends React.Component {
   };
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.authHandler({ user });
-      }
-    });
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (user) {
+    //     this.authHandler({ user });
+    //   }
+    // });
   }
-  // FIX THIS
 
   authHandler = async (authData) => {
     const store = await base.fetch(this.props.draftName, { context: this });
@@ -67,4 +68,4 @@ class LandingPage extends React.Component {
   }
 }
 
-export default LandingPage;
+export default Landing;

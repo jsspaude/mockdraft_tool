@@ -7,7 +7,7 @@ import PlayerList from './PlayerList';
 import Managers from './Managers';
 import ManagerNames from './ManagerNames';
 
-class Draft extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -87,4 +87,4 @@ class Draft extends React.Component {
     );
   }
 }
-export default Draft;
+export default App;

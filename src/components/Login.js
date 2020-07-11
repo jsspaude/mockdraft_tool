@@ -1,15 +1,14 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useLayoutEffect } from 'react';
 import firebase from 'firebase';
 import { withRouter } from 'react-router-dom';
-import { AuthContext, UidContext } from '../index';
+import { AuthContext } from './Context';
 
 const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
-  const Auth = useContext(AuthContext);
-  const { uid, setUid } = useContext(UidContext);
+  const [uid, setUid] = useContext(AuthContext);
   const handleForm = (e) => {
     e.preventDefault();
     firebase
@@ -20,9 +19,10 @@ const Login = ({ history }) => {
           .auth()
           .signInWithEmailAndPassword(email, password)
           .then((res) => {
-            if (res.user) Auth.setLoggedIn(true);
+            console.log(res);
+            if (res.user) setUid(res.user.uid);
+            localStorage.setItem('uid', res.user.uid);
             history.push(`/draft/${res.user.uid}`);
-            setUid(uid);
           })
           .catch(() => {
             setErrors(e.message);
@@ -40,8 +40,9 @@ const Login = ({ history }) => {
           .auth()
           .signInWithPopup(provider)
           .then((res) => {
+            setUid(res.user.uid);
+            localStorage.setItem('uid', res.user.uid);
             history.push(`/draft/${res.user.uid}`);
-            Auth.setLoggedIn(true);
           })
           .catch((e) => setErrors(e.message));
       });

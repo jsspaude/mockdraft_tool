@@ -2,20 +2,19 @@
 import React from 'react';
 import Login from './Login';
 import SignUp from './SignUp';
-import Draft from './Draft';
 
 const routes = [
   {
     name: 'SignUp',
-    path: '/',
+    path: '/signup',
     exact: true,
     main: () => <SignUp />,
   },
   {
     name: 'Login',
-    path: '/login',
+    path: '/',
     exact: true,
-    main: () => <Login />,
+    main: (props) => <Login {...props} />,
   },
 ];
 

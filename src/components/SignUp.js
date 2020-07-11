@@ -1,58 +1,61 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext, useEffect } from 'react';
-import {
-  Redirect, useHistory, Link, withRouter,
-} from 'react-router-dom';
+import React, { useState, useContext, useLayoutEffect } from 'react';
+import { Redirect, Link, withRouter } from 'react-router-dom';
 import firebase from 'firebase';
-import { AuthContext, UidContext } from '../index';
+// import AuthContext, { UidContext } from './Context';
 
-const SignUp = ({ history }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setErrors] = useState('');
-  const Auth = useContext(AuthContext);
-  const { uid, setUid } = useContext(UidContext);
-  const handleForm = (e) => {
-    e.preventDefault();
-    firebase
-      .auth()
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        firebase
-          .auth()
-          .createUserWithEmailAndPassword(email, password)
-          .then((res) => {
-            if (res.user) Auth.setLoggedIn(true);
-            history.push(`/draft/${res.user.uid}`);
-            setUid(uid);
-          })
-          .catch(() => {
-            setErrors(e.message);
-          });
-      });
-  };
+const SignUp = ({ history }) =>
+// const [email, setEmail] = useState('');
+// const [password, setPassword] = useState('');
+// const [error, setErrors] = useState('');
+// const Auth = useContext(AuthContext);
+// const { uid, setUid } = useContext(UidContext);
+// const handleForm = (e) => {
+//   e.preventDefault();
+//   firebase
+//     .auth()
+//     .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+//     .then(() => {
+//       firebase
+//         .auth()
+//         .createUserWithEmailAndPassword(email, password)
+//         .then((res) => {
+//           if (res.user) Auth.setLoggedIn(true);
+//           history.push(`/draft/${res.user.uid}`);
+//           setUid(uid);
+//         })
+//         .catch(() => {
+//           setErrors(e.message);
+//         });
+//     });
+// };
 
-  const handleGoogleLogin = () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
+// useLayoutEffect(() => {
+//   const user = localStorage.getItem('uid');
+//   if (user) history.push(`/draft/${user}`);
+// });
 
-    firebase
-      .auth()
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        firebase
-          .auth()
-          .signInWithPopup(provider)
-          .then((res) => {
-            history.push(`/draft/${res.user.uid}`);
-            Auth.setLoggedIn(true);
-          })
-          .catch((e) => setErrors(e.message));
-      });
-  };
+// const handleGoogleLogin = () => {
+//   const provider = new firebase.auth.GoogleAuthProvider();
 
-  return (
+//   firebase
+//     .auth()
+//     .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+//     .then(() => {
+//       firebase
+//         .auth()
+//         .signInWithPopup(provider)
+//         .then((res) => {
+//           history.push(`/draft/${res.user.uid}`);
+//           Auth.setLoggedIn(true);
+//         })
+//         .catch((e) => setErrors(e.message));
+//     });
+// };
+
+  (
     <div>
-      <h1>Join</h1>
+      {/* <h1>Join</h1>
       <form onSubmit={(e) => handleForm(e)}>
         <input
           value={email}
@@ -86,9 +89,7 @@ const SignUp = ({ history }) => {
         <Link to="/login" className="">
           Sign in here
         </Link>
-      </p>
+      </p> */}
     </div>
   );
-};
-
 export default withRouter(SignUp);

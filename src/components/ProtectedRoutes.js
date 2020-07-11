@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useContext } from 'react';
 import Draft from './Draft';
 
 const protectedRoutes = [
   {
     name: 'draft',
     exact: true,
-    path: '/draft/*',
+    path: '/draft',
     main: (props) => <Draft {...props} />,
     public: false,
   },

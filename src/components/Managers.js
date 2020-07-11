@@ -1,10 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
+// eslint-disable-next-line no-unused-vars
+import React from 'react';
+// import PropTypes from "prop-types";
 
-class Managers extends React.Component {
-  render() {
-    return <div className="managers"></div>;
-  }
-}
+const Managers = () => <div className="managers"></div>;
 
 export default Managers;

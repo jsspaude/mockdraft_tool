@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useLayoutEffect, useContext } from 'react';
 import {
   BrowserRouter, Switch, Route, Redirect, useHistory,
 } from 'react-router-dom';
@@ -9,17 +9,14 @@ import protectedRoutes from './ProtectedRoutes';
 import ProtectedRouteHoc from './ProtectedRouteHoc';
 import AuthContextProvider, { AuthContext } from './Context';
 
-const App = () => {
-  const initialState = () => window.localStorage.getItem('uid') || null;
-  const [uid, setUid] = useState(initialState);
-
-  return (
+const App = () => (
     <AuthContextProvider>
       <BrowserRouter>
         <Header routes={routes} />
         <Switch>
           {protectedRoutes.map((route) => (
             <ProtectedRouteHoc
+              uid={route.uid}
               key={route.path}
               path={route.path}
               component={route.main}
@@ -28,11 +25,16 @@ const App = () => {
             />
           ))}
           {routes.map((route) => (
-            <Route key={route.path} path={route.path} exact={route.exact} component={route.main} />
+            <Route
+              key={route.path}
+              uid={route.uid}
+              path={route.path}
+              exact={route.exact}
+              component={route.main}
+            />
           ))}
         </Switch>
       </BrowserRouter>
     </AuthContextProvider>
-  );
-};
+);
 export default App;

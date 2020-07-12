@@ -5,7 +5,6 @@ import { AuthContext } from './Context';
 
 const Header = (props) => {
   const [uid, setUid] = useContext(AuthContext);
-  console.log(uid);
   return (
     <ul className="nav">
       {/* {props.routes.map((route, i) => (

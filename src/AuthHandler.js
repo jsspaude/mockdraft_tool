@@ -1,13 +1,23 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from 'react';
-import { base } from './base';
-import AuthContextProvider, { AuthContext } from './components/Context';
+import React from 'react';
+import firebase from 'firebase';
+import { firebaseApp, base } from './base';
 
-const AuthHandlerComponent = () => {
-  const [uid, setUid] = useContext(AuthContext);
+const authenticate = (provider, email, password) => {
+  if (provider !== 'email') {
+    const authProvider = new firebase.auth[`${provider}AuthProvider`]();
+    return firebaseApp.auth().signInWithPopup(authProvider).then(this.authHandler);
+  }
+  if (provider === 'join') {
+    return firebase.auth().createUserWithEmailAndPassword(email, password);
+  }
+  if (provider === 'email') {
+    return firebase.auth().signInWithEmailAndPassword(email, password);
+  }
+  return undefined;
 };
 
-const AuthHandler = async (authData) => {
+const syncHandler = async (authData) => {
   const draft = await base.fetch(authData.user.uid, { context: this });
   if (!draft.owner) {
     await base.post(`${authData.user.uid}/owner`, {
@@ -16,4 +26,4 @@ const AuthHandler = async (authData) => {
   }
 };
 
-export default AuthHandler;
+export default authenticate;

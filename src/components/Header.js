@@ -7,15 +7,14 @@ const Header = (props) => {
   const [uid, setUid] = useContext(AuthContext);
   return (
     <ul className="nav">
-      {/* {props.routes.map((route, i) => (
+      {props.routes.map((route, i) => (
         <li key={i}>
           <Link to={route.path}>{route.name}</Link>
         </li>
-      ))} */}
-      <li>Nope</li>
+      ))}
       {uid && (
         <li>
-          {/* <Link to="/draft">Draft Room</Link> */}
+          <Link to="/draft">Draft Room</Link>
           Test
         </li>
       )}

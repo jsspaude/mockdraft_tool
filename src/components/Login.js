@@ -1,41 +1,39 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useLayoutEffect } from 'react';
 import firebase from 'firebase';
-import { withRouter } from 'react-router-dom';
-import { firebaseApp } from '../base';
+import { withRouter, Link } from 'react-router-dom';
+import Firebase, { firebaseApp } from '../base';
 import { AuthContext } from './Context';
+import authenticate from '../AuthHandler';
 
 const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
   const [uid, setUid] = useContext(AuthContext);
+
   const handleForm = (e) => {
     e.preventDefault();
     firebaseApp
       .auth()
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => {
-        firebase
-          .auth()
-          .signInWithEmailAndPassword(email, password)
-          .then((res) => {
-            if (res.user) setUid(res.user.uid);
-            localStorage.setItem('uid', res.user.uid);
-            history.push(`/draft/${res.user.uid}`);
-          })
-          .catch(() => {
-            setErrors(e.message);
-          });
+        Firebase.login(email, password).then((res) => {
+          if (res.user) setUid(res.user.uid);
+          localStorage.setItem('uid', res.user.uid);
+          history.push(`/draft/${res.user.uid}`);
+        });
       });
   };
 
   useLayoutEffect(() => {
-    const initialState = () => window.localStorage.getItem('uid') || false;
-    if (initialState) {
-      setUid(initialState);
-      history.push(`/draft/${initialState()}`);
-    }
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUid(user.uid);
+        history.push(`/draft/${user.uid}`);
+        // ReferencePoint use css to help with login flicker https://github.com/firebase/quickstart-js/issues/58
+      }
+    });
   });
 
   // const signInWithGoogle = () => {
@@ -83,6 +81,12 @@ const Login = ({ history }) => {
         </button> */}
         <button type="submit">Login</button>
         <span>{error}</span>
+        <p className="">
+          Need to sign up?{' '}
+          <Link to="/signup" className="">
+            Join here
+          </Link>
+        </p>
       </form>
     </div>
   );

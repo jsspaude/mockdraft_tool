@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useContext } from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { bool, any, object } from 'prop-types';
+import AuthContextProvider, { AuthContext } from './Context';
 
-const ProtectedRouteHoc = ({ component: Component, uid, ...rest }) => {
-  console.log(uid);
+const ProtectedRouteHoc = ({ component: Component, ...rest }) => {
+  const [uid, setUid] = useContext(AuthContext);
   if (uid || rest.public) {
     return <Route {...rest} render={(props) => <Component {...props}></Component>} />;
   }

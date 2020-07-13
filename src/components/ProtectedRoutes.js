@@ -6,7 +6,7 @@ const protectedRoutes = [
   {
     name: 'draft',
     exact: true,
-    path: '/draft',
+    path: '/draft/*',
     main: (props) => <Draft {...props} />,
     public: false,
   },

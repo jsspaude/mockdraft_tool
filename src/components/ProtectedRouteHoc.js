@@ -2,7 +2,7 @@
 import React, { useContext } from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { bool, any, object } from 'prop-types';
-import AuthContextProvider, { AuthContext } from './Context';
+import { AuthContext } from './Context';
 
 const ProtectedRouteHoc = ({ component: Component, ...rest }) => {
   const [uid, setUid] = useContext(AuthContext);

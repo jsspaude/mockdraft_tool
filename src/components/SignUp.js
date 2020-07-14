@@ -2,7 +2,7 @@
 import React, { useState, useContext, useLayoutEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import firebase from 'firebase';
-import Firebase, { firebaseApp } from '../base';
+import Firebase, { firebaseApp } from '../calls/base';
 import { AuthContext } from './Context';
 
 const SignUp = ({ history }) => {
@@ -18,11 +18,20 @@ const SignUp = ({ history }) => {
       .then(() => {
         Firebase.createUser(email, password).then((res) => {
           if (res.user) setUid(res.user.uid);
-          localStorage.setItem('uid', res.user.uid);
           history.push(`/draft/${res.user.uid}`);
         });
       });
   };
+
+  useLayoutEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUid(user.uid);
+        history.push(`/draft/${user.uid}`);
+        // ReferencePoint use css to help with login flicker https://github.com/firebase/quickstart-js/issues/58
+      }
+    });
+  });
 
   return (
     <div>
@@ -43,9 +52,16 @@ const SignUp = ({ history }) => {
           placeholder="password"
         />
         <button type="submit">Login</button>
-
         <span>{error}</span>
       </form>
+      <nav className="login">
+        <button className="google" onClick={() => Firebase.authenticate('Google')}>
+          Login With Google
+        </button>
+        <button className="facebook" onClick={() => Firebase.authenticate('Twitter')}>
+          Login With facebook
+        </button>
+      </nav>
     </div>
   );
 };

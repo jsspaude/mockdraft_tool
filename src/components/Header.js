@@ -2,9 +2,14 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from './Context';
+import Firebase from '../calls/base';
 
 const Header = (props) => {
   const [uid, setUid] = useContext(AuthContext);
+  const handleLogout = () => {
+    Firebase.logout();
+    setUid(false);
+  };
   return (
     <ul className="nav">
       {props.routes.map((route, i) => (
@@ -13,10 +18,16 @@ const Header = (props) => {
         </li>
       ))}
       {uid && (
-        <li>
-          <Link to="/draft">Draft Room</Link>
-          Test
-        </li>
+        <div>
+          <li>
+            <Link to={`/draft/${uid}`}>Draft Room</Link>
+          </li>
+          <li>
+            <Link to={'/'} className="logout" onClick={(e) => handleLogout(e)}>
+              LOGOUT
+            </Link>
+          </li>
+        </div>
       )}
     </ul>
   );

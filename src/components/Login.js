@@ -2,9 +2,8 @@
 import React, { useState, useContext, useLayoutEffect } from 'react';
 import firebase from 'firebase';
 import { withRouter, Link } from 'react-router-dom';
-import Firebase, { firebaseApp } from '../base';
+import Firebase, { firebaseApp } from '../calls/base';
 import { AuthContext } from './Context';
-import authenticate from '../AuthHandler';
 
 const Login = ({ history }) => {
   const [email, setEmail] = useState('');
@@ -20,7 +19,6 @@ const Login = ({ history }) => {
       .then(() => {
         Firebase.login(email, password).then((res) => {
           if (res.user) setUid(res.user.uid);
-          localStorage.setItem('uid', res.user.uid);
           history.push(`/draft/${res.user.uid}`);
         });
       });
@@ -36,23 +34,6 @@ const Login = ({ history }) => {
     });
   });
 
-  // const signInWithGoogle = () => {
-  //   const provider = new firebase.auth.GoogleAuthProvider();
-  //   firebase
-  //     .auth()
-  //     .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-  //     .then(() => {
-  //       firebase
-  //         .auth()
-  //         .signInWithPopup(provider)
-  //         .then((res) => {
-  //           setUid(res.user.uid);
-  //           localStorage.setItem('uid', res.user.uid);
-  //           history.push(`/draft/${res.user.uid}`);
-  //         })
-  //         .catch((e) => setErrors(e.message));
-  //     });
-  // };
   return (
     <div>
       <h1>Login</h1>
@@ -72,13 +53,6 @@ const Login = ({ history }) => {
           placeholder="password"
         />
 
-        {/* <button onClick={() => signInWithGoogle()} className="googleBtn" type="button">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg"
-            alt="logo"
-          />
-          Login With Google
-        </button> */}
         <button type="submit">Login</button>
         <span>{error}</span>
         <p className="">
@@ -88,6 +62,14 @@ const Login = ({ history }) => {
           </Link>
         </p>
       </form>
+      <nav className="login">
+        <button className="google" onClick={() => Firebase.authenticate('Google')}>
+          Login With Google
+        </button>
+        <button className="facebook" onClick={() => Firebase.authenticate('Twitter')}>
+          Login With facebook
+        </button>
+      </nav>
     </div>
   );
 };

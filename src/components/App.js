@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
-import React, { useLayoutEffect, useState } from 'react';
-import {
-  BrowserRouter, Switch, Route, Redirect, useHistory,
-} from 'react-router-dom';
-import firebase from 'firebase';
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Header from './Header';
 import routes from './routes';
 import protectedRoutes from './ProtectedRoutes';

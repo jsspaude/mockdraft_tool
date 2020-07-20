@@ -1,22 +1,20 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
 import { Route, Redirect, withRouter } from 'react-router-dom';
-import { bool, any, object } from 'prop-types';
-import { AuthContext } from './Context';
+import PropTypes, { bool, any, object } from 'prop-types';
+import { AuthContext } from './AuthContextProvider';
 
 const ProtectedRouteHoc = ({ component: Component, ...rest }) => {
+  ProtectedRouteHoc.propTypes = {
+    component: PropTypes.any,
+    rest: PropTypes.object,
+    props: PropTypes.object,
+  };
   const [uid, setUid] = useContext(AuthContext);
   if (uid || rest.public) {
     return <Route {...rest} render={(props) => <Component {...props}></Component>} />;
   }
   return <Redirect to={{ pathname: '/' }} />;
-};
-
-ProtectedRouteHoc.propTypes = {
-  component: any,
-  isLoggedIn: bool,
-  rest: object,
-  props: object,
 };
 
 export default withRouter(ProtectedRouteHoc);

@@ -2,6 +2,9 @@
 import React from 'react';
 // import PropTypes from "prop-types";
 
-const Managers = () => <div className="managers"></div>;
+const Managers = () => {
+  const test = 'test';
+  return <div className="managers"></div>;
+};
 
 export default Managers;

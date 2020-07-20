@@ -1,10 +1,14 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from './Context';
+import PropTypes from 'prop-types';
+import { AuthContext } from './AuthContextProvider';
 import Firebase from '../calls/base';
 
 const Header = (props) => {
+  Header.propTypes = {
+    routes: PropTypes.object,
+  };
   const [uid, setUid] = useContext(AuthContext);
   const handleLogout = () => {
     Firebase.logout();

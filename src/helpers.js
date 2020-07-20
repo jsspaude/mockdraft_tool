@@ -95,11 +95,3 @@ export function getFunName() {
 
   return `${rando(adjectives)}-${rando(adjectives)}-${rando(nouns)}`;
 }
-
-export async function fetchCsv() {
-  const response = await fetch('../api/raw_data.csv');
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder('utf-8');
-  const result = await reader.read();
-  return decoder.decode(result.value);
-}

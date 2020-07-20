@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
+import Router from './components/Router';
 
 const rootElement = document.getElementById('main');
 
-ReactDOM.render(<App />, rootElement);
+ReactDOM.render(<Router />, rootElement);

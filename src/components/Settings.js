@@ -1,55 +1,42 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import Firebase from '../calls/base';
+import { DataContext } from './DataContextProvider';
+import { UserSettingsContext } from './UserSettingsContextProviders';
 
-class Settings extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showComponent: false,
-    };
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  roundsRef = React.createRef();
-
-  managersRef = React.createRef();
-
-  static propTypes = {
-    onSettingsChange: PropTypes.func,
+const Settings = (props) => {
+  const [userSettings, setUserSettings] = useContext(UserSettingsContext);
+  const [managers, setManagers] = useState(10);
+  const [rounds, setRounds] = useState('');
+  const settingsObj = { managers, rounds, drafting: true };
+  const handleSettings = async (e) => {
+    e.preventDefault();
+    await setUserSettings(settingsObj);
+    Firebase.updateUserData(props.user, settingsObj, 'userSettings');
   };
 
-  handleChange(e) {
-    e.preventDefault();
-    const settings = {
-      rounds: this.roundsRef.current.value,
-      managers: this.managersRef.current.value,
-    };
-    this.props.onSettingsChange(settings);
-  }
-
-  render() {
-    return (
-      <div>
-        <form action="" className="user-settings" onSubmit={this.handleChange}>
-          <input
-            type="text"
-            name="rounds"
-            ref={this.roundsRef}
-            placeholder="# of Rounds"
-            required
-          />
-          <select name="managers" ref={this.managersRef} required>
-            <option value="10">10 Managers</option>
-            <option value="4">4 Managers</option>
-            <option value="12">12 Managers</option>
-            <option value="14">14 Managers</option>
-            <option value="16">16 Managers</option>
-          </select>
-          <button type="submit">Start Draft</button>
-        </form>
-      </div>
-    );
-  }
-}
+  return (
+    <div>
+      <form className="user-settings" onSubmit={(e) => handleSettings(e)}>
+        <input
+          type="text"
+          name="rounds"
+          onChange={(e) => setRounds(parseInt(e.target.value, 10))}
+          placeholder="# of Rounds"
+          required
+        />
+        <select defaultValue="10" onChange={(e) => setManagers(parseInt(e.target.value, 10))}>
+          <option value="10">10 Managers</option>
+          <option value="4">4 Managers</option>
+          <option value="12">12 Managers</option>
+          <option value="14">14 Managers</option>
+          <option value="16">16 Managers</option>
+        </select>
+        <button type="submit">Start Draft</button>
+      </form>
+    </div>
+  );
+};
 
 export default Settings;

@@ -3,7 +3,7 @@ import React, { useState, useContext, useLayoutEffect } from 'react';
 import firebase from 'firebase';
 import { withRouter, Link } from 'react-router-dom';
 import Firebase, { firebaseApp } from '../calls/base';
-import { AuthContext } from './Context';
+import { AuthContext } from './AuthContextProvider';
 
 const Login = ({ history }) => {
   const [email, setEmail] = useState('');
@@ -19,7 +19,7 @@ const Login = ({ history }) => {
       .then(() => {
         Firebase.login(email, password).then((res) => {
           if (res.user) setUid(res.user.uid);
-          history.push(`/draft/${res.user.uid}`);
+          history.push(`/${res.user.uid}`);
         });
       });
   };
@@ -28,7 +28,7 @@ const Login = ({ history }) => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         setUid(user.uid);
-        history.push(`/draft/${user.uid}`);
+        history.push(`/${user.uid}`);
         // ReferencePoint use css to help with login flicker https://github.com/firebase/quickstart-js/issues/58
       }
     });

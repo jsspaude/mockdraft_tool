@@ -1,60 +1,26 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useLayoutEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
-import Firebase from '../calls/base';
+import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from './AuthContextProvider';
-import { DataContext } from './DataContextProvider';
+import DataContextProvider, { DataContext } from './DataContextProvider';
 import { UserSettingsContext } from './UserSettingsContextProviders';
-import getCsvData from '../calls/GetCSV';
-import { slugify } from '../helpers';
 import Settings from './Settings';
 import Draft from './Draft';
 
-const App = (props) => {
-  const [uid, setUid] = useContext(AuthContext);
-  const [playerData, setPlayerData] = useContext(DataContext);
-  const [userSettings, setUserSettings] = useContext(UserSettingsContext);
-  const dataRef = Firebase.dataRef(uid);
+const App = () => {
+  const { state, dispatch } = useContext(DataContext);
 
-  const collectData = () => dataRef.once('value').then((snapshot) => {
-    const settings = (snapshot.val() && snapshot.val().userSettings) || '';
-    const players = (snapshot.val() && snapshot.val().playerData) || '';
-    return { settings, players };
-  });
-
-  const reducePlayerObject = (data, action) => {
-    const arr = data;
-    const playerObject = arr.reduce(
-      (obj, item) => ({
-        ...obj,
-        [slugify(item.overall)]: item,
-      }),
-      {},
-    );
-    console.log(playerObject);
-    return playerObject;
-  };
-
-  useLayoutEffect(() => {
-    collectData().then((res) => {
-      if (!res.settings) {
-        getCsvData()
-          .then((result) => reducePlayerObject(result.data))
-          .then((obj) => {
-            setPlayerData(obj);
-            Firebase.setUserData(uid, obj, 'playerData');
-          });
-      } else {
-        setPlayerData(res.players);
-        setUserSettings(res.settings);
-      }
-    });
+  // HERE - had everything working now cant get data to show up in context again.
+  useEffect(() => {
+    dispatch({ type: 'resume' });
+    console.log(state);
   }, []);
 
   return (
     <div className="mock-draft">
-      {!userSettings.drafting && <Settings user={uid} />}
-      {userSettings.drafting && <Draft user={uid} data={playerData} settings={userSettings} />}
+      {/* <DataContextProvider uid={uid}>
+        {!userSettings.drafting && <Settings user={uid} />}
+        {userSettings.drafting && <Draft user={uid} settings={userSettings} />}
+      </DataContextProvider> */}
     </div>
   );
 };

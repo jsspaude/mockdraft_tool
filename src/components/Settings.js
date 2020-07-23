@@ -13,6 +13,7 @@ const Settings = (props) => {
   const handleSettings = async (e) => {
     e.preventDefault();
     await setUserSettings(settingsObj);
+    console.log(settingsObj);
     Firebase.updateUserData(props.user, settingsObj, 'userSettings');
   };
 

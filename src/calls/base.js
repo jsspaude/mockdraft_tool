@@ -32,6 +32,14 @@ class Firebase {
 
   dataRef = (user) => firebase.database().ref(`${user}/data`);
 
+  collectData = (user) => this.dataRef(user)
+    .once('value')
+    .then((snapshot) => {
+      const settings = (snapshot.val() && snapshot.val().userSettings) || '';
+      const players = (snapshot.val() && snapshot.val().playerData) || '';
+      return { settings, players };
+    });
+
   login(email, password) {
     return this.auth.signInWithEmailAndPassword(email, password);
   }
@@ -48,27 +56,27 @@ class Firebase {
     return this.auth.currentUser && this.auth.currentUser.displayName;
   }
 
-  writeDataHandler = async (user, input) => {
-    const draft = await base.fetch(user, { context: this });
-    if (!draft.owner) {
-      await base.post(`${user}/players`, {
-        data: input,
-      });
-    }
-  };
+  // writeDataHandler = async (user, input) => {
+  //   const draft = await base.fetch(user, { context: this });
+  //   if (!draft.owner) {
+  //     await base.post(`${user}/players`, {
+  //       data: input,
+  //     });
+  //   }
+  // };
 
   setUserData(uid, dataValue, dataKey) {
-    this.database.ref(`${uid}/data/`).set({
-      [dataKey]: dataValue,
+    this.database.ref(`${uid}/data/${dataKey}`).set({
+      ...dataValue,
     });
   }
 
   updateUserData = (uid, dataValue, dataKey) => {
     const updates = {};
-    updates[`/${uid}/data/${dataKey}`] = dataValue;
+    updates[`/${dataKey}`] = dataValue;
     console.log(updates);
 
-    return firebase.database().ref().update(updates);
+    return this.dataRef(uid).update(updates);
   };
 }
 export { base, firebaseApp };

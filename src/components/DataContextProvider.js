@@ -1,21 +1,41 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, createContext } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useReducer, useContext } from 'react';
+import { AuthContext } from './AuthContextProvider';
+import createInitialState, { getCsvData, reducePlayerObject } from '../calls/csvData';
+import Firebase from '../calls/base';
 
-const DataContext = createContext('');
+const initialState = {};
+const DataContext = React.createContext(initialState);
+const { Provider } = DataContext;
 
-// MOVE APP getWRiteData to here?
+// https://blog.logrocket.com/use-hooks-and-context-not-react-and-redux/ create an initial state action for adding csv
 
-const DataContextProvider = (props) => {
-  DataContextProvider.propTypes = {
-    children: PropTypes.element,
+const DataContextProvider = ({ children }) => {
+  const [uid, setUid] = useContext(AuthContext);
+  const draftReducer = (data, action) => {
+    switch (action.type) {
+      case 'draft':
+        return {
+          ...data,
+          drafted: true,
+        };
+      case 'init':
+        return getCsvData()
+          .then((result) => reducePlayerObject(result.data))
+          .then((obj) => {
+            Firebase.setUserData(uid, obj, 'playerData');
+            console.log(obj);
+            return { ...obj };
+          });
+      case 'resume':
+        return Firebase.collectData(uid).then((res) => res);
+      default:
+        return initialState;
+    }
   };
-  const [playerData, setPlayerData] = useState('');
-  return (
-    <DataContext.Provider value={[playerData, setPlayerData]}>
-      {props.children}
-    </DataContext.Provider>
-  );
+  const [state, dispatch] = useReducer(draftReducer, initialState);
+
+  return <Provider value={{ state, dispatch }}>{children}</Provider>;
 };
 
 export { DataContext };

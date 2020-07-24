@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { DataContext } from './DataContextProvider';
 import Player from './Player';
 
 const PlayerList = (props) => {
+  const { state, dispatch, inProgress } = useContext(DataContext);
   PlayerList.propTypes = {
-    data: PropTypes.object,
-    user: PropTypes.string,
+    uid: PropTypes.string,
     handlePlayer: PropTypes.func,
   };
-  console.log(props);
   return (
     <div className="player-list">
       <table className="players">
@@ -20,13 +20,13 @@ const PlayerList = (props) => {
             <th>Team</th>
           </tr>
         </thead>
-        {Object.keys(props.data).map((key) => (
+        {Object.keys(state.playerData).map((key) => (
           <Player
             key={key}
             index={key}
-            details={props.data[key]}
+            details={state.playerData[key]}
             handlePlayer={props.handlePlayer}
-            user={props.user}
+            user={props.uid}
           />
         ))}
       </table>

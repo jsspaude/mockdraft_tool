@@ -5,16 +5,17 @@ import Firebase from '../calls/base';
 import { DataContext } from './DataContextProvider';
 
 const Player = (props) => {
-  const [playerData, setPlayerData] = useContext(DataContext);
+  const { state, dispatch, inProgress } = useContext(DataContext);
   const { overall, pos, team } = props.details;
   const posStripped = pos.replace(/[0-9]/g, '');
 
   const handleDraft = () => {
-    const { index } = props;
-    const value = props.details;
-    const newPlayerObject = { ...value, drafted: true };
-    props.handlePlayer({ [index]: value });
-    Firebase.updateUserData(props.user, newPlayerObject, `playerData/${index}`);
+    // const { index } = props;
+    // const value = props.details;
+    // const newPlayerObject = { ...value, drafted: true };
+    // props.handlePlayer({ [index]: value });
+    // Firebase.updateUserData(props.user, newPlayerObject, `playerData/${index}`);
+    dispatch({ type: 'draftPlayer', payload: props.index });
   };
   // store player as a local state and then update it so it re-renders.
   // Adjust this state change in firebase

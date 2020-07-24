@@ -6,13 +6,7 @@ import PlayerList from './PlayerList';
 import Managers from './Managers';
 
 const Draft = (props) => {
-  // const initialData = useContext(DataContext);
-  // const { dispatch } = initialData;
-
-  useEffect(() => {
-    // dispatch({ type: 'init' });
-    // console.log(initialData);
-  }, []);
+  useEffect(() => {}, []);
 
   const handlePlayer = (info) => {
     console.log(info);

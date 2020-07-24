@@ -34,11 +34,7 @@ class Firebase {
 
   collectData = (user) => this.dataRef(user)
     .once('value')
-    .then((snapshot) => {
-      const settings = (snapshot.val() && snapshot.val().userSettings) || '';
-      const players = (snapshot.val() && snapshot.val().playerData) || '';
-      return { settings, players };
-    });
+    .then((snapshot) => snapshot.val());
 
   login(email, password) {
     return this.auth.signInWithEmailAndPassword(email, password);
@@ -74,8 +70,6 @@ class Firebase {
   updateUserData = (uid, dataValue, dataKey) => {
     const updates = {};
     updates[`/${dataKey}`] = dataValue;
-    console.log(updates);
-
     return this.dataRef(uid).update(updates);
   };
 }

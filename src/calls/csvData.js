@@ -1,4 +1,3 @@
-import React from 'react';
 import Papa from 'papaparse';
 import PropTypes from 'prop-types';
 import { slugify } from '../helpers';
@@ -46,20 +45,13 @@ const reducePlayerObject = (data) => {
   return playerObject;
 };
 
-const createInitialState = (uid) => Firebase.collectData(uid).then((res) => {
-  if (!res.settings.drafted) {
-    getCsvData()
-      .then((result) => reducePlayerObject(result.data))
-      .then((obj) => {
-        Firebase.setUserData(uid, obj, 'playerData');
-        console.log(obj);
-        return obj;
-      });
-  }
-  console.log(res);
-  return res;
-});
+const createCsvObject = (children) => getCsvData()
+  .then((result) => reducePlayerObject(result.data))
+  .then((obj) => {
+    Firebase.setUserData(children.props.uid, obj, 'playerData');
+    return { ...obj };
+  });
 
-export { getCsvData, reducePlayerObject };
+export { createCsvObject };
 
-export default createInitialState;
+export default getCsvData;

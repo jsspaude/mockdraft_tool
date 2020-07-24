@@ -12,7 +12,7 @@ const ProtectedRouteHoc = ({ component: Component, ...rest }) => {
   };
   const [uid, setUid] = useContext(AuthContext);
   if (uid || rest.public) {
-    return <Route {...rest} render={(props) => <Component {...props}></Component>} />;
+    return <Route {...rest} render={(props) => <Component uid={uid} {...props}></Component>} />;
   }
   return <Redirect to={{ pathname: '/' }} />;
 };

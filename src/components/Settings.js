@@ -1,20 +1,17 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react';
-import PropTypes from 'prop-types';
 import Firebase from '../calls/base';
 import { DataContext } from './DataContextProvider';
-import { UserSettingsContext } from './UserSettingsContextProviders';
 
 const Settings = (props) => {
-  const [userSettings, setUserSettings] = useContext(UserSettingsContext);
   const [managers, setManagers] = useState(10);
   const [rounds, setRounds] = useState('');
+  const { state, dispatch } = useContext(DataContext);
   const settingsObj = { managers, rounds, drafting: true };
   const handleSettings = async (e) => {
     e.preventDefault();
-    await setUserSettings(settingsObj);
-    console.log(settingsObj);
-    Firebase.updateUserData(props.user, settingsObj, 'userSettings');
+    dispatch('storeSettings');
+    Firebase.updateUserData(props.uid, settingsObj, 'userSettings');
   };
 
   return (

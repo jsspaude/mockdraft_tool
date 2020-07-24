@@ -1,26 +1,31 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from 'react';
-import { AuthContext } from './AuthContextProvider';
-import DataContextProvider, { DataContext } from './DataContextProvider';
-import { UserSettingsContext } from './UserSettingsContextProviders';
 import Settings from './Settings';
+import { DataContext } from './DataContextProvider';
+import { createCsvObject } from '../calls/csvData';
+import Firebase from '../calls/base';
 import Draft from './Draft';
 
-const App = () => {
+const App = (props) => {
+  const [initialData, setInitialData] = useState(null);
   const { state, dispatch } = useContext(DataContext);
-
-  // HERE - had everything working now cant get data to show up in context again.
   useEffect(() => {
-    dispatch({ type: 'resume' });
-    console.log(state);
+    async function initData() {
+      const response = await Firebase.collectData(props.uid);
+      dispatch({ type: 'loadSettings', payload: response });
+      if (!response) {
+        createCsvObject(props.uid).then((data) => {
+          dispatch({ type: 'loadSettings', payload: data });
+        });
+      }
+    }
+    initData();
   }, []);
 
   return (
     <div className="mock-draft">
-      {/* <DataContextProvider uid={uid}>
-        {!userSettings.drafting && <Settings user={uid} />}
-        {userSettings.drafting && <Draft user={uid} settings={userSettings} />}
-      </DataContextProvider> */}
+      <Settings {...props} />
+      {/* {userSettings.drafting && <Draft user={uid} settings={userSettings} />} */}
     </div>
   );
 };

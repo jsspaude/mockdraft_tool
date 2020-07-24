@@ -4,15 +4,11 @@ import PropTypes from 'prop-types';
 
 const AuthContext = createContext('');
 
-const AuthContextProvider = (props) => {
-  console.log('test');
-  AuthContextProvider.propTypes = {
-    children: PropTypes.element,
-  };
+const AuthContextProvider = ({ children }) => {
   const [uid, setUid] = useState(false);
   return (
     <AuthContext.Provider uid={uid} value={[uid, setUid]}>
-      {props.children}
+      {children}
     </AuthContext.Provider>
   );
 };

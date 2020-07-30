@@ -52,15 +52,6 @@ class Firebase {
     return this.auth.currentUser && this.auth.currentUser.displayName;
   }
 
-  // writeDataHandler = async (user, input) => {
-  //   const draft = await base.fetch(user, { context: this });
-  //   if (!draft.owner) {
-  //     await base.post(`${user}/players`, {
-  //       data: input,
-  //     });
-  //   }
-  // };
-
   setUserData(uid, dataValue, dataKey) {
     this.database.ref(`${uid}/data/${dataKey}`).set({
       ...dataValue,
@@ -71,6 +62,10 @@ class Firebase {
     const updates = {};
     updates[`/${dataKey}`] = dataValue;
     return this.dataRef(uid).update(updates);
+  };
+
+  removeData = (uid, path) => {
+    this.database.ref(`${uid}/${path}`).remove();
   };
 }
 export { base, firebaseApp };

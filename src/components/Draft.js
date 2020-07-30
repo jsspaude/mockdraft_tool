@@ -1,16 +1,19 @@
 /* eslint-disable no-unused-vars */
-import React from 'react';
+import React, { useContext } from 'react';
 import PlayerList from './PlayerList';
-import Managers from './Managers';
+import ManagersList from './ManagersList';
+import { DataContext } from './DataContextProvider';
 
 const Draft = (props) => {
+  const { state, dispatch } = useContext(DataContext);
   const handlePlayer = (info) => {
     console.log(info);
   };
+
   return (
-    <div className="mock-draft">
+    <div className="draft-main">
       <PlayerList {...props} handlePlayer={handlePlayer} />
-      <Managers {...props} />
+      <ManagersList {...props} />
     </div>
   );
 };

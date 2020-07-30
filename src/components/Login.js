@@ -44,6 +44,7 @@ const Login = ({ history }) => {
           name="email"
           type="email"
           placeholder="email"
+          autoComplete="email"
         />
         <input
           onChange={(e) => setPassword(e.target.value)}
@@ -51,6 +52,7 @@ const Login = ({ history }) => {
           value={password}
           type="password"
           placeholder="password"
+          autoComplete="password"
         />
 
         <button type="submit">Login</button>

@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 import PropTypes from 'prop-types';
-import { slugify } from '../helpers';
 import Firebase from './base';
 
 const fetchCsv = async () => {
@@ -29,26 +28,18 @@ const getCsvData = async (props) => {
 
 const reducePlayerObject = (data) => {
   const arr = data;
-  const playerObject = arr
-    .map((player) => {
-      const o = { ...player };
-      o.drafted = false;
-      return o;
-    })
-    .reduce(
-      (obj, item) => ({
-        ...obj,
-        [slugify(item.overall)]: item,
-      }),
-      {},
-    );
+  const playerObject = arr.map((player) => {
+    const o = { ...player };
+    o.drafted = false;
+    return o;
+  });
   return playerObject;
 };
 
-const createCsvObject = (children) => getCsvData()
+const createCsvObject = (uid) => getCsvData()
   .then((result) => reducePlayerObject(result.data))
   .then((obj) => {
-    Firebase.setUserData(children.props.uid, obj, 'playerData');
+    Firebase.setUserData(uid, obj, 'playerData');
     return { ...obj };
   });
 

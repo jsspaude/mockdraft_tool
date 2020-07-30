@@ -4,6 +4,24 @@
   padding: 50px;
 }
 
+.draft-main {
+  display: flex;
+  flex-direction: row;
+}
+
+.managers {
+  max-width: 50vw;
+  height: 100vh;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  padding: 0 10%;
+}
+
+th {
+  font-size: 10px;
+}
+
 h1 {
   margin: 0 0 25px 0;
   text-align: left;

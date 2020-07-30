@@ -95,3 +95,33 @@ export function getFunName() {
 
   return `${rando(adjectives)}-${rando(adjectives)}-${rando(nouns)}`;
 }
+
+export function isEven(value) {
+  if (value % 2 === 0) return true;
+  return false;
+}
+
+export function counter(current, managers) {
+  let newCurr;
+  let newRound;
+  const limit = parseInt(managers, 10) * 0.01;
+  const round = parseInt(current, 10);
+  const curr = Number((current - parseInt(current, 10)).toFixed(2));
+
+  if (isEven(round)) {
+    if (curr === 0) {
+      newRound = round + 1;
+      return Number((newRound + curr).toFixed(2));
+    }
+    newCurr = curr - 0.01;
+    newRound = round;
+  } else {
+    newCurr = curr + 0.01;
+    if (newCurr > limit) {
+      newRound = round + 1;
+      return Number((newRound + curr).toFixed(2));
+    }
+    newRound = round;
+  }
+  return Number((newRound + newCurr).toFixed(2));
+}

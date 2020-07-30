@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useReducer, useContext } from 'react';
+import React, { useReducer, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Firebase from '../calls/base';
 import { DataContext } from './DataContextProvider';
@@ -8,19 +8,23 @@ const Player = (props) => {
   const { state, dispatch, inProgress } = useContext(DataContext);
   const { overall, pos, team } = props.details;
   const posStripped = pos.replace(/[0-9]/g, '');
+  const { index } = props;
+  const value = props.details;
 
-  const handleDraft = () => {
-    // const { index } = props;
-    // const value = props.details;
-    // const newPlayerObject = { ...value, drafted: true };
-    // props.handlePlayer({ [index]: value });
-    // Firebase.updateUserData(props.user, newPlayerObject, `playerData/${index}`);
-    dispatch({ type: 'draftPlayer', payload: props.index });
+  const handleDraft = async (e) => {
+    await dispatch({
+      type: 'draftPlayer',
+      payload: index,
+      curr: state.userSettings.currStatus,
+    });
+    props.handlePlayer({ [index]: value });
   };
-  // store player as a local state and then update it so it re-renders.
-  // Adjust this state change in firebase
-  // so when app get realoaded it pulls form up to date firebase
-  // const isAvailable = status === 'available';
+
+  useEffect(() => {
+    Firebase.updateUserData(props.user, state.playerData[index], `playerData/${index}`);
+    Firebase.updateUserData(props.user, state.userSettings.currStatus, 'userSettings/currStatus');
+    Firebase.updateUserData(props.user, state.managerData, 'managerData');
+  }, [state, props, index, value]);
 
   Player.propTypes = {
     details: PropTypes.shape({

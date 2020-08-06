@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useContext } from 'react';
 import { DataContext } from './DataContextProvider';
 import Firebase from '../calls/base';
+import ManagerPositions from './ManagerPositions';
 
 const Manager = (props) => {
   const { state, dispatch } = useContext(DataContext);
@@ -24,6 +26,7 @@ const Manager = (props) => {
     dispatch({ type: 'managerNames', payload: name, index: props.index });
     Firebase.updateUserData(props.uid, newSettingsObject, 'userSettings/');
   };
+
   return (
     <div className={`Manager${props.index}`}>
       <input
@@ -42,6 +45,9 @@ const Manager = (props) => {
             <th>TEAM</th>
             <th>ROUND</th>
           </tr>
+          {props.posArray.map((x, key) => (
+            <ManagerPositions key={key} index={key} posArray={props.posArray} />
+          ))}
         </thead>
       </table>
     </div>

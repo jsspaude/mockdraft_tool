@@ -125,3 +125,7 @@ export function counter(current, managers) {
   }
   return Number((newRound + newCurr).toFixed(2));
 }
+
+export function isEmpty(obj) {
+  return Object.keys(obj).length === 0;
+}

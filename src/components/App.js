@@ -1,18 +1,23 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import Settings from './Settings';
 import { DataContext } from './DataContextProvider';
 import '../css/style.css';
 import Draft from './Draft';
-import Firebase from '../calls/base';
+import { base } from '../calls/base';
 
 const App = (props) => {
+  const history = useHistory();
   const { state, dispatch } = useContext(DataContext);
   const [inProgress, setInProgress] = useState(false);
-  const handleReset = async (e) => {
-    await dispatch({ type: 'reset' });
-    Firebase.removeData(props.uid, 'data');
+  const handleReset = (e) => {
+    dispatch({ type: 'reset' });
+    base.remove('data', (err) => {
+      if (!err) {
+        history.push('/');
+      }
+    });
   };
 
   useEffect(() => {
@@ -31,7 +36,7 @@ const App = (props) => {
         </li>
       </ul>
       {!inProgress && <Settings {...props} />}
-      {inProgress && <Draft {...props} />}
+      {inProgress && <Draft data={state} {...props} />}
     </div>
   );
 };

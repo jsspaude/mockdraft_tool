@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 import PropTypes from 'prop-types';
-import Firebase from './base';
 
 const fetchCsv = async () => {
   const response = await fetch('../api/raw_data.csv');
@@ -36,12 +35,9 @@ const reducePlayerObject = (data) => {
   return playerObject;
 };
 
-const createCsvObject = (uid) => getCsvData()
+const createCsvObject = () => getCsvData()
   .then((result) => reducePlayerObject(result.data))
-  .then((obj) => {
-    Firebase.setUserData(uid, obj, 'playerData');
-    return { ...obj };
-  });
+  .then((obj) => ({ ...obj }));
 
 export { createCsvObject };
 

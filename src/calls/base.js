@@ -30,6 +30,15 @@ class Firebase {
     }
   };
 
+  getData = (uid) => {
+    this.base.fetch(`${uid}/data`, {
+      context: this,
+      then(data) {
+        return data;
+      },
+    });
+  };
+
   dataRef = (user) => firebase.database().ref(`${user}/data`);
 
   collectData = (user) => this.dataRef(user)
@@ -53,7 +62,7 @@ class Firebase {
   }
 
   setUserData(uid, dataValue, dataKey) {
-    this.database.ref(`${uid}/data/${dataKey}`).set({
+    this.database.ref(`${uid}/${dataKey}`).set({
       ...dataValue,
     });
   }

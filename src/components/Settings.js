@@ -20,7 +20,7 @@ const Settings = (props) => {
   };
 
   const handleManagerChange = (e) => {
-    setManagers(e);
+    setManagers(parseInt(e, 10));
   };
   return (
     <div>

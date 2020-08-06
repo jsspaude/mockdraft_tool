@@ -1,30 +1,34 @@
 /* eslint-disable no-unused-vars */
-import React, { useReducer, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Firebase from '../calls/base';
-import { DataContext } from './DataContextProvider';
+import { CounterContext } from './CounterContextProvider';
+import { counter } from '../helpers';
 
 const Player = (props) => {
-  const { state, dispatch, inProgress } = useContext(DataContext);
+  const { index } = props;
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [currStatus, setCurrStatus] = useContext(CounterContext);
+  const [playerData, setPlayerData] = useState(props.data.playerData[index]);
   const { overall, pos, team } = props.details;
   const posStripped = pos.replace(/[0-9]/g, '');
-  const { index } = props;
-  const value = props.details;
+  const newCurrStatus = counter(currStatus, props.data.userSettings.managers);
 
   const handleDraft = async (e) => {
-    await dispatch({
-      type: 'draftPlayer',
-      payload: index,
-      curr: state.userSettings.currStatus,
-    });
-    props.handlePlayer({ [index]: value });
+    Firebase.updateUserData(props.user, newCurrStatus, 'userSettings/currStatus');
+    setCurrStatus(newCurrStatus);
+    setPlayerData({ ...playerData, drafted: newCurrStatus });
+    props.handlePlayer({ ...playerData, drafted: newCurrStatus });
+    Firebase.updateUserData(
+      props.user,
+      { ...playerData, drafted: newCurrStatus },
+      `playerData/${index}`,
+    );
   };
 
-  useEffect(() => {
-    Firebase.updateUserData(props.user, state.playerData[index], `playerData/${index}`);
-    Firebase.updateUserData(props.user, state.userSettings.currStatus, 'userSettings/currStatus');
-    Firebase.updateUserData(props.user, state.managerData, 'managerData');
-  }, [state, props, index, value]);
+  // useEffect(() => {
+
+  // }, [currStatus]);
 
   Player.propTypes = {
     details: PropTypes.shape({
@@ -32,6 +36,8 @@ const Player = (props) => {
       pos: PropTypes.string,
       team: PropTypes.string,
     }),
+    user: PropTypes.string,
+    data: PropTypes.object,
   };
 
   return (
@@ -41,7 +47,9 @@ const Player = (props) => {
         <td className="pos">{posStripped}</td>
         <td className="team">{team}</td>
         <td>
-          <button onClick={handleDraft}>DRAFT</button>
+          <button disabled={isWaiting} onClick={handleDraft}>
+            DRAFT
+          </button>
         </td>
       </tr>
     </tbody>

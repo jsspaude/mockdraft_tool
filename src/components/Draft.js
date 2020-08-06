@@ -5,7 +5,6 @@ import ManagersList from './ManagersList';
 import { DataContext } from './DataContextProvider';
 
 const Draft = (props) => {
-  const { state, dispatch } = useContext(DataContext);
   const handlePlayer = (info) => {
     console.log(info);
   };

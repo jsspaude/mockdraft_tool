@@ -33,29 +33,6 @@ const initialState = {
 
 const dataReducer = (state, action) => {
   switch (action.type) {
-    case 'draftPlayer':
-      return {
-        ...state,
-        playerData: {
-          ...state.playerData,
-          [action.payload]: {
-            ...state.playerData[action.payload],
-            drafted: true,
-          },
-        },
-        userSettings: {
-          ...state.userSettings,
-          currStatus: counter(state.userSettings.currStatus, state.userSettings.managers),
-        },
-        managerData: {
-          ...state.managerData,
-          [Number(
-            (state.userSettings.currStatus - parseInt(state.userSettings.currStatus, 10)).toFixed(
-              2,
-            ) * 100,
-          )]: state.playerData[action.payload],
-        },
-      };
     case 'storeSettings':
       return {
         ...state,
@@ -113,12 +90,14 @@ const DataContextProvider = (props) => {
   const [state, dispatch] = useReducer(dataReducer, initialState);
 
   useLayoutEffect(() => {
+    console.log('test');
     async function initData() {
       const response = await Firebase.collectData(props.uid);
       dispatch({ type: 'loadSettings', payload: response });
       if (!response) {
         await createCsvObject(props.uid).then((data) => {
-          dispatch({ type: 'loadSettings', payload: { playerData: data } });
+          Firebase.setUserData(props.uid, { ...initialState, playerData: data }, 'data');
+          return dispatch({ type: 'loadSettings', payload: { playerData: data } });
         });
       }
     }

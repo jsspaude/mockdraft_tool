@@ -40,7 +40,11 @@ const ManagersList = (props) => {
 
   const posStringArray = Object.keys(state.userSettings.positions)
     .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
-    .map((pos) => Array(positions[pos]).fill(pos))
+    .map((pos) => {
+      const arr = Array(positions[pos]).fill(pos);
+      const newArr = arr.map((item, i) => `${item}${i}`);
+      return newArr;
+    })
     .flat();
 
   return (

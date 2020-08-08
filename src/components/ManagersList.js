@@ -7,6 +7,17 @@ import Manager from './Manager';
 const ManagersList = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { positions } = state.userSettings;
+  const { draftedPlayers } = props;
+  const playerAssign = (i) => draftedPlayers
+    .map((player) => {
+      const { drafted } = player;
+      const managerIndex = (drafted - Math.trunc(drafted)) * 100;
+      if (Math.trunc(managerIndex) === i) {
+        return player;
+      }
+      return null;
+    })
+    .filter((item) => item != null);
 
   const posOrder = [
     'QB',
@@ -23,24 +34,26 @@ const ManagersList = (props) => {
     'BENCH',
   ];
 
-  const posArray = Object.keys(state.userSettings.positions)
+  const posObjArray = Object.keys(state.userSettings.positions)
     .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
     .map((pos) => ({ [pos]: positions[pos] }));
 
-  console.log(posArray);
-
-  // HERE!!!!!
+  const posStringArray = Object.keys(state.userSettings.positions)
+    .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
+    .map((pos) => Array(positions[pos]).fill(pos))
+    .flat();
 
   return (
     <div className="managers">
       {Array.from(Array(state.userSettings.managers)).map((x, key) => (
         <Manager
-          data={state}
-          posArray={posArray}
-          index={key}
           key={key}
           uid={props.uid}
           index={key}
+          data={state}
+          posObjArray={posObjArray}
+          posStringArray={posStringArray}
+          playerAssign={playerAssign(key)}
         />
       ))}
     </div>

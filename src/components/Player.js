@@ -19,6 +19,7 @@ const Player = (props) => {
     setCurrStatus(newCurrStatus);
     setPlayerData({ ...playerData, drafted: newCurrStatus });
     props.handlePlayer({ ...playerData, drafted: newCurrStatus });
+    props.draftedPlayers();
     Firebase.updateUserData(
       props.user,
       { ...playerData, drafted: newCurrStatus },

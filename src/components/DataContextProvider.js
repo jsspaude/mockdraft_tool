@@ -90,7 +90,6 @@ const DataContextProvider = (props) => {
   const [state, dispatch] = useReducer(dataReducer, initialState);
 
   useLayoutEffect(() => {
-    console.log('test');
     async function initData() {
       const response = await Firebase.collectData(props.uid);
       dispatch({ type: 'loadSettings', payload: response });

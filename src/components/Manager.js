@@ -6,9 +6,8 @@ import ManagerPositions from './ManagerPositions';
 
 const Manager = (props) => {
   const { state, dispatch } = useContext(DataContext);
-  const [name, updateName] = useState(
-    state.userSettings.names[props.index] ? state.userSettings.names[props.index] : '',
-  );
+  const { names } = state.userSettings;
+  const [name, updateName] = useState(names[props.index] ? names[props.index] : '');
   const newSettingsObject = {
     ...state.userSettings,
     names: {
@@ -45,9 +44,13 @@ const Manager = (props) => {
             <th>TEAM</th>
             <th>ROUND</th>
           </tr>
-          {props.posArray.map((x, key) => (
-            <ManagerPositions key={key} index={key} posArray={props.posArray} />
-          ))}
+          <ManagerPositions
+            index={props.index}
+            data={props.data}
+            posObjArray={props.posObjArray}
+            posStringArray={props.posStringArray}
+            playerAssign={props.playerAssign}
+          />
         </thead>
       </table>
     </div>

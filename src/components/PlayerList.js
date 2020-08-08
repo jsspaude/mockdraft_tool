@@ -28,6 +28,7 @@ const PlayerList = (props) => {
               key={key}
               index={key}
               details={state.playerData[key]}
+              draftedPlayers={props.draftedPlayers}
               handlePlayer={props.handlePlayer}
               user={props.uid}
               data={state}

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
+import DraftedPlayer from './DraftedPlayer';
 import { flattenObject } from '../helpers';
 
 const ManagerPositions = (props) => {
@@ -28,27 +29,18 @@ const ManagerPositions = (props) => {
   };
 
   useLayoutEffect(() => {
-    setPlayerData(playerArray());
+    const init = async () => {
+      await setPlayerData(playerArray());
+    };
+
+    init();
   }, [props.playerAssign]);
 
   // HERE - create new component for player pos
   return props.posStringArray.map((pos, key) => (
     <tr key={key} index={key} poscount={pos.replace(/\D/g, '')}>
       <td>{pos.replace(/[0-9]/g, '')}</td>
-      <td>
-        {' '}
-        // NEW COMPONENT HERE
-        {playerData
-          && playerData.forEach((position) => {
-            if (position.pos === pos.replace(/[0-9]/g, '')) {
-              const player = position.players[parseInt(pos.replace(/\D/g, ''), 10)];
-              if (player) {
-                return player.overall;
-              }
-            }
-            return '';
-          })}
-      </td>
+      <DraftedPlayer pos={pos} playerData={playerData} {...props} />
     </tr>
   ));
 };

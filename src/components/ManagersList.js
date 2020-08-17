@@ -8,6 +8,7 @@ const ManagersList = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { positions } = state.userSettings;
   const { draftedPlayers } = props;
+
   const playerAssign = (i) => draftedPlayers
     .map((player) => {
       const { drafted } = player;

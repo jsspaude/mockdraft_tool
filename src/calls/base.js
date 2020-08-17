@@ -1,5 +1,7 @@
 import Rebase from 're-base';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/database';
+import 'firebase/auth';
 
 const firebaseApp = firebase.initializeApp({
   apiKey: 'AIzaSyB8zX55zSbxsyWNl_Nio1QHOANIK5U5T6k',
@@ -76,6 +78,35 @@ class Firebase {
   removeData = (uid, path) => {
     this.database.ref(`${uid}/${path}`).remove();
   };
+
+  moveRecord(oldRef, newRef) {
+    console.log(this.database);
+    return new Promise((resolve, reject) => {
+      this.database
+        .ref(oldRef)
+        .once('value')
+        .then((snap) => this.database.ref(newRef).set(snap.val()))
+        .then(() => this.database.ref(oldRef).set(null))
+        .then(() => {
+          console.log('Done!');
+          resolve();
+        })
+        .catch((err) => {
+          console.log(err.message);
+          reject();
+        });
+    });
+  }
+
+  copyRecord(oldRef, newRef) {
+    this.database.ref(oldRef).once('value', (snap) => {
+      this.database.ref(newRef).set(snap.val(), (error) => {
+        if (error && typeof console !== 'undefined' && console.error) {
+          console.error(error);
+        }
+      });
+    });
+  }
 }
 export { base, firebaseApp };
 

@@ -9,6 +9,10 @@
   flex-direction: row;
 }
 
+tr.true {
+  display: none;
+}
+
 .managers {
   max-width: 50vw;
   height: 100vh;

@@ -5,19 +5,13 @@ import Settings from './Settings';
 import { DataContext } from './DataContextProvider';
 import '../css/style.css';
 import Draft from './Draft';
-import { base } from '../calls/base';
+import Firebase from '../calls/base';
 
 const App = (props) => {
-  const history = useHistory();
   const { state, dispatch } = useContext(DataContext);
   const [inProgress, setInProgress] = useState(false);
   const handleReset = (e) => {
-    dispatch({ type: 'reset' });
-    base.remove('data', (err) => {
-      if (!err) {
-        history.push('/');
-      }
-    });
+    Firebase.moveRecord(`${props.uid}/data`, `${props.uid}/olddata`).then(() => Firebase.setUserData(props.uid, state, 'data'));
   };
 
   useEffect(() => {

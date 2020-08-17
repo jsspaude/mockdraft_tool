@@ -23,17 +23,20 @@ const PlayerList = (props) => {
               <th>Team</th>
             </tr>
           </thead>
-          {Object.keys(state.playerData).map((key) => (
-            <Player
-              key={key}
-              index={key}
-              details={state.playerData[key]}
-              draftedPlayers={props.draftedPlayers}
-              handlePlayer={props.handlePlayer}
-              user={props.uid}
-              data={state}
-            />
-          ))}
+          <tbody>
+            {Object.keys(state.playerData).map((key) => (
+              <Player
+                key={key}
+                index={key}
+                details={state.playerData[key]}
+                draftedPlayers={props.draftedPlayers}
+                handlePlayer={props.handlePlayer}
+                user={props.uid}
+                data={state}
+                status={!!state.playerData[key].drafted}
+              />
+            ))}
+          </tbody>
         </table>
       </div>
     </CounterContextProvider>

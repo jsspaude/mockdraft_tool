@@ -2,7 +2,6 @@
 import React, {
   useContext, useState, useLayoutEffect, useEffect,
 } from 'react';
-import { initializeApp } from 'firebase';
 import PlayerList from './PlayerList';
 import ManagersList from './ManagersList';
 import { DataContext } from './DataContextProvider';
@@ -10,16 +9,27 @@ import { DataContext } from './DataContextProvider';
 const Draft = (props) => {
   const { state, dispatch } = useContext(DataContext);
 
-  const draftedPlayers = () => state.playerData
-    .map((player) => {
-      if (player.drafted) {
-        return player;
-      }
-      return null;
-    })
-    .filter((item) => item != null);
+  const draftedPlayers = () => {
+    if (state.playerData) {
+      const req = state.playerData
+        .map((player) => {
+          if (player.drafted !== false) {
+            return player;
+          }
+          return null;
+        })
+        .filter((item) => item != null);
+      return req;
+    }
+    return null;
+  };
 
-  const [drafted, setDrafted] = useState(draftedPlayers());
+  const playerArray = draftedPlayers();
+  const [drafted, setDrafted] = useState(playerArray);
+
+  useLayoutEffect(() => {
+    setDrafted(draftedPlayers());
+  }, []);
 
   const handlePlayer = (info) => {
     const newDrafted = [...drafted, info];

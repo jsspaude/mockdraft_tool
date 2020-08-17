@@ -2,7 +2,6 @@
 import React, { useReducer, useLayoutEffect } from 'react';
 import { createCsvObject } from '../calls/csvData';
 import Firebase from '../calls/base';
-import { counter } from '../helpers';
 
 const DataContext = React.createContext(null);
 const defaultPos = {
@@ -23,7 +22,7 @@ const defaultPos = {
 const initialState = {
   playerData: {},
   userSettings: {
-    currStatus: 1.01,
+    currStatus: 1.0,
     positions: { ...defaultPos },
     names: '',
   },
@@ -72,8 +71,6 @@ const dataReducer = (state, action) => {
           managers: action.payload,
         },
       };
-    case 'reset':
-      return initialState;
     case 'loadSettings':
       return {
         ...initialState,
@@ -83,8 +80,6 @@ const dataReducer = (state, action) => {
       return null;
   }
 };
-
-// https://blog.logrocket.com/use-hooks-and-context-not-react-and-redux/ create an initial state action for adding csv
 
 const DataContextProvider = (props) => {
   const [state, dispatch] = useReducer(dataReducer, initialState);

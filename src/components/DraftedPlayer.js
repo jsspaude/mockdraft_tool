@@ -17,10 +17,17 @@ const DraftedPlayer = (props) => {
           return <td>{position.players[posArray[1]].overall}</td>;
         }
       }
+      if (playerData && posArray[0].includes('_')) {
+        const createFlexCell = () => playerData.find(({ flex }) => flex);
+        const flexArray = createFlexCell();
+        if (flexArray && flexArray.flex[posArray[1]]) {
+          return <td>{flexArray.flex[posArray[1]].overall}</td>;
+        }
+      }
       if (posArray[0] === 'BENCH') {
         const createBenchCell = () => playerData.find(({ bench }) => bench);
         const benchArray = createBenchCell();
-        if (benchArray.bench[posArray[1]]) {
+        if (benchArray && benchArray.bench[posArray[1]]) {
           return <td>{benchArray.bench[posArray[1]].overall}</td>;
         }
       }

@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { DataContext } from './DataContextProvider';
 import Firebase from '../calls/base';
 import ManagerPositions from './ManagerPositions';
@@ -47,14 +48,27 @@ const Manager = (props) => {
           <ManagerPositions
             index={props.index}
             data={props.data}
-            posObjArray={props.posObjArray}
             posStringArray={props.posStringArray}
+            posSettings={props.posSettings}
+            flexPosArray={props.flexPosArray}
+            flexCount={props.flexCount}
             playerAssign={props.playerAssign}
           />
         </thead>
       </table>
     </div>
   );
+};
+
+Manager.propTypes = {
+  index: PropTypes.number,
+  uid: PropTypes.string,
+  data: PropTypes.object,
+  flexPosArray: PropTypes.array,
+  flexCount: PropTypes.number,
+  playerAssign: PropTypes.array,
+  posSettings: PropTypes.object,
+  posStringArray: PropTypes.array,
 };
 
 export default Manager;

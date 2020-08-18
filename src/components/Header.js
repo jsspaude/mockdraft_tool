@@ -6,9 +6,6 @@ import { AuthContext } from './AuthContextProvider';
 import Firebase from '../calls/base';
 
 const Header = (props) => {
-  Header.propTypes = {
-    routes: PropTypes.object,
-  };
   const [uid, setUid] = useContext(AuthContext);
   const handleLogout = () => {
     Firebase.logout();
@@ -35,6 +32,10 @@ const Header = (props) => {
       )}
     </ul>
   );
+};
+
+Header.propTypes = {
+  routes: PropTypes.array,
 };
 
 export default Header;

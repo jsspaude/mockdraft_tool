@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState } from 'react';
+import PropTypes from 'prop-types';
 import Firebase from '../calls/base';
 import { DataContext } from './DataContextProvider';
 
@@ -237,6 +238,10 @@ const Settings = (props) => {
       </form>
     </div>
   );
+};
+
+Settings.propTypes = {
+  uid: PropTypes.string,
 };
 
 export default Settings;

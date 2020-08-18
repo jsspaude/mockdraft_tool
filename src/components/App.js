@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Settings from './Settings';
 import { DataContext, initialState } from './DataContextProvider';
@@ -24,7 +25,6 @@ const id = components.join('');
 const App = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const [inProgress, setInProgress] = useState(false);
-
   const handleReset = (e) => {
     const resultsObject = { playerData: state.playerData, posData: state.userSettings.positions };
     Firebase.updateResultsData(props.uid, resultsObject, id).then(() => Firebase.removeData(props.uid, '/data').then(() => {
@@ -33,13 +33,11 @@ const App = (props) => {
       });
     }));
   };
-
   useEffect(() => {
     if (state) {
       setInProgress(state.inProgress);
     }
   }, [state]);
-
   return (
     <div className="mock-draft">
       <ul>
@@ -53,6 +51,10 @@ const App = (props) => {
       {inProgress && <Draft data={state} {...props} />}
     </div>
   );
+};
+
+App.propTypes = {
+  uid: PropTypes.string,
 };
 
 export default App;

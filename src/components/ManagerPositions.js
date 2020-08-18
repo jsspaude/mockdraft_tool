@@ -1,70 +1,60 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import DraftedPlayer from './DraftedPlayer';
-import { flattenObject } from '../helpers';
+import ManagerDrafted from './ManagerDrafted';
 
 const ManagerPositions = (props) => {
   const [playerData, setPlayerData] = useState('');
-  const [flexLength, setFlexLength] = useState(0);
-  const positionSettings = flattenObject({ ...props.posObjArray });
-  const flexSettings = Object.keys(positionSettings)
-    .map((key) => {
-      if (key.includes('_')) {
-        return key;
-      }
-      return undefined;
-    })
-    .map((flex) => {
-      if (positionSettings[flex] > 0) return { [flex]: positionSettings[flex] };
-      return undefined;
-    })
-    .filter((item) => item !== undefined);
-  const flexPositionsArray = Object.keys(...flexSettings)
-    .map((key) => key.split('_'))
-    .flat();
-  const flexCount = Object.values(...flexSettings).reduce((a, b) => a + b);
-
-  const draftedPlayers = props.playerAssign.reduce((acc, curr) => {
-    const newP = curr;
-    newP.pos = newP.pos.replace(/[0-9]/g, '');
-    return acc.concat(newP);
-  }, []);
-
-  const playerArray = () => {
-    const group = {};
-    draftedPlayers.forEach(({ pos, ...rest }, i) => {
-      group[pos] = group[pos] || {
-        pos,
-        players: [],
-        bench: [],
-        flex: [],
-      };
-      if (group[pos].players.length < positionSettings[pos]) {
-        group[pos].players.push(rest);
-      } else if (flexPositionsArray.includes(group[pos].pos)) {
-        group[pos].flex.push(rest);
-      } else {
-        group[pos].bench.push(rest);
-      }
-    });
-    return Object.values(group);
-  };
 
   useLayoutEffect(() => {
-    const init = async () => {
-      const result = playerArray();
-      setPlayerData(result);
-    };
-    init();
-  }, [props.playerAssign]);
+    const draftedPlayers = props.playerAssign.reduce((acc, curr) => {
+      const newP = curr;
+      newP.pos = newP.pos.replace(/[0-9]/g, '');
+      return acc.concat(newP);
+    }, []);
+
+    const playerArray = () => new Promise((resolve, reject) => {
+      try {
+        const group = {};
+        const flex = { pos: 'FLEX', players: [] };
+        const bench = { pos: 'BENCH', players: [] };
+        draftedPlayers.forEach(({ pos, ...rest }, i) => {
+          group[pos] = group[pos] || {
+            pos,
+            players: [],
+          };
+          if (group[pos].players.length < props.posSettings[pos]) {
+            group[pos].players.push(rest);
+          } else if (flex.players.length < props.flexCount && props.flexPosArray.includes(pos)) {
+            flex.players.push(rest);
+          } else {
+            bench.players.push(rest);
+          }
+        });
+        resolve([...Object.values(group), bench]);
+      } catch (err) {
+        reject(console.log(err));
+      }
+    });
+    playerArray().then((res) => setPlayerData(res));
+  }, [props]);
 
   return props.posStringArray.map((pos, key) => (
     <tr key={key} index={key} poscount={pos.replace(/\D/g, '')}>
       <td>{pos.replace(/[0-9]/g, '')}</td>
-      <DraftedPlayer pos={pos} playerData={playerData} {...props} />
+      <ManagerDrafted pos={pos} playerData={playerData} {...props} />
     </tr>
   ));
+};
+
+ManagerPositions.propTypes = {
+  data: PropTypes.object,
+  flexCount: PropTypes.number,
+  flexPosArray: PropTypes.array,
+  index: PropTypes.number,
+  playerAssign: PropTypes.array,
+  posSettings: PropTypes.object,
+  posStringArray: PropTypes.array,
 };
 
 export default ManagerPositions;

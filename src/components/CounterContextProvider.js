@@ -2,6 +2,8 @@
 import React, { useState, createContext } from 'react';
 import PropTypes from 'prop-types';
 
+// IMPROVEMENT: switch to a userReducer and use counter from helpers as reducer function
+
 const CounterContext = createContext('');
 
 const CounterContextProvider = (props) => {
@@ -11,6 +13,10 @@ const CounterContextProvider = (props) => {
       {props.children}
     </CounterContext.Provider>
   );
+};
+
+CounterContextProvider.propTypes = {
+  userSettings: PropTypes.object,
 };
 
 export { CounterContext };

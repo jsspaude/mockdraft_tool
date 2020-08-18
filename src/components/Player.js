@@ -28,21 +28,11 @@ const Player = (props) => {
     );
   };
 
-  Player.propTypes = {
-    details: PropTypes.shape({
-      overall: PropTypes.string,
-      pos: PropTypes.string,
-      team: PropTypes.string,
-    }),
-    user: PropTypes.string,
-    data: PropTypes.object,
-  };
-
   useLayoutEffect(() => {
     if (props.status) {
       setDrafted(true);
     }
-  }, []);
+  }, [props.status]);
 
   return (
     <tr className={`player-data ${drafted}`}>
@@ -54,6 +44,22 @@ const Player = (props) => {
       </td>
     </tr>
   );
+};
+
+Player.propTypes = {
+  currStatus: PropTypes.number,
+  data: PropTypes.object,
+  details: PropTypes.shape({
+    overall: PropTypes.string,
+    pos: PropTypes.string,
+    team: PropTypes.string,
+  }),
+  draftedPlayers: PropTypes.func,
+  handlePlayer: PropTypes.func,
+  index: PropTypes.number,
+  newCurrStatus: PropTypes.number,
+  status: PropTypes.bool,
+  user: PropTypes.string,
 };
 
 export default Player;

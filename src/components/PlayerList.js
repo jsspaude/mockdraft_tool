@@ -10,10 +10,6 @@ const PlayerList = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { currStatus, setCurrStatus } = useContext(CounterContext);
   const newCurrStatus = counter(currStatus, state.userSettings.managers);
-  PlayerList.propTypes = {
-    uid: PropTypes.string,
-    handlePlayer: PropTypes.func,
-  };
 
   return (
     <div className="player-list">
@@ -29,7 +25,7 @@ const PlayerList = (props) => {
           {Object.keys(state.playerData).map((key) => (
             <Player
               key={key}
-              index={key}
+              index={parseInt(key, 10)}
               details={state.playerData[key]}
               draftedPlayers={props.draftedPlayers}
               handlePlayer={props.handlePlayer}
@@ -44,6 +40,13 @@ const PlayerList = (props) => {
       </table>
     </div>
   );
+};
+
+PlayerList.propTypes = {
+  data: PropTypes.object,
+  uid: PropTypes.string,
+  draftedPlayers: PropTypes.func,
+  handlePlayer: PropTypes.func,
 };
 
 export default PlayerList;

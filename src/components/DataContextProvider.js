@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useReducer, useLayoutEffect } from 'react';
+import PropTypes from 'prop-types';
 import { createCsvObject } from '../calls/csvData';
 import Firebase from '../calls/base';
 
@@ -99,6 +100,11 @@ const DataContextProvider = (props) => {
 
   return <DataContext.Provider value={{ state, dispatch }}>{props.children}</DataContext.Provider>;
 };
+
+DataContextProvider.propTypes = {
+  uid: PropTypes.string,
+};
+
 export { DataContext, initialState };
 
 export default DataContextProvider;

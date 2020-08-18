@@ -1,7 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, {
-  useContext, useState, useLayoutEffect, useEffect,
-} from 'react';
+import React, { useContext, useState } from 'react';
 import PlayerList from './PlayerList';
 import ManagersList from './ManagersList';
 import { DataContext } from './DataContextProvider';
@@ -33,10 +31,6 @@ const Draft = (props) => {
 
   const playerArray = draftedPlayers();
   const [drafted, setDrafted] = useState(playerArray);
-
-  useLayoutEffect(() => {
-    setDrafted(draftedPlayers());
-  }, []);
 
   const handlePlayer = (info) => {
     const newDrafted = [...drafted, info];

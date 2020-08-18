@@ -27,7 +27,6 @@ const initialState = {
     names: '',
   },
   inProgress: false,
-  managerData: '',
 };
 
 const dataReducer = (state, action) => {
@@ -100,6 +99,6 @@ const DataContextProvider = (props) => {
 
   return <DataContext.Provider value={{ state, dispatch }}>{props.children}</DataContext.Provider>;
 };
-export { DataContext };
+export { DataContext, initialState };
 
 export default DataContextProvider;

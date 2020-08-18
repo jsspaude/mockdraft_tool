@@ -12,8 +12,8 @@ const ManagersList = (props) => {
   const playerAssign = (i) => draftedPlayers
     .map((player) => {
       const { drafted } = player;
-      const managerIndex = (drafted - Math.trunc(drafted)) * 100;
-      if (Math.trunc(managerIndex) === i) {
+      const managerIndex = (drafted - Math.round(drafted)) * 100;
+      if (Math.round(managerIndex) === i) {
         return player;
       }
       return null;

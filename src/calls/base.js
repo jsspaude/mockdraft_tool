@@ -75,12 +75,31 @@ class Firebase {
     return this.dataRef(uid).update(updates);
   };
 
-  removeData = (uid, path) => {
-    this.database.ref(`${uid}/${path}`).remove();
-  };
+  updateResultsData = (uid, dataValue, dataKey) => new Promise((resolve, reject) => {
+    const updates = {};
+    updates[`/${dataKey}`] = dataValue;
+    this.database
+      .ref(`${uid}/results`)
+      .update(updates)
+      .then(() => resolve())
+      .catch((err) => {
+        console.log(err);
+        reject();
+      });
+  });
+
+  removeData = (uid, path) => new Promise((resolve, reject) => {
+    this.database
+      .ref(`${uid}/${path}`)
+      .remove()
+      .then(() => resolve())
+      .catch((err) => {
+        console.log(err);
+        reject();
+      });
+  });
 
   moveRecord(oldRef, newRef) {
-    console.log(this.database);
     return new Promise((resolve, reject) => {
       this.database
         .ref(oldRef)
@@ -88,7 +107,6 @@ class Firebase {
         .then((snap) => this.database.ref(newRef).set(snap.val()))
         .then(() => this.database.ref(oldRef).set(null))
         .then(() => {
-          console.log('Done!');
           resolve();
         })
         .catch((err) => {

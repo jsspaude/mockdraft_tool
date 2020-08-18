@@ -3,29 +3,27 @@ import React, {
   useState, useContext, useEffect, useLayoutEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import Firebase from '../calls/base';
 import { CounterContext } from './CounterContextProvider';
-import { counter } from '../helpers';
+import Firebase from '../calls/base';
 
 const Player = (props) => {
   const { index } = props;
-  const [currStatus, setCurrStatus] = useContext(CounterContext);
   const [playerData, setPlayerData] = useState(props.data.playerData[index]);
   const [drafted, setDrafted] = useState(false);
+  const { currStatus, setCurrStatus } = useContext(CounterContext);
   const { overall, pos, team } = props.details;
   const posStripped = pos.replace(/[0-9]/g, '');
-  const newCurrStatus = counter(currStatus, props.data.userSettings.managers);
 
   const handleDraft = async (e) => {
-    Firebase.updateUserData(props.user, newCurrStatus, 'userSettings/currStatus');
-    setPlayerData({ ...playerData, drafted: currStatus });
-    setCurrStatus(newCurrStatus);
+    Firebase.updateUserData(props.user, props.newCurrStatus, 'userSettings/currStatus');
+    setPlayerData({ ...playerData, drafted: props.currStatus });
+    setCurrStatus(props.newCurrStatus);
     setDrafted(true);
-    props.handlePlayer({ ...playerData, drafted: newCurrStatus });
+    props.handlePlayer({ ...playerData, drafted: props.currStatus });
     props.draftedPlayers();
     Firebase.updateUserData(
       props.user,
-      { ...playerData, drafted: newCurrStatus },
+      { ...playerData, drafted: props.currStatus },
       `playerData/${index}`,
     );
   };

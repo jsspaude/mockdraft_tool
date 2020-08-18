@@ -102,28 +102,28 @@ export function isEven(value) {
 }
 
 export function counter(current, managers) {
-  let newCurr;
+  let next;
   let newRound;
   const limit = parseInt(managers, 10) * 0.01;
   const round = parseInt(current, 10);
   const curr = Number((current - parseInt(current, 10)).toFixed(2));
 
   if (isEven(round)) {
+    next = curr - 0.01;
     if (curr === 0) {
       newRound = round + 1;
       return Number((newRound + curr).toFixed(2));
     }
-    newCurr = curr - 0.01;
     newRound = round;
-  } else {
-    newCurr = curr + 0.01;
-    if (newCurr > limit) {
-      newRound = round + 1;
-      return Number((newRound + curr).toFixed(2));
-    }
-    newRound = round;
+    return Number((newRound + next).toFixed(2));
   }
-  return Number((newRound + newCurr).toFixed(2));
+  next = curr + 0.01;
+  if (next > limit - 0.01) {
+    newRound = round + 1;
+    return Number((newRound + curr).toFixed(2));
+  }
+  newRound = round;
+  return Number((newRound + next).toFixed(2));
 }
 
 export function isEmpty(obj) {

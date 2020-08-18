@@ -27,9 +27,7 @@ const ManagerPositions = (props) => {
 
   const draftedPlayers = props.playerAssign.reduce((acc, curr) => {
     const newP = curr;
-
     newP.pos = newP.pos.replace(/[0-9]/g, '');
-
     return acc.concat(newP);
   }, []);
 
@@ -45,11 +43,7 @@ const ManagerPositions = (props) => {
       if (group[pos].players.length < positionSettings[pos]) {
         group[pos].players.push(rest);
       } else if (flexPositionsArray.includes(group[pos].pos)) {
-        if (group[pos].flex.length > flexCount) {
-          group[pos].bench.push(rest);
-        } else {
-          group[pos].flex.push(rest);
-        }
+        group[pos].flex.push(rest);
       } else {
         group[pos].bench.push(rest);
       }
@@ -59,8 +53,8 @@ const ManagerPositions = (props) => {
 
   useLayoutEffect(() => {
     const init = async () => {
-      const result = await playerArray();
-      await setPlayerData(result);
+      const result = playerArray();
+      setPlayerData(result);
     };
     init();
   }, [props.playerAssign]);

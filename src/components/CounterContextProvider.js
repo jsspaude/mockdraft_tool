@@ -6,9 +6,8 @@ const CounterContext = createContext('');
 
 const CounterContextProvider = (props) => {
   const [currStatus, setCurrStatus] = useState(props.userSettings.currStatus);
-
   return (
-    <CounterContext.Provider value={[currStatus, setCurrStatus]}>
+    <CounterContext.Provider value={{ currStatus, setCurrStatus }}>
       {props.children}
     </CounterContext.Provider>
   );

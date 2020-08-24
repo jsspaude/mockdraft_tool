@@ -10,16 +10,18 @@ const SignUp = ({ history }) => {
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
   const [uid, setUid] = useContext(AuthContext);
+
+  const errorHandler = (e) => {
+    setErrors(e.message);
+  };
+
   const handleForm = (e) => {
     e.preventDefault();
     firebaseApp
       .auth()
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(() => {
-        Firebase.createUser(email, password).then((res) => {
-          if (res.user) setUid(res.user.uid);
-          history.push(`/${res.user.uid}`);
-        });
+        Firebase.createUser(email, password, errorHandler);
       });
   };
 
@@ -57,9 +59,6 @@ const SignUp = ({ history }) => {
       <nav className="login">
         <button className="google" onClick={() => Firebase.authenticate('Google')}>
           Login With Google
-        </button>
-        <button className="facebook" onClick={() => Firebase.authenticate('Twitter')}>
-          Login With facebook
         </button>
       </nav>
     </div>

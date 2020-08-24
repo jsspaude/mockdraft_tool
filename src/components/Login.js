@@ -11,17 +11,16 @@ const Login = ({ history }) => {
   const [error, setErrors] = useState('');
   const [uid, setUid] = useContext(AuthContext);
 
+  const errorHandler = (e) => {
+    setErrors(e.message);
+  };
+
   const handleForm = (e) => {
     e.preventDefault();
     firebaseApp
       .auth()
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        Firebase.login(email, password).then((res) => {
-          if (res.user) setUid(res.user.uid);
-          history.push(`/${res.user.uid}`);
-        });
-      });
+      .then(Firebase.login(email, password, errorHandler));
   };
 
   useLayoutEffect(() => {
@@ -58,7 +57,7 @@ const Login = ({ history }) => {
         <button type="submit">Login</button>
         <span>{error}</span>
         <p className="">
-          Need to sign up?{' '}
+          Need to sign up?
           <Link to="/signup" className="">
             Join here
           </Link>
@@ -67,9 +66,6 @@ const Login = ({ history }) => {
       <nav className="login">
         <button className="google" onClick={() => Firebase.authenticate('Google')}>
           Login With Google
-        </button>
-        <button className="facebook" onClick={() => Firebase.authenticate('Twitter')}>
-          Login With facebook
         </button>
       </nav>
     </div>

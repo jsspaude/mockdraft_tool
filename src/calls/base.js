@@ -1,4 +1,3 @@
-import React from 'react';
 import Rebase from 're-base';
 import firebase from 'firebase/app';
 import 'firebase/database';

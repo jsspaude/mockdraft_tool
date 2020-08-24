@@ -1,3 +1,4 @@
+import React from 'react';
 import Rebase from 're-base';
 import firebase from 'firebase/app';
 import 'firebase/database';
@@ -16,6 +17,7 @@ class Firebase {
     this.auth = firebaseApp.auth();
     this.base = base;
     this.database = firebase.database();
+    this.error = '';
   }
 
   authenticate = (provider) => {
@@ -30,6 +32,7 @@ class Firebase {
         data: authData.user.uid,
       });
     }
+    return draft;
   };
 
   getData = (uid) => {
@@ -47,12 +50,18 @@ class Firebase {
     .once('value')
     .then((snapshot) => snapshot.val());
 
-  login(email, password) {
-    return this.auth.signInWithEmailAndPassword(email, password);
+  login(email, password, errorHandler) {
+    return this.auth
+      .signInWithEmailAndPassword(email, password)
+      .then(this.authHandler)
+      .catch((err) => errorHandler(err));
   }
 
-  async createUser(email, password) {
-    await this.auth.createUserWithEmailAndPassword(email, password);
+  async createUser(email, password, errorHandler) {
+    await this.auth
+      .createUserWithEmailAndPassword(email, password)
+      .then(this.authHandler)
+      .catch((err) => errorHandler(err));
   }
 
   logout() {

@@ -13,18 +13,19 @@ const Header = (props) => {
   };
   return (
     <ul className="nav">
-      {props.routes.map((route, i) => (
-        <li key={i}>
-          <Link to={route.path}>{route.name}</Link>
-        </li>
-      ))}
+      <li key="/signup">
+        <Link to="/signup">SignUp</Link>
+      </li>
+      <li key="/">
+        <Link to="/">Login</Link>
+      </li>
       {uid && (
         <div>
           <li>
-            <Link to={`/draft/${uid}`}>Draft Room</Link>
+            <Link to={`draft/${uid}`}>Draft Room</Link>
           </li>
           <li>
-            <Link to={'/'} className="logout" onClick={(e) => handleLogout(e)}>
+            <Link to="/" className="logout" onClick={(e) => handleLogout(e)}>
               LOGOUT
             </Link>
           </li>

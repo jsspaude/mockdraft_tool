@@ -47,7 +47,7 @@ const App = (props) => {
           </Link>
         </li>
       </ul>
-      {!inProgress && <Settings {...props} />}
+      {!inProgress && <Settings className={inProgress} {...props} />}
       {inProgress && <Draft data={state} {...props} />}
     </div>
   );

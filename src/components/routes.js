@@ -6,14 +6,14 @@ import SignUp from './SignUp';
 const routes = [
   {
     name: 'SignUp',
-    path: '/signup',
+    path: '/',
     exact: true,
     main: () => <SignUp />,
   },
   {
     name: 'Login',
-    path: '/',
-    exact: true,
+    path: '/login',
+    exact: false,
     main: (props) => <Login {...props} />,
   },
 ];

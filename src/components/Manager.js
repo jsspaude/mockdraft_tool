@@ -37,14 +37,15 @@ const Manager = (props) => {
         placeholder={(name && name) || (!name && `Manager-${props.index}`)}
         value={name && `${name}`}
       />
-      <table className="players">
+      <table className="drafted-players">
         <thead>
           <tr>
             <th>POS</th>
-            <th>NAME</th>
-            <th>TEAM</th>
-            <th>ROUND</th>
+            <th>PLAYER</th>
+            <th>DRAFTED</th>
           </tr>
+        </thead>
+        <tbody>
           <ManagerPositions
             index={props.index}
             data={props.data}
@@ -54,7 +55,7 @@ const Manager = (props) => {
             flexCount={props.flexCount}
             playerAssign={props.playerAssign}
           />
-        </thead>
+        </tbody>
       </table>
     </div>
   );

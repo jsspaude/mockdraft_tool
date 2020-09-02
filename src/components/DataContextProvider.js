@@ -23,6 +23,7 @@ const defaultPos = {
 const initialState = {
   playerData: {},
   userSettings: {
+    currPick: 1,
     currStatus: 1.0,
     positions: { ...defaultPos },
     names: '',

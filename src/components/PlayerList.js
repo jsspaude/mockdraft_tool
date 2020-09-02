@@ -10,6 +10,13 @@ const PlayerList = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { currStatus, setCurrStatus } = useContext(CounterContext);
   const newCurrStatus = counter(currStatus, state.userSettings.managers);
+  const keeperIndexes = () => {
+    const keeperIndexArray = [];
+    if (state.userSettings.keeperList) {
+      state.userSettings.keeperList.forEach((keeper) => keeperIndexArray.push(keeper.index));
+    }
+    return keeperIndexArray;
+  };
 
   return (
     <div className="player-list">
@@ -22,20 +29,27 @@ const PlayerList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(state.playerData).map((key) => (
-            <Player
-              key={key}
-              index={parseInt(key, 10)}
-              details={state.playerData[key]}
-              draftedPlayers={props.draftedPlayers}
-              handlePlayer={props.handlePlayer}
-              user={props.uid}
-              currStatus={currStatus}
-              newCurrStatus={newCurrStatus}
-              data={state}
-              status={!!state.playerData[key].drafted}
-            />
-          ))}
+          {Object.keys(state.playerData).map((key) => {
+            const keeperStatus = keeperIndexes().includes(parseInt(key, 10));
+            return (
+              <Player
+                key={key}
+                index={parseInt(key, 10)}
+                details={state.playerData[key]}
+                draftedPlayers={props.draftedPlayers}
+                handlePlayer={props.handlePlayer}
+                user={props.uid}
+                currStatus={currStatus}
+                keepers={props.keepers}
+                keeperStatus={keeperStatus}
+                handleKeeper={props.handleKeeper}
+                newCurrStatus={newCurrStatus}
+                buttonLabel={props.buttonLabel}
+                data={state}
+                status={!!state.playerData[key].drafted}
+              />
+            );
+          })}
         </tbody>
       </table>
     </div>

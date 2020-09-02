@@ -15,7 +15,16 @@ const ManagerDrafted = (props) => {
       const position = createCell();
       if (position) {
         if (position.players[posArray[1]]) {
-          return <td>{position.players[posArray[1]].overall}</td>;
+          const drafted = Math.trunc(position.players[posArray[1]].drafted);
+          return (
+            <>
+              <td>
+                {position.players[posArray[1]].overall}
+                <span className="subtext"> ({position.players[posArray[1]].team})</span>
+              </td>
+              <td>{drafted}</td>
+            </>
+          );
         }
       }
       if (posArray[0].includes('_')) {

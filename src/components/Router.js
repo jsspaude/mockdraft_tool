@@ -2,7 +2,6 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Header from './Header';
-import routes from './routes';
 import Login from './Login';
 import SignUp from './SignUp';
 import protectedRoutes from './ProtectedRoutes';
@@ -12,7 +11,7 @@ import AuthContextProvider from './AuthContextProvider';
 const Router = () => (
   <AuthContextProvider>
     <BrowserRouter>
-      <Header routes={routes} />
+      <Header />
       <Switch>
         <Route key="/" exact path="/">
           <Login />

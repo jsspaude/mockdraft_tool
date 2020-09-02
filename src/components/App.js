@@ -39,7 +39,7 @@ const App = (props) => {
     }
   }, [state]);
   return (
-    <div className="mock-draft">
+    <div className="App">
       <ul>
         <li>
           <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
@@ -47,8 +47,8 @@ const App = (props) => {
           </Link>
         </li>
       </ul>
-      {!inProgress && <Settings className={inProgress} {...props} />}
-      {inProgress && <Draft data={state} {...props} />}
+      {!inProgress && <Settings {...props} />}
+      {inProgress && <Draft {...props} />}
     </div>
   );
 };

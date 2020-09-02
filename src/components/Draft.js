@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useLayoutEffect } from 'react';
 import PlayerList from './PlayerList';
 import ManagersList from './ManagersList';
 import { DataContext } from './DataContextProvider';
 import CounterContextProvider from './CounterContextProvider';
+import CurrPickContextProvider from './CurrPickContextProvider';
 
 const Draft = (props) => {
   const { state, dispatch } = useContext(DataContext);
@@ -24,6 +25,7 @@ const Draft = (props) => {
           return null;
         })
         .filter((item) => item != null);
+
       return req;
     }
     return null;
@@ -37,10 +39,29 @@ const Draft = (props) => {
     setDrafted(newDrafted);
   };
 
+  useLayoutEffect(() => {
+    if (state.userSettings.keeperList) {
+      state.userSettings.keeperList.forEach((player) => {
+        const round = parseInt(player.round, 10);
+        const manager = (parseInt(player.manager, 10) - 1) * 0.01;
+        const keeperDrafted = round + manager;
+        handlePlayer({ ...state.playerData[player.index], drafted: keeperDrafted });
+        draftedPlayers();
+      });
+    }
+  }, []);
+
   return (
     <div className="draft-main">
       <CounterContextProvider userSettings={state.userSettings}>
-        <PlayerList {...props} draftedPlayers={draftedPlayers} handlePlayer={handlePlayer} />
+        <CurrPickContextProvider>
+          <PlayerList
+            {...props}
+            draftedPlayers={draftedPlayers}
+            buttonLabel="DRAFT"
+            handlePlayer={handlePlayer}
+          />
+        </CurrPickContextProvider>
       </CounterContextProvider>
       <ManagersList draftedPlayers={drafted} {...props} />
     </div>

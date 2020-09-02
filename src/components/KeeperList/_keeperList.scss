@@ -1,0 +1,14 @@
+.keepers-list-container {
+  display: flex;
+  flex-direction: row;
+
+  .player-list {
+    width: auto;
+    margin-right: 5%;
+  }
+
+  .keeper-player-info {
+    display: flex;
+    flex-direction: column;
+  }
+}

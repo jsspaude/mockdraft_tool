@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useState, useLayoutEffect } from 'react';
-import PlayerList from './PlayerList';
-import ManagersList from './ManagersList';
-import { DataContext } from './DataContextProvider';
-import CounterContextProvider from './CounterContextProvider';
-import CurrPickContextProvider from './CurrPickContextProvider';
+import PlayerList from '../PlayerList/PlayerList';
+import ManagerList from '../ManagerList/ManagerList';
+import { DataContext } from '../DataContextProvider';
+import CounterContextProvider from '../CounterContextProvider';
+import CurrPickContextProvider from '../CurrPickContextProvider';
 
 const Draft = (props) => {
   const { state, dispatch } = useContext(DataContext);
@@ -63,7 +63,7 @@ const Draft = (props) => {
           />
         </CurrPickContextProvider>
       </CounterContextProvider>
-      <ManagersList draftedPlayers={drafted} {...props} />
+      <ManagerList draftedPlayers={drafted} {...props} />
     </div>
   );
 };

@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from './DataContextProvider';
-import { CounterContext } from './CounterContextProvider';
-import { counter } from '../helpers';
-import Player from './Player';
+import { DataContext } from '../DataContextProvider';
+import { CounterContext } from '../CounterContextProvider';
+import { counter } from '../../helpers';
+import Player from '../Player/Player';
 
 const PlayerList = (props) => {
   const { state, dispatch } = useContext(DataContext);

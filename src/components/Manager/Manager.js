@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from './DataContextProvider';
-import Firebase from '../calls/base';
-import ManagerPositions from './ManagerPositions';
+import { DataContext } from '../DataContextProvider';
+import Firebase from '../../calls/base';
+import ManagerPositions from '../ManagerPositions/ManagerPositions';
 
 const Manager = (props) => {
   const { state, dispatch } = useContext(DataContext);
@@ -37,7 +37,7 @@ const Manager = (props) => {
         placeholder={(name && name) || (!name && `Manager-${props.index}`)}
         value={name && `${name}`}
       />
-      <table className="drafted-players">
+      <table className="manager-drafted-players">
         <thead>
           <tr>
             <th>POS</th>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import PlayerList from './PlayerList';
+import PlayerList from '../PlayerList/PlayerList';
 
 const KeeperList = (props) => {
   const [keepers, setKeepers] = useState('');
@@ -22,7 +22,7 @@ const KeeperList = (props) => {
   };
 
   return (
-    <div className="keepers-container">
+    <div className="keeper-list-container">
       <PlayerList keepers={keepers} handleKeeper={handleKeeper} buttonLabel="KEEP" />
       <div className="keeper-player-info">
         {keepers

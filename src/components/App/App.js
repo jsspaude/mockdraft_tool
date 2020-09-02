@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Settings from './Settings';
-import { DataContext, initialState } from './DataContextProvider';
-import '../css/style.css';
-import Draft from './Draft';
-import Firebase from '../calls/base';
-import { createCsvObject } from '../calls/csvData';
+import Settings from '../Settings/Settings';
+import { DataContext, initialState } from '../DataContextProvider';
+import '../../sass/style.scss';
+import Draft from '../Draft/Draft';
+import Firebase from '../../calls/base';
+import { createCsvObject } from '../../calls/csvData';
 
 const date = new Date();
 const components = [

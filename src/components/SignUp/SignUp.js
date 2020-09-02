@@ -2,8 +2,8 @@
 import React, { useState, useContext, useLayoutEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import firebase from 'firebase';
-import Firebase, { firebaseApp } from '../calls/base';
-import { AuthContext } from './AuthContextProvider';
+import Firebase, { firebaseApp } from '../../calls/base';
+import { AuthContext } from '../AuthContextProvider';
 
 const SignUp = ({ history }) => {
   const [email, setEmail] = useState('');

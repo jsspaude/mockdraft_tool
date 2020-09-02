@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from './DataContextProvider';
-import Manager from './Manager';
-import { flattenObject } from '../helpers';
+import { DataContext } from '../DataContextProvider';
+import Manager from '../Manager/Manager';
+import { flattenObject } from '../../helpers';
 
 const roundingHelper = (x, key) => {
   const y = x[key];
   return Math.round((y - Math.round(y)) * 100);
 };
 
-const ManagersList = (props) => {
+const ManagerList = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { positions } = state.userSettings;
   const playerAssign = (i) => props.draftedPlayers
@@ -53,7 +53,7 @@ const ManagersList = (props) => {
   const flexCount = Object.values(...flexSettings).reduce((a, b) => a + b);
 
   return (
-    <div className="managers">
+    <div className="manager-list">
       {Array.from(Array(state.userSettings.managers)).map((x, key) => (
         <Manager
           key={key}
@@ -71,10 +71,10 @@ const ManagersList = (props) => {
   );
 };
 
-ManagersList.propTypes = {
+ManagerList.propTypes = {
   uid: PropTypes.string,
   data: PropTypes.object,
   draftedPlayers: PropTypes.array,
 };
 
-export default ManagersList;
+export default ManagerList;

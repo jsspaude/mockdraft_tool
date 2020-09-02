@@ -2,9 +2,9 @@
 import React, { useContext, useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import Switch from '@material-ui/core/Switch';
-import KeeperList from './KeeperList';
-import Firebase from '../calls/base';
-import { DataContext } from './DataContextProvider';
+import KeeperList from '../KeeperList/KeeperList';
+import Firebase from '../../calls/base';
+import { DataContext } from '../DataContextProvider';
 
 const Settings = (props) => {
   const { state, dispatch } = useContext(DataContext);

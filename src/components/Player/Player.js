@@ -3,9 +3,9 @@ import React, {
   useState, useContext, useEffect, useLayoutEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import { CounterContext } from './CounterContextProvider';
-import { CurrPickContext } from './CurrPickContextProvider';
-import Firebase from '../calls/base';
+import { CounterContext } from '../CounterContextProvider';
+import { CurrPickContext } from '../CurrPickContextProvider';
+import Firebase from '../../calls/base';
 
 const Player = (props) => {
   const { index } = props;

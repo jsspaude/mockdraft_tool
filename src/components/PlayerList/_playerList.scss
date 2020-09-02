@@ -1,0 +1,19 @@
+.player-list {
+  max-height: 100vh;
+  width: 50%;
+  overflow-y: scroll;
+  .true {
+    display: none;
+  }
+  .players {
+    tr {
+      box-shadow: 0.5px 0.5px 0.5px 0.5px lightgrey;
+      &:nth-child(even) {
+        background-color: lightblue;
+      }
+    }
+    button {
+      width: 50px;
+    }
+  }
+}

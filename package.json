@@ -26,6 +26,7 @@
     "react-dom": "^16.6.3",
     "react-papaparse": "^3.4.0",
     "react-router-dom": "^5.2.0",
+    "react-test-renderer": "^16.13.1",
     "react-transition-group": "^2.2.1",
     "serve": "^10.1.2",
     "stylus": "0.54.5"
@@ -38,7 +39,8 @@
     "eject": "react-scripts eject",
     "styles": "stylus -u autoprefixer-stylus ./src/css/style.styl -o ./src/css/style.css",
     "now-build": "npm run build && mv build dist",
-    "styles:watch": "npm run styles -- -w"
+    "styles:watch": "npm run styles -- -w",
+    "test": "jest"
   },
   "browserslist": [
     ">0.2%",

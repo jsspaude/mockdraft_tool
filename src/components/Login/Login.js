@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useLayoutEffect } from 'react';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { withRouter, Link } from 'react-router-dom';
-import Firebase, { firebaseApp } from '../../calls/base';
+import Firebase from '../../calls/base';
 import { AuthContext } from '../AuthContextProvider';
 
 const Login = ({ history }) => {
@@ -17,10 +17,7 @@ const Login = ({ history }) => {
 
   const handleForm = (e) => {
     e.preventDefault();
-    firebaseApp
-      .auth()
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(Firebase.login(email, password, errorHandler));
+    Firebase.login(email, password, errorHandler);
   };
 
   useLayoutEffect(() => {

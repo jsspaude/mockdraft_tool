@@ -27,7 +27,6 @@ const Player = (props) => {
       setCurrPick(currPick + 1);
       setDrafted(true);
       props.handlePlayer({ ...playerData, drafted: props.currStatus });
-      props.draftedPlayers();
       Firebase.updateUserData(
         props.user,
         { ...playerData, drafted: props.currStatus },
@@ -43,7 +42,7 @@ const Player = (props) => {
     if (props.status || props.keeperStatus) {
       setDrafted(true);
     }
-  }, [props.status]);
+  }, [props.status, props.keeperStatus]);
 
   return (
     <tr className={`player-data ${drafted}`}>
@@ -65,7 +64,6 @@ Player.propTypes = {
     pos: PropTypes.string,
     team: PropTypes.string,
   }),
-  draftedPlayers: PropTypes.func,
   handlePlayer: PropTypes.func,
   index: PropTypes.number,
   newCurrStatus: PropTypes.number,

@@ -74,7 +74,7 @@ const ManagerList = (props) => {
 ManagerList.propTypes = {
   uid: PropTypes.string,
   data: PropTypes.object,
-  draftedPlayers: PropTypes.array,
+  draftedPlayers: PropTypes.any,
 };
 
 export default ManagerList;

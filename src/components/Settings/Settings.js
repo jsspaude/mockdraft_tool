@@ -16,7 +16,13 @@ const Settings = (props) => {
     e.preventDefault();
     const rounds = await Object.values(state.userSettings.positions).reduce((a, b) => a + b, 0);
     await dispatch({ type: 'storeSettings', payload: { managers, rounds, keeperList } });
-    Firebase.updateUserData(props.uid, { ...state.userSettings, managers, rounds }, 'userSettings');
+    Firebase.updateUserData(
+      props.uid,
+      {
+        ...state.userSettings, managers, rounds, keeperList,
+      },
+      'userSettings',
+    );
     Firebase.updateUserData(props.uid, true, 'inProgress');
     keeperList.forEach((player) => {
       if (player.round && player.manager) {

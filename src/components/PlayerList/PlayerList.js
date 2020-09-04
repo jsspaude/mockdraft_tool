@@ -59,7 +59,7 @@ const PlayerList = (props) => {
 PlayerList.propTypes = {
   data: PropTypes.object,
   uid: PropTypes.string,
-  draftedPlayers: PropTypes.func,
+  draftedPlayers: PropTypes.any,
   handlePlayer: PropTypes.func,
 };
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import ManagerDrafted from './ManagerDrafted';
+import ManagerDrafted from '../ManagerDrafted/ManagerDrafted';
 
 const ManagerPositions = (props) => {
   const [playerData, setPlayerData] = useState('');

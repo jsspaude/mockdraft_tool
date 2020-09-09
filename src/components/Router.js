@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import Header from './Header';
-import routes from './routes';
-import Login from './Login';
-import SignUp from './SignUp';
+import Header from './Header/Header';
+import Login from './Login/Login';
+import SignUp from './SignUp/SignUp';
 import protectedRoutes from './ProtectedRoutes';
 import ProtectedRouteHoc from './ProtectedRouteHoc';
 import AuthContextProvider from './AuthContextProvider';
@@ -12,7 +11,7 @@ import AuthContextProvider from './AuthContextProvider';
 const Router = () => (
   <AuthContextProvider>
     <BrowserRouter>
-      <Header routes={routes} />
+      <Header />
       <Switch>
         <Route key="/" exact path="/">
           <Login />

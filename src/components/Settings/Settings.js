@@ -1,18 +1,46 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import Firebase from '../calls/base';
-import { DataContext } from './DataContextProvider';
+import Switch from '@material-ui/core/Switch';
+import KeeperList from '../KeeperList/KeeperList';
+import Firebase from '../../calls/base';
+import { DataContext } from '../DataContextProvider';
 
 const Settings = (props) => {
   const { state, dispatch } = useContext(DataContext);
+  const [keeperBool, setKeeperBool] = useState(false);
+  const [keeperList, setKeeperList] = useState(null);
   const [managers, setManagers] = useState(10);
+
   const handleSettings = async (e) => {
     e.preventDefault();
     const rounds = await Object.values(state.userSettings.positions).reduce((a, b) => a + b, 0);
-    await dispatch({ type: 'storeSettings', payload: { managers, rounds } });
-    Firebase.updateUserData(props.uid, { ...state.userSettings, managers, rounds }, 'userSettings');
+    await dispatch({ type: 'storeSettings', payload: { managers, rounds, keeperList } });
+    Firebase.updateUserData(
+      props.uid,
+      {
+        ...state.userSettings,
+        managers,
+        rounds,
+        keeperList,
+      },
+      'userSettings',
+    );
     Firebase.updateUserData(props.uid, true, 'inProgress');
+    if (keeperList) {
+      keeperList.forEach((player) => {
+        if (player.round && player.manager) {
+          const round = parseInt(player.round, 10);
+          const manager = (parseInt(player.manager, 10) - 1) * 0.01;
+          const keeperDrafted = round + manager;
+          Firebase.updateUserData(
+            props.uid,
+            { ...state.playerData[player.index], drafted: keeperDrafted },
+            `playerData/${player.index}`,
+          );
+        }
+      });
+    }
   };
 
   const handleChange = (e, label) => {
@@ -20,9 +48,15 @@ const Settings = (props) => {
     dispatch({ type: 'positions', label, payload });
   };
 
+  const handleKeeperChange = (e) => {
+    setKeeperBool(e.target.checked);
+  };
+
   const handleManagerChange = (e) => {
     setManagers(parseInt(e, 10));
   };
+
+  useLayoutEffect(() => {}, [keeperBool]);
   return (
     <div>
       <form className="user-settings" onSubmit={(e) => handleSettings(e)}>
@@ -231,9 +265,24 @@ const Settings = (props) => {
                   </div>
                 </td>
               </tr>
+              <tr>
+                <td>
+                  <div>
+                    Set Keepers?
+                    <Switch
+                      checked={state.checkedB}
+                      onChange={handleKeeperChange}
+                      color="primary"
+                      name="checkedB"
+                      inputProps={{ 'aria-label': 'primary checkbox' }}
+                    />
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
+        {keeperBool && <KeeperList setKeeperList={setKeeperList} playerData={state.playerData} />}
         <button type="submit">Start Draft</button>
       </form>
     </div>

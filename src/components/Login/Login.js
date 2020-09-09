@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext, useLayoutEffect } from 'react';
-import { withRouter } from 'react-router-dom';
-import firebase from 'firebase';
-import Firebase, { firebaseApp } from '../calls/base';
-import { AuthContext } from './AuthContextProvider';
+import firebase from 'firebase/app';
+import { withRouter, Link } from 'react-router-dom';
+import Firebase from '../../calls/base';
+import { AuthContext } from '../AuthContextProvider';
 
-const SignUp = ({ history }) => {
+const Login = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
@@ -17,12 +17,7 @@ const SignUp = ({ history }) => {
 
   const handleForm = (e) => {
     e.preventDefault();
-    firebaseApp
-      .auth()
-      .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => {
-        Firebase.createUser(email, password, errorHandler);
-      });
+    Firebase.login(email, password, errorHandler);
   };
 
   useLayoutEffect(() => {
@@ -37,7 +32,7 @@ const SignUp = ({ history }) => {
 
   return (
     <div>
-      <h1>Join</h1>
+      <h1>Login</h1>
       <form onSubmit={(e) => handleForm(e)}>
         <input
           value={email}
@@ -45,6 +40,7 @@ const SignUp = ({ history }) => {
           name="email"
           type="email"
           placeholder="email"
+          autoComplete="email"
         />
         <input
           onChange={(e) => setPassword(e.target.value)}
@@ -52,9 +48,17 @@ const SignUp = ({ history }) => {
           value={password}
           type="password"
           placeholder="password"
+          autoComplete="password"
         />
+
         <button type="submit">Login</button>
         <span>{error}</span>
+        <p className="">
+          Need to sign up?
+          <Link to="/signup" className="">
+            Join here
+          </Link>
+        </p>
       </form>
       <nav className="login">
         <button className="google" onClick={() => Firebase.authenticate('Google')}>
@@ -65,4 +69,4 @@ const SignUp = ({ history }) => {
   );
 };
 
-export default withRouter(SignUp);
+export default withRouter(Login);

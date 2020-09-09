@@ -2,12 +2,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Settings from './Settings';
-import { DataContext, initialState } from './DataContextProvider';
-import '../css/style.css';
-import Draft from './Draft';
-import Firebase from '../calls/base';
-import { createCsvObject } from '../calls/csvData';
+import Settings from '../Settings/Settings';
+import { DataContext, initialState } from '../DataContextProvider';
+import '../../sass/style.scss';
+import Draft from '../Draft/Draft';
+import Firebase from '../../calls/base';
+import { createCsvObject } from '../../calls/csvData';
 
 const date = new Date();
 const components = [
@@ -39,7 +39,7 @@ const App = (props) => {
     }
   }, [state]);
   return (
-    <div className="mock-draft">
+    <div className="App">
       <ul>
         <li>
           <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
@@ -47,8 +47,8 @@ const App = (props) => {
           </Link>
         </li>
       </ul>
-      {!inProgress && <Settings className={inProgress} {...props} />}
-      {inProgress && <Draft data={state} {...props} />}
+      {!inProgress && <Settings {...props} />}
+      {inProgress && <Draft {...props} />}
     </div>
   );
 };

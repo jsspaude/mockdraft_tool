@@ -1,0 +1,17 @@
+.manager-drafted-players {
+  width: 100%;
+  margin-bottom: 15px;
+
+  td {
+    padding: 5px 10px 5px 5px;
+  }
+
+  th {
+    padding: 5px 10px 5px 5px;
+  }
+
+  tr td:first-child {
+    width: 5%;
+    color: #828282;
+  }
+}

@@ -8,8 +8,8 @@ import Player from '../Player/Player';
 
 const PlayerList = (props) => {
   const { state, dispatch } = useContext(DataContext);
-  const { currStatus, setCurrStatus } = useContext(CounterContext);
-  const newCurrStatus = counter(currStatus, state.userSettings.managers);
+  const { counterState, counterDispatch } = useContext(CounterContext);
+  const newCurrStatus = counter(counterState.currStatus, state.userSettings.managers);
   const keeperIndexes = () => {
     const keeperIndexArray = [];
     if (state.userSettings.keeperList) {
@@ -39,7 +39,7 @@ const PlayerList = (props) => {
                 draftedPlayers={props.draftedPlayers}
                 handlePlayer={props.handlePlayer}
                 user={props.uid}
-                currStatus={currStatus}
+                currStatus={counterState.currStatus}
                 keepers={props.keepers}
                 keeperStatus={keeperStatus}
                 handleKeeper={props.handleKeeper}

@@ -4,7 +4,6 @@ import PlayerList from '../PlayerList/PlayerList';
 import ManagerList from '../ManagerList/ManagerList';
 import { DataContext } from '../DataContextProvider';
 import CounterContextProvider from '../CounterContextProvider';
-import CurrPickContextProvider from '../CurrPickContextProvider';
 
 const draftedPlayers = (playerData) => {
   if (playerData) {
@@ -52,14 +51,12 @@ const Draft = (props) => {
   return (
     <div className="draft-main">
       <CounterContextProvider userSettings={state.userSettings}>
-        <CurrPickContextProvider>
-          <PlayerList
-            {...props}
-            draftedPlayers={drafted}
-            buttonLabel="DRAFT"
-            handlePlayer={handlePlayer}
-          />
-        </CurrPickContextProvider>
+        <PlayerList
+          {...props}
+          draftedPlayers={drafted}
+          buttonLabel="DRAFT"
+          handlePlayer={handlePlayer}
+        />
       </CounterContextProvider>
       <ManagerList draftedPlayers={drafted} {...props} />
     </div>

@@ -19,23 +19,28 @@ const Settings = (props) => {
     Firebase.updateUserData(
       props.uid,
       {
-        ...state.userSettings, managers, rounds, keeperList,
+        ...state.userSettings,
+        managers,
+        rounds,
+        keeperList,
       },
       'userSettings',
     );
     Firebase.updateUserData(props.uid, true, 'inProgress');
-    keeperList.forEach((player) => {
-      if (player.round && player.manager) {
-        const round = parseInt(player.round, 10);
-        const manager = (parseInt(player.manager, 10) - 1) * 0.01;
-        const keeperDrafted = round + manager;
-        Firebase.updateUserData(
-          props.uid,
-          { ...state.playerData[player.index], drafted: keeperDrafted },
-          `playerData/${player.index}`,
-        );
-      }
-    });
+    if (keeperList) {
+      keeperList.forEach((player) => {
+        if (player.round && player.manager) {
+          const round = parseInt(player.round, 10);
+          const manager = (parseInt(player.manager, 10) - 1) * 0.01;
+          const keeperDrafted = round + manager;
+          Firebase.updateUserData(
+            props.uid,
+            { ...state.playerData[player.index], drafted: keeperDrafted },
+            `playerData/${player.index}`,
+          );
+        }
+      });
+    }
   };
 
   const handleChange = (e, label) => {

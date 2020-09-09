@@ -4,27 +4,32 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { CounterContext } from '../CounterContextProvider';
-import { CurrPickContext } from '../CurrPickContextProvider';
 import Firebase from '../../calls/base';
 
 const Player = (props) => {
   const { index } = props;
   const [playerData, setPlayerData] = useState(props.data.playerData[index]);
   const [drafted, setDrafted] = useState(false);
-  const { currStatus, setCurrStatus } = useContext(CounterContext);
-  const { currPick, setCurrPick } = useContext(CurrPickContext);
+  const { counterState, counterDispatch } = useContext(CounterContext);
   const { overall, pos, team } = props.details;
   const posStripped = (position) => position.replace(/[0-9]/g, '');
-
   const handleDraft = async (e) => {
     e.preventDefault();
     if (props.buttonLabel === 'DRAFT') {
-      const newCurrPick = currPick + 1;
-      Firebase.updateUserData(props.user, props.newCurrStatus, 'userSettings/currStatus');
-      Firebase.updateUserData(props.user, newCurrPick, 'userSettings/currPick');
+      const newCurrPick = (await counterState.currPick) + 1;
+      await Firebase.updateUserData(
+        props.user,
+        { currPick: newCurrPick, currStatus: props.newCurrStatus },
+        'userSettings/counter',
+      );
       setPlayerData({ ...playerData, drafted: props.currStatus });
-      setCurrStatus(props.newCurrStatus);
-      setCurrPick(currPick + 1);
+      counterDispatch({
+        type: 'setCurr',
+        payload: {
+          currPick: newCurrPick,
+          currStatus: props.newCurrStatus,
+        },
+      });
       setDrafted(true);
       props.handlePlayer({ ...playerData, drafted: props.currStatus });
       Firebase.updateUserData(

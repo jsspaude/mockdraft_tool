@@ -2,7 +2,6 @@
 import React from 'react';
 import App from './App/App';
 import DataContextProvider from './DataContextProvider';
-import CurrPickContextProvider from './CurrPickContextProvider';
 
 const protectedRoutes = [
   {

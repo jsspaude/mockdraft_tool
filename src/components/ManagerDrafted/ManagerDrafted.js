@@ -32,7 +32,18 @@ const ManagerDrafted = (props) => {
         const createFlexCell = () => playerData.find(({ pos }) => pos === 'FLEX');
         const flexArray = createFlexCell();
         if (flexArray && flexArray.players[posArray[1]]) {
-          return <td>{flexArray.players[posArray[1]].overall}</td>;
+          const drafted = Math.trunc(flexArray.players[posArray[1]].drafted);
+          return (
+            <>
+              <td>
+                {flexArray.players[posArray[1]].overall}
+                <span className="subtext">
+                  ({flexArray.players[posArray[1]].team}, {flexArray.players[posArray[1]].pos})
+                </span>
+              </td>
+              <td>{drafted}</td>
+            </>
+          );
         }
       }
       if (posArray[0] === 'BENCH') {
@@ -40,7 +51,19 @@ const ManagerDrafted = (props) => {
         const createBenchCell = () => playerData.find(({ pos }) => pos === 'BENCH');
         const benchArray = createBenchCell();
         if (benchArray && benchArray.players[posArray[1]]) {
-          return <td>{benchArray.players[posArray[1]].overall}</td>;
+          const drafted = Math.trunc(benchArray.players[posArray[1]].drafted);
+          return (
+            <>
+              <td>
+                {benchArray.players[posArray[1]].overall}
+                <span className="subtext">
+                  {' '}
+                  ({benchArray.players[posArray[1]].team}, {benchArray.players[posArray[1]].pos})
+                </span>
+              </td>
+              <td>{drafted}</td>
+            </>
+          );
         }
       }
       return <td></td>;

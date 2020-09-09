@@ -26,12 +26,13 @@ const ManagerPositions = (props) => {
           if (group[pos].players.length < props.posSettings[pos]) {
             group[pos].players.push(rest);
           } else if (flex.players.length < props.flexCount && props.flexPosArray.includes(pos)) {
+            console.log(pos);
             flex.players.push(rest);
           } else {
             bench.players.push(rest);
           }
         });
-        resolve([...Object.values(group), bench]);
+        resolve([...Object.values(group), flex, bench]);
       } catch (err) {
         reject(console.log(err));
       }

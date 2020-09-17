@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import PlayerList from '../PlayerList/PlayerList';
+import { SettingsContext } from '../SettingsContextProvider';
 
 const KeeperList = (props) => {
   const [keepers, setKeepers] = useState('');
+  const { settingsState, settingsDispatch } = useContext(SettingsContext);
   const { playerData } = props;
 
   const handleKeeper = (info) => {
     setKeepers([...keepers, { index: info.index }]);
-    props.setKeeperList([...keepers, { index: info.index }]);
+    settingsDispatch({ type: 'keeperList', payload: [...keepers, { index: info.index }] });
   };
   const handleKeeperInput = (e, label, playerIndex) => {
     const newKeepers = keepers.map((keeper) => {
@@ -18,7 +20,7 @@ const KeeperList = (props) => {
       return keeper;
     });
     setKeepers(newKeepers);
-    props.setKeeperList(newKeepers);
+    settingsDispatch({ type: 'keeperList', payload: newKeepers });
   };
 
   return (

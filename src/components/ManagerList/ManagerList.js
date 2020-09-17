@@ -2,6 +2,8 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { DataContext } from '../DataContextProvider';
+import { ResultsContext } from '../ResultsContextProvider';
+import { SettingsContext } from '../SettingsContextProvider';
 import Manager from '../Manager/Manager';
 import { flattenObject } from '../../helpers';
 
@@ -12,10 +14,17 @@ const roundingHelper = (x, key) => {
 
 const ManagerList = (props) => {
   const { state, dispatch } = useContext(DataContext);
+  const { resultsState, resultsDispatch } = useContext(ResultsContext);
+  const { settingsState, settingsDispatch } = useContext(SettingsContext);
   const { positions } = state.userSettings;
-  const playerAssign = (i) => props.draftedPlayers
-    .map((p) => (roundingHelper(p, 'drafted') === i ? p : null))
-    .filter((item) => item != null);
+  const playerAssign = (i) => {
+    if (resultsState.length) {
+      return resultsState
+        .map((p) => (roundingHelper(p, 'drafted') === i ? p : null))
+        .filter((item) => item != null);
+    }
+    return [];
+  };
 
   const posOrder = [
     'QB',
@@ -54,7 +63,7 @@ const ManagerList = (props) => {
 
   return (
     <div className="manager-list">
-      {Array.from(Array(state.userSettings.managers)).map((x, key) => (
+      {Array.from(Array(settingsState.managers)).map((x, key) => (
         <Manager
           key={key}
           uid={props.uid}
@@ -64,7 +73,7 @@ const ManagerList = (props) => {
           posSettings={posSettings}
           flexPosArray={flexPosArray}
           flexCount={flexCount}
-          playerAssign={playerAssign(key)}
+          playerAssign={playerAssign}
         />
       ))}
     </div>

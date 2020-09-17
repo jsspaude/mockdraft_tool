@@ -9,6 +9,8 @@ const Manager = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { names } = state.userSettings;
   const [name, updateName] = useState(names[props.index] ? names[props.index] : '');
+  const playerAssign = props.playerAssign(props.index);
+
   const newSettingsObject = {
     ...state.userSettings,
     names: {
@@ -53,7 +55,7 @@ const Manager = (props) => {
             posSettings={props.posSettings}
             flexPosArray={props.flexPosArray}
             flexCount={props.flexCount}
-            playerAssign={props.playerAssign}
+            playerAssign={playerAssign}
           />
         </tbody>
       </table>
@@ -67,7 +69,7 @@ Manager.propTypes = {
   data: PropTypes.object,
   flexPosArray: PropTypes.array,
   flexCount: PropTypes.number,
-  playerAssign: PropTypes.array,
+  playerAssign: PropTypes.func,
   posSettings: PropTypes.object,
   posStringArray: PropTypes.array,
 };

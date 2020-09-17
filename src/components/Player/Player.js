@@ -5,20 +5,22 @@ import React, {
 import PropTypes from 'prop-types';
 import { CounterContext } from '../CounterContextProvider';
 import Firebase from '../../calls/base';
+import { AuthContext } from '../AuthContextProvider';
 
 const Player = (props) => {
   const { index } = props;
   const [playerData, setPlayerData] = useState(props.data.playerData[index]);
   const [drafted, setDrafted] = useState(false);
   const { counterState, counterDispatch } = useContext(CounterContext);
+  const [uid, setUid] = useContext(AuthContext);
   const { overall, pos, team } = props.details;
-  const posStripped = (position) => position.replace(/[0-9]/g, '');
+  // const posStripped = (position) => position.replace(/[0-9]/g, '');
   const handleDraft = async (e) => {
     e.preventDefault();
     if (props.buttonLabel === 'DRAFT') {
       const newCurrPick = (await counterState.currPick) + 1;
       await Firebase.updateUserData(
-        props.user,
+        uid,
         { currPick: newCurrPick, currStatus: props.newCurrStatus },
         'userSettings/counter',
       );
@@ -33,7 +35,7 @@ const Player = (props) => {
       setDrafted(true);
       props.handlePlayer({ ...playerData, drafted: props.currStatus });
       Firebase.updateUserData(
-        props.user,
+        uid,
         { ...playerData, drafted: props.currStatus },
         `playerData/${index}`,
       );
@@ -52,7 +54,7 @@ const Player = (props) => {
   return (
     <tr className={`player-data ${drafted}`}>
       <td className="name">{overall}</td>
-      <td className="pos">{posStripped(pos)}</td>
+      <td className="pos">{}</td>
       <td className="team">{team}</td>
       <td>
         <button onClick={handleDraft}>{props.buttonLabel}</button>
@@ -73,7 +75,6 @@ Player.propTypes = {
   index: PropTypes.number,
   newCurrStatus: PropTypes.number,
   status: PropTypes.bool,
-  user: PropTypes.string,
 };
 
 export default Player;

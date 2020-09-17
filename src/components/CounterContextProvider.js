@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useReducer, createContext } from 'react';
+import React, { useReducer, useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
+import { DataContext } from './DataContextProvider';
 
 // IMPROVEMENT: switch to a userReducer and use counter from helpers as reducer function
 
@@ -19,7 +20,9 @@ const counterReducer = (state, action) => {
 };
 
 const CounterContextProvider = (props) => {
-  const [counterState, counterDispatch] = useReducer(counterReducer, props.userSettings.counter);
+  const { state, disptch } = useContext(DataContext);
+  const [counterState, counterDispatch] = useReducer(counterReducer, state.userSettings.counter);
+
   return (
     <CounterContext.Provider value={{ counterState, counterDispatch }}>
       {props.children}

@@ -3,12 +3,18 @@ import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { DataContext } from '../DataContextProvider';
 import { CounterContext } from '../CounterContextProvider';
+import { ResultsContext } from '../ResultsContextProvider';
 import { counter } from '../../helpers';
 import Player from '../Player/Player';
 
 const PlayerList = (props) => {
   const { state, dispatch } = useContext(DataContext);
   const { counterState, counterDispatch } = useContext(CounterContext);
+  const { resultsState, resultsDispatch } = useContext(ResultsContext);
+
+  const handlePlayer = (info) => {
+    resultsDispatch({ type: 'draftPlayer', payload: info });
+  };
   const newCurrStatus = counter(counterState.currStatus, state.userSettings.managers);
   const keeperIndexes = () => {
     const keeperIndexArray = [];
@@ -36,9 +42,8 @@ const PlayerList = (props) => {
                 key={key}
                 index={parseInt(key, 10)}
                 details={state.playerData[key]}
-                draftedPlayers={props.draftedPlayers}
-                handlePlayer={props.handlePlayer}
-                user={props.uid}
+                draftedPlayers={resultsState}
+                handlePlayer={handlePlayer}
                 currStatus={counterState.currStatus}
                 keepers={props.keepers}
                 keeperStatus={keeperStatus}

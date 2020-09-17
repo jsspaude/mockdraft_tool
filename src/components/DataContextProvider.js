@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useReducer, useLayoutEffect } from 'react';
+import React, { useReducer, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { createCsvObject } from '../calls/csvData';
 import Firebase from '../calls/base';
+import { AuthContext } from './AuthContextProvider';
 
 const DataContext = React.createContext(null);
 const defaultPos = {
@@ -21,7 +22,6 @@ const defaultPos = {
 };
 
 const initialState = {
-  playerData: {},
   userSettings: {
     counter: {
       currPick: 1,
@@ -32,6 +32,7 @@ const initialState = {
     names: '',
   },
   inProgress: false,
+  playerData: [],
 };
 
 const dataReducer = (state, action) => {
@@ -56,17 +57,6 @@ const dataReducer = (state, action) => {
           },
         },
       };
-    case 'positions':
-      return {
-        ...state,
-        userSettings: {
-          ...state.userSettings,
-          positions: {
-            ...state.userSettings.positions,
-            [action.label]: action.payload,
-          },
-        },
-      };
     case 'managerInput':
       return {
         ...state,
@@ -75,9 +65,20 @@ const dataReducer = (state, action) => {
           managers: action.payload,
         },
       };
+    case 'draftPlayer':
+      return { ...state, ...action.payload };
+    case 'inProgress':
+      return {
+        ...state,
+        inProgress: action.payload,
+      };
+    case 'reset':
+      return {
+        ...state,
+        playerData: { ...action.payload },
+      };
     case 'loadSettings':
       return {
-        ...initialState,
         ...action.payload,
       };
     default:
@@ -85,22 +86,27 @@ const dataReducer = (state, action) => {
   }
 };
 
+const initData = async (uid) => {
+  const response = await Firebase.collectData(uid);
+  if (!response || !response.inProgress) {
+    await createCsvObject(uid).then((data) => {
+      Firebase.setUserData(uid, { ...initialState, playerData: data }, 'data');
+      initialState.playerData = data;
+      return initialState;
+    });
+  }
+  return response;
+};
+
 const DataContextProvider = (props) => {
+  const [uid, setUid] = useContext(AuthContext);
   const [state, dispatch] = useReducer(dataReducer, initialState);
 
-  useLayoutEffect(() => {
-    async function initData() {
-      const response = await Firebase.collectData(props.uid);
-      dispatch({ type: 'loadSettings', payload: response });
-      if (!response) {
-        await createCsvObject(props.uid).then((data) => {
-          Firebase.setUserData(props.uid, { ...initialState, playerData: data }, 'data');
-          return dispatch({ type: 'loadSettings', payload: { playerData: data } });
-        });
-      }
-    }
-    initData();
-  }, [props.uid]);
+  useEffect(() => {
+    initData(uid).then((res) => {
+      dispatch({ type: 'loadSettings', payload: res });
+    });
+  }, [uid]);
 
   return <DataContext.Provider value={{ state, dispatch }}>{props.children}</DataContext.Provider>;
 };

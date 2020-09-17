@@ -36,7 +36,9 @@ const ManagerPositions = (props) => {
         reject(console.log(err));
       }
     });
-    playerArray().then((res) => setPlayerData(res));
+    playerArray().then((res) => {
+      setPlayerData(res);
+    });
   }, [props]);
 
   return props.posStringArray.map((pos, key) => (

@@ -1,14 +1,10 @@
 /* eslint-disable no-unused-vars */
-import React, {
-  useState, useLayoutEffect, useContext, useEffect,
-} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
 import Settings from '../Settings/Settings';
 import { DataContext, initialState } from '../DataContextProvider';
 import { AuthContext } from '../AuthContextProvider';
-import ResultsContextProvider from '../ResultsContextProvider';
-import SettingsContextProvider from '../SettingsContextProvider';
 import '../../sass/style.scss';
 import Draft from '../Draft/Draft';
 import Firebase from '../../calls/base';
@@ -24,13 +20,22 @@ const components = [
   date.getSeconds(),
   date.getMilliseconds(),
 ];
-
 const id = components.join('');
 
 const App = (props) => {
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
   const { state, dispatch } = useContext(DataContext);
+  const [pending, setPending] = useState(true);
   const history = useHistory();
+
+  console.log(state);
+
+  useEffect(() => {
+    // history.push({ pathname: `/${uid}` });
+    if (state.inProgress) {
+      setPending(false);
+    }
+  }, []);
 
   const handleReset = async (e) => {
     e.preventDefault();
@@ -40,9 +45,6 @@ const App = (props) => {
         Firebase.setUserData(uid, { ...initialState, playerData: data }, 'data');
       });
     }));
-    history.push({
-      pathname: '/',
-    });
   };
 
   const handleWipe = async (e) => {
@@ -50,10 +52,26 @@ const App = (props) => {
     Firebase.removeData(uid, '/results');
   };
 
-  // useLayoutEffect(() => {
-  //   dispatch({ type: 'inProgress', payload: true });
-  // }, [dispatch]);
+  if (state.inProgress) {
+    return (
+      <div className="App">
+        <ul>
+          <li>
+            <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
+              RESET
+            </Link>
+          </li>
+          <li>
+            <Link to={'/'} className="reset" onClick={(e) => handleWipe(e)}>
+              WIPE HISTORY
+            </Link>
+          </li>
+        </ul>
 
+        <Draft {...props} />
+      </div>
+    );
+  }
   return (
     <div className="App">
       <ul>
@@ -68,12 +86,7 @@ const App = (props) => {
           </Link>
         </li>
       </ul>
-      <SettingsContextProvider>
-        <ResultsContextProvider>
-          {!state.inProgress && <Settings {...props} />}
-          {state.inProgress && <Draft {...props} />}
-        </ResultsContextProvider>
-      </SettingsContextProvider>
+      <Settings {...props} />
     </div>
   );
 };

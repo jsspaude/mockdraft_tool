@@ -1,15 +1,18 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { AuthContext } from '../AuthContextProvider';
 import Firebase from '../../calls/base';
 
 const Header = (props) => {
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
+  const history = useHistory();
   const handleLogout = () => {
     Firebase.logout();
-    setUid(false);
+    history.push({
+      pathname: '/login',
+    });
   };
   return (
     <ul className="nav">
@@ -25,7 +28,7 @@ const Header = (props) => {
             <Link to={`${uid}`}>Draft Room</Link>
           </li>
           <li>
-            <Link to="/" className="logout" onClick={(e) => handleLogout(e)}>
+            <Link to="/login" className="logout" onClick={(e) => handleLogout(e)}>
               LOGOUT
             </Link>
           </li>

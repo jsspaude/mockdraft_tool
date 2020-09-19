@@ -18,7 +18,7 @@ const Settings = (props) => {
   const [keeperBool, setKeeperBool] = useState(false);
   const [inProgress, setInProgress] = useState(false);
   const { state, dispatch } = useContext(DataContext);
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
   const { resultsState, resultsDispatch } = useContext(ResultsContext);
   const { settingsState, settingsDispatch } = useContext(SettingsContext);
 
@@ -35,7 +35,15 @@ const Settings = (props) => {
         const round = parseInt(player.round, 10);
         const manager = (parseInt(player.manager, 10) - 1) * 0.01;
         const keeperDrafted = round + manager;
-        updateDraftedStatus(state.playerData[player.index], keeperDrafted, player.index);
+        const draftedData = updateDraftedStatus(
+          state.playerData[player.index],
+          keeperDrafted,
+          player.index,
+        );
+        resultsDispatch({
+          type: 'draftPlayer',
+          payload: draftedData,
+        });
         Firebase.updateUserData(
           uid,
           { ...state.playerData[player.index], drafted: keeperDrafted },
@@ -61,7 +69,7 @@ const Settings = (props) => {
     );
     await Firebase.updateUserData(uid, true, 'inProgress');
     dispatch({ type: 'inProgress', payload: true });
-    if (state.keeperList) {
+    if (settingsState.keeperList) {
       draftKeepers();
     }
   };

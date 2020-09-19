@@ -5,23 +5,22 @@ import Header from './Header/Header';
 import Login from './Login/Login';
 import SignUp from './SignUp/SignUp';
 import App from './App/App';
-import ProtectedRouteHoc from './ProtectedRouteHoc';
-import AuthContextProvider from './AuthContextProvider';
+import PrivateRoute from './PrivateRoute';
+import { AuthContext } from './AuthContextProvider';
 
-const Router = () => (
-    <AuthContextProvider>
-      <BrowserRouter>
-        <Header />
-        <Switch>
-          <Route key="/" exact path="/">
-            <Login />
-          </Route>
-          <Route key="/signup" path="/signup">
-            <SignUp />
-          </Route>
-          <ProtectedRouteHoc component={App} />
-        </Switch>
-      </BrowserRouter>
-    </AuthContextProvider>
-);
+const Router = () => {
+  const { uid, setUid } = React.useContext(AuthContext);
+  const isLoggedIn = !!uid;
+
+  return (
+    <BrowserRouter>
+      <Header />
+      <Switch>
+        <Route exact path="/login" render={(props) => <Login {...props} />} />
+        <PrivateRoute isLoggedIn={isLoggedIn} key="/" exact path={`/${uid}`} component={App} />
+        <Route key="/signup" exact path="/signup" component={SignUp} />
+      </Switch>
+    </BrowserRouter>
+  );
+};
 export default Router;

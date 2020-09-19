@@ -99,7 +99,7 @@ const initData = async (uid) => {
 };
 
 const DataContextProvider = (props) => {
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
   const [state, dispatch] = useReducer(dataReducer, initialState);
 
   useEffect(() => {

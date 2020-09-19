@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useReducer, useContext, useLayoutEffect } from 'react';
+import React, { useReducer, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Firebase from '../calls/base';
 import { DataContext } from './DataContextProvider';
@@ -32,7 +32,7 @@ const resultsDataReducer = (state, action) => {
     case 'init':
       return draftedPlayers(action.payload);
     case 'draftPlayer':
-      return { ...state, ...action.payload };
+      return [...state, { ...action.payload }];
     default:
       return null;
   }
@@ -44,6 +44,10 @@ const ResultsContextProvider = (props) => {
     resultsDataReducer,
     draftedPlayers(state.playerData),
   );
+
+  useEffect(() => {
+    resultsDispatch({ type: 'init', payload: state.playerData });
+  }, [state]);
 
   return (
     <ResultsContext.Provider value={{ resultsState, resultsDispatch }}>

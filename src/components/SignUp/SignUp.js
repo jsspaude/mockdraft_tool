@@ -9,7 +9,7 @@ const SignUp = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
 
   const errorHandler = (e) => {
     setErrors(e.message);

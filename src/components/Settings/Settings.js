@@ -1,26 +1,26 @@
 /* eslint-disable no-unused-vars */
-import React, {
-  useContext, useState, useEffect, useHistory,
-} from 'react';
-import PropTypes from 'prop-types';
+import React, { useContext, useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import Switch from '@material-ui/core/Switch';
 import KeeperList from '../KeeperList/KeeperList';
 import Firebase from '../../calls/base';
 import ManagerSelect from './ManagerSelect';
-import { DataContext } from '../DataContextProvider';
-import { ResultsContext } from '../ResultsContextProvider';
-import { SettingsContext } from '../SettingsContextProvider';
-import { AuthContext } from '../AuthContextProvider';
-import CounterContextProvider from '../CounterContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import { ResultsContext } from '../../contexts/ResultsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
+import CounterContextProvider from '../../contexts/CounterContextProvider';
 import PositionsSelect from './PositionsSelect';
+import { FirebaseContext } from '../../contexts/FirebaseContextProvider';
 
 const Settings = (props) => {
   const [keeperBool, setKeeperBool] = useState(false);
-  const [inProgress, setInProgress] = useState(false);
-  const { state, dispatch } = useContext(DataContext);
+  const { dataState, dataDispatch } = useContext(DataContext);
   const { uid, setUid } = useContext(AuthContext);
   const { resultsState, resultsDispatch } = useContext(ResultsContext);
   const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const { firebaseState, firebaseDispatch } = React.useContext(FirebaseContext);
+  const history = useHistory();
 
   const updateDraftedStatus = (player, status, index) => {
     const change = player;
@@ -36,7 +36,7 @@ const Settings = (props) => {
         const manager = (parseInt(player.manager, 10) - 1) * 0.01;
         const keeperDrafted = round + manager;
         const draftedData = updateDraftedStatus(
-          state.playerData[player.index],
+          dataState.playerData[player.index],
           keeperDrafted,
           player.index,
         );
@@ -46,7 +46,7 @@ const Settings = (props) => {
         });
         Firebase.updateUserData(
           uid,
-          { ...state.playerData[player.index], drafted: keeperDrafted },
+          { ...dataState.playerData[player.index], drafted: keeperDrafted },
           `playerData/${player.index}`,
         );
       }
@@ -55,28 +55,36 @@ const Settings = (props) => {
 
   const handleSettings = async (e) => {
     e.preventDefault();
-    const rounds = await Object.values(settingsState.positions).reduce((a, b) => a + b, 0);
-    settingsDispatch({ type: 'rounds', payload: rounds });
-    await Firebase.updateUserData(
-      uid,
-      {
-        ...state.userSettings,
-        managers: settingsState.managers,
-        rounds,
-        keeperList: settingsState.keeperList,
-      },
-      'userSettings',
-    );
-    await Firebase.updateUserData(uid, true, 'inProgress');
-    dispatch({ type: 'inProgress', payload: true });
     if (settingsState.keeperList) {
       draftKeepers();
     }
+    const rounds = Object.values(settingsState.positions).reduce((a, b) => a + b, 0);
+    dataDispatch({ type: 'inProgress', payload: true });
+    settingsDispatch({ type: 'rounds', payload: rounds });
+    firebaseDispatch({ type: 'initialize', payload: { ...settingsState, ...dataState } });
+    Firebase.updateUserData(uid, {
+      ...dataState,
+      inProgress: true,
+      userSettings: {
+        managers: settingsState.managers,
+        rounds,
+        positions: settingsState.positions,
+        keeperList: settingsState.keeperList,
+        counter: settingsState.counter,
+      },
+    });
+    history.push('/');
   };
 
   const handleKeeperChange = (e) => {
     setKeeperBool(e.target.checked);
   };
+
+  useEffect(() => {
+    if (dataState.inProgress) {
+      history.push(`/${uid}/draft`);
+    }
+  }, []);
 
   useEffect(() => {}, [settingsState.keeperBool]);
   return (
@@ -88,7 +96,7 @@ const Settings = (props) => {
         <div>
           <h3>Set Keepers?</h3>
           <Switch
-            checked={state.checkedB}
+            checked={dataState.checkedB}
             onChange={handleKeeperChange}
             color="primary"
             name="checkedB"
@@ -98,7 +106,7 @@ const Settings = (props) => {
 
         {keeperBool && (
           <CounterContextProvider>
-            <KeeperList settingsDispatch={settingsDispatch} playerData={state.playerData} />
+            <KeeperList settingsDispatch={settingsDispatch} playerData={dataState.playerData} />
           </CounterContextProvider>
         )}
         <button type="submit">Start Draft</button>

@@ -1,23 +1,28 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../DataContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import Firebase from '../../calls/base';
 import ManagerPositions from '../ManagerPositions/ManagerPositions';
 
 const Manager = (props) => {
   const { state, dispatch } = useContext(DataContext);
-  const { names } = state.userSettings;
-  const [name, updateName] = useState(names[props.index] ? names[props.index] : '');
+  const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const [name, updateName] = useState('');
   const playerAssign = props.playerAssign(props.index);
 
   const newSettingsObject = {
-    ...state.userSettings,
+    ...settingsState.names,
     names: {
-      ...state.userSettings.names,
+      ...settingsState.names,
       [props.index]: name,
     },
   };
+
+  useLayoutEffect(() => {
+    updateName(settingsState.names[props.index] ? settingsState.names[props.index] : '');
+  }, []);
 
   const handleName = (e) => {
     updateName(e);

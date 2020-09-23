@@ -1,17 +1,17 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState, useLayoutEffect } from 'react';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
 import PlayerList from '../PlayerList/PlayerList';
 import ManagerList from '../ManagerList/ManagerList';
-import { DataContext } from '../DataContextProvider';
-import ResultsContextProvider from '../ResultsContextProvider';
-import CounterContextProvider from '../CounterContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
+import CounterContextProvider from '../../contexts/CounterContextProvider';
 
 const Draft = (props) => {
-  const { state, dispatch } = useContext(DataContext);
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
 
   return (
     <div className="draft-main">
-      <CounterContextProvider userSettings={state.userSettings}>
+      <CounterContextProvider userSettings={settingsState}>
         <PlayerList {...props} buttonLabel="DRAFT" />
       </CounterContextProvider>
       <ManagerList {...props} />

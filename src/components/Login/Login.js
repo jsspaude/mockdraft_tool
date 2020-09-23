@@ -5,7 +5,7 @@ import {
   withRouter, Link, useHistory, Redirect,
 } from 'react-router-dom';
 import Firebase from '../../calls/base';
-import { AuthContext } from '../AuthContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const Login = () => {
   const [email, setEmail] = useState('');

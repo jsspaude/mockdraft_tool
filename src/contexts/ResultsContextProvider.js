@@ -7,6 +7,7 @@ import { DataContext } from './DataContextProvider';
 const ResultsContext = React.createContext(null);
 
 const draftedPlayers = (playerData) => {
+  console.log(playerData);
   if (playerData) {
     let playerDataArray = [];
     if (Array.isArray(playerData)) {
@@ -39,15 +40,15 @@ const resultsDataReducer = (state, action) => {
 };
 
 const ResultsContextProvider = (props) => {
-  const { state, dispatch } = useContext(DataContext);
+  const { dataState, dataDispatch } = useContext(DataContext);
   const [resultsState, resultsDispatch] = useReducer(
     resultsDataReducer,
-    draftedPlayers(state.playerData),
+    draftedPlayers(dataState.playerData),
   );
 
   useEffect(() => {
-    resultsDispatch({ type: 'init', payload: state.playerData });
-  }, [state]);
+    resultsDispatch({ type: 'init', payload: dataState.playerData });
+  }, [dataState]);
 
   return (
     <ResultsContext.Provider value={{ resultsState, resultsDispatch }}>

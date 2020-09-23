@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../DataContextProvider';
-import { ResultsContext } from '../ResultsContextProvider';
-import { SettingsContext } from '../SettingsContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import { ResultsContext } from '../../contexts/ResultsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import Manager from '../Manager/Manager';
 import { flattenObject } from '../../helpers';
 
@@ -13,12 +13,12 @@ const roundingHelper = (x, key) => {
 };
 
 const ManagerList = (props) => {
-  const { state, dispatch } = useContext(DataContext);
+  const { dataState, dataDispatch } = useContext(DataContext);
   const { resultsState, resultsDispatch } = useContext(ResultsContext);
   const { settingsState, settingsDispatch } = useContext(SettingsContext);
-  const { positions } = state.userSettings;
+  const { positions } = settingsState;
   const playerAssign = (i) => {
-    if (resultsState.length) {
+    if (resultsState && resultsState.length) {
       return resultsState
         .map((p) => (roundingHelper(p, 'drafted') === i ? p : null))
         .filter((item) => item != null);
@@ -42,11 +42,11 @@ const ManagerList = (props) => {
   ];
 
   const posSettings = flattenObject({
-    ...Object.keys(positions)
+    ...Object.keys(settingsState.positions)
       .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
       .map((pos) => ({ [pos]: positions[pos] })),
   });
-  const posStringArray = Object.keys(positions)
+  const posStringArray = Object.keys(settingsState.positions)
     .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
     .map((pos) => Array(positions[pos])
       .fill(pos)
@@ -68,7 +68,7 @@ const ManagerList = (props) => {
           key={key}
           uid={props.uid}
           index={key}
-          data={state}
+          data={dataState}
           posStringArray={posStringArray}
           posSettings={posSettings}
           flexPosArray={flexPosArray}

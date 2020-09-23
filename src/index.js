@@ -1,14 +1,14 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import Router from './components/Router';
-import AuthContextProvider from './components/AuthContextProvider';
+import App from './components/App/App';
+import AuthContextProvider from './contexts/AuthContextProvider';
 
 const rootElement = document.getElementById('main');
 
 ReactDOM.render(
   <AuthContextProvider>
-    <Router />
+    <App />
   </AuthContextProvider>,
   rootElement,
 );

@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useReducer, useContext, useLayoutEffect } from 'react';
-import PropTypes from 'prop-types';
-import Firebase from '../calls/base';
 import { DataContext } from './DataContextProvider';
+import { FirebaseContext } from './FirebaseContextProvider';
 
 const SettingsContext = React.createContext(null);
 
@@ -21,7 +20,17 @@ const defaultPos = {
   QB_WR_RB_TE: 0,
 };
 
-const defaultSettings = { keeperList: null, managers: 10, positions: { ...defaultPos } };
+const defaultSettings = {
+  keeperList: [false],
+  managers: 10,
+  positions: { ...defaultPos },
+  counter: {
+    currPick: 1,
+    currStatus: 1.0,
+    keeperPicks: false,
+  },
+  names: '',
+};
 
 const settingsReducer = (state, action) => {
   switch (action.type) {
@@ -44,6 +53,7 @@ const settingsReducer = (state, action) => {
       return {
         ...state,
         positions: {
+          ...state.positions,
           [action.label]: action.payload,
         },
       };
@@ -52,18 +62,23 @@ const settingsReducer = (state, action) => {
   }
 };
 
+const initData = (state) => {
+  if (state.inProgress) {
+    return { ...state.userSettings };
+  }
+  return defaultSettings;
+};
+
 const SettingsContextProvider = (props) => {
-  const [settingsState, settingsDispatch] = useReducer(settingsReducer, defaultSettings);
+  const { dataState, setDataState } = React.useContext(DataContext);
+  const { firebaseState, setFirebaseState } = React.useContext(FirebaseContext);
+  const [settingsState, settingsDispatch] = useReducer(settingsReducer, initData(dataState));
 
   return (
     <SettingsContext.Provider value={{ settingsState, settingsDispatch }}>
       {props.children}
     </SettingsContext.Provider>
   );
-};
-
-SettingsContextProvider.propTypes = {
-  uid: PropTypes.string,
 };
 
 export { SettingsContext };

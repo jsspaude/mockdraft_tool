@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { SettingsContext } from '../SettingsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -33,7 +33,6 @@ export default function ManagerSelect() {
         <Select
           labelId="managers-select"
           id="select-managers"
-          value={settingsState.managers}
           defaultValue={10}
           onChange={(e) => handleManagerChange(e.target.value)}
         >

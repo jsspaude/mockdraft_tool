@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext } from 'react';
 import PlayerList from '../PlayerList/PlayerList';
-import { SettingsContext } from '../SettingsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 
 const KeeperList = (props) => {
   const [keepers, setKeepers] = useState('');

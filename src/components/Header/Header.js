@@ -2,7 +2,7 @@
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { AuthContext } from '../AuthContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 import Firebase from '../../calls/base';
 
 const Header = (props) => {

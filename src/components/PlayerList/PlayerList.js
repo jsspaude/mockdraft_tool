@@ -1,25 +1,27 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../DataContextProvider';
-import { CounterContext } from '../CounterContextProvider';
-import { ResultsContext } from '../ResultsContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import { CounterContext } from '../../contexts/CounterContextProvider';
+import { ResultsContext } from '../../contexts/ResultsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import { counter } from '../../helpers';
 import Player from '../Player/Player';
 
 const PlayerList = (props) => {
-  const { state, dispatch } = useContext(DataContext);
+  const { dataState, dataDispatch } = useContext(DataContext);
   const { counterState, counterDispatch } = useContext(CounterContext);
   const { resultsState, resultsDispatch } = useContext(ResultsContext);
+  const { settingsState, settingsDispatch } = useContext(SettingsContext);
 
   const handlePlayer = (info) => {
     resultsDispatch({ type: 'draftPlayer', payload: info });
   };
-  const newCurrStatus = counter(counterState.currStatus, state.userSettings.managers);
+  const newCurrStatus = counter(counterState.currStatus, settingsState.managers);
   const keeperIndexes = () => {
     const keeperIndexArray = [];
-    if (state.userSettings.keeperList) {
-      state.userSettings.keeperList.forEach((keeper) => keeperIndexArray.push(keeper.index));
+    if (settingsState.keeperList) {
+      settingsState.keeperList.forEach((keeper) => keeperIndexArray.push(keeper.index));
     }
     return keeperIndexArray;
   };
@@ -35,13 +37,13 @@ const PlayerList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(state.playerData).map((key) => {
+          {Object.keys(dataState.playerData).map((key) => {
             const keeperStatus = keeperIndexes().includes(parseInt(key, 10));
             return (
               <Player
                 key={key}
                 index={parseInt(key, 10)}
-                details={state.playerData[key]}
+                details={dataState.playerData[key]}
                 draftedPlayers={resultsState}
                 handlePlayer={handlePlayer}
                 currStatus={counterState.currStatus}
@@ -50,8 +52,8 @@ const PlayerList = (props) => {
                 handleKeeper={props.handleKeeper}
                 newCurrStatus={newCurrStatus}
                 buttonLabel={props.buttonLabel}
-                data={state}
-                status={!!state.playerData[key].drafted}
+                data={dataState}
+                status={!!dataState.playerData[key].drafted}
               />
             );
           })}

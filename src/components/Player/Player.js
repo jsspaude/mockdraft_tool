@@ -3,9 +3,9 @@ import React, {
   useState, useContext, useEffect, useLayoutEffect,
 } from 'react';
 import PropTypes from 'prop-types';
-import { CounterContext } from '../CounterContextProvider';
+import { CounterContext } from '../../contexts/CounterContextProvider';
 import Firebase from '../../calls/base';
-import { AuthContext } from '../AuthContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const Player = (props) => {
   const { index } = props;

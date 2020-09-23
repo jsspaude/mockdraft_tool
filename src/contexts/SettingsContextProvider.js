@@ -21,7 +21,7 @@ const defaultPos = {
 };
 
 const defaultSettings = {
-  keeperList: [false],
+  keeperList: false,
   managers: 10,
   positions: { ...defaultPos },
   counter: {
@@ -29,20 +29,38 @@ const defaultSettings = {
     currStatus: 1.0,
     keeperPicks: false,
   },
-  names: '',
+  names: [],
 };
 
 const settingsReducer = (state, action) => {
   switch (action.type) {
+    case 'initialize':
+      return { ...state, ...action.payload };
     case 'keeperList':
       return {
         ...state,
         keeperList: action.payload,
       };
+    case 'keeperPicks':
+      return {
+        ...state,
+        counter: {
+          ...state.counter,
+          keeperPicks: action.payload,
+        },
+      };
     case 'managers':
       return {
         ...state,
         managers: action.payload,
+      };
+    case 'managerNames':
+      return {
+        ...state,
+        names: {
+          ...state.names,
+          [action.index]: action.payload,
+        },
       };
     case 'rounds':
       return {
@@ -62,17 +80,16 @@ const settingsReducer = (state, action) => {
   }
 };
 
-const initData = (state) => {
-  if (state.inProgress) {
-    return { ...state.userSettings };
-  }
-  return defaultSettings;
-};
-
 const SettingsContextProvider = (props) => {
   const { dataState, setDataState } = React.useContext(DataContext);
   const { firebaseState, setFirebaseState } = React.useContext(FirebaseContext);
-  const [settingsState, settingsDispatch] = useReducer(settingsReducer, initData(dataState));
+  const [settingsState, settingsDispatch] = useReducer(settingsReducer, defaultSettings);
+
+  React.useLayoutEffect(() => {
+    Promise.resolve(firebaseState).then((res) => {
+      settingsDispatch({ type: 'initialize', payload: res.userSettings });
+    });
+  }, [firebaseState]);
 
   return (
     <SettingsContext.Provider value={{ settingsState, settingsDispatch }}>

@@ -1,27 +1,29 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext, useLayoutEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../../contexts/DataContextProvider';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import Firebase from '../../calls/base';
 import ManagerPositions from '../ManagerPositions/ManagerPositions';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const Manager = (props) => {
-  const { state, dispatch } = useContext(DataContext);
-  const { settingsState, settingsDispatch } = useContext(SettingsContext);
-  const [name, updateName] = useState('');
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
+  const { uid, setUid } = React.useContext(AuthContext);
+  const [name, updateName] = React.useState('');
   const playerAssign = props.playerAssign(props.index);
 
   const newSettingsObject = {
-    ...settingsState.names,
+    ...settingsState,
     names: {
       ...settingsState.names,
       [props.index]: name,
     },
   };
 
-  useLayoutEffect(() => {
-    updateName(settingsState.names[props.index] ? settingsState.names[props.index] : '');
+  React.useLayoutEffect(() => {
+    if (settingsState.names) {
+      updateName(settingsState.names[props.index] ? settingsState.names[props.index] : '');
+    }
   }, []);
 
   const handleName = (e) => {
@@ -30,8 +32,8 @@ const Manager = (props) => {
 
   const handleNameBlur = (e) => {
     updateName(e);
-    dispatch({ type: 'managerNames', payload: name, index: props.index });
-    Firebase.updateUserData(props.uid, newSettingsObject, 'userSettings/');
+    settingsDispatch({ type: 'managerNames', payload: name, index: props.index });
+    Firebase.updateUserData(uid, newSettingsObject, 'userSettings/');
   };
 
   return (

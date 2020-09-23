@@ -14,6 +14,7 @@ import { DataContext, initialState } from '../contexts/DataContextProvider';
 import { SettingsContext } from '../contexts/SettingsContextProvider';
 import Firebase from '../calls/base';
 import { createCsvObject } from '../calls/csvData';
+import CounterContextProvider from '../contexts/CounterContextProvider';
 
 const date = new Date();
 const components = [
@@ -39,17 +40,9 @@ const Router = () => {
     if (dataState.inProgress) {
       setPending(false);
     }
+    setPending(false);
   }, [dataState.inProgress]);
 
-  const handleReset = async (e) => {
-    e.preventDefault();
-    const resultsObject = { playerData: dataState.playerData, posData: settingsState.positions };
-    await Firebase.updateResultsData(uid, resultsObject, id).then(() => Firebase.removeData(uid, '/data').then(() => {
-      createCsvObject(uid).then((data) => {
-        Firebase.setUserData(uid, { ...initialState, playerData: data }, 'data');
-      });
-    }));
-  };
   if (!pending) {
     return (
       <BrowserRouter>

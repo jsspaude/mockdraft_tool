@@ -7,11 +7,9 @@ import { SettingsContext } from './SettingsContextProvider';
 const CounterContext = createContext(null);
 
 const initialState = {
-  counter: {
-    currPick: 1,
-    currStatus: 1.0,
-    keeperPicks: {},
-  },
+  currPick: 1,
+  currStatus: 1.0,
+  keeperPicks: [],
 };
 
 const counterReducer = (state, action) => {
@@ -21,9 +19,11 @@ const counterReducer = (state, action) => {
         ...action.payload,
       };
     case 'setCurr':
+      console.log(state);
       return {
-        currPick: action.payload.currPick,
-        currStatus: action.payload.currStatus,
+        ...state,
+        currPick: action.currPick,
+        currStatus: action.currStatus,
       };
     default:
       return null;
@@ -32,12 +32,11 @@ const counterReducer = (state, action) => {
 
 const CounterContextProvider = (props) => {
   const { settingsState, settingsDisptch } = useContext(SettingsContext);
-
   const [counterState, counterDispatch] = useReducer(counterReducer, initialState);
 
   useLayoutEffect(() => {
     counterDispatch({ type: 'initialize', payload: settingsState.counter });
-  }, []);
+  }, [settingsState.counter]);
   return (
     <CounterContext.Provider value={{ counterState, counterDispatch }}>
       {props.children}

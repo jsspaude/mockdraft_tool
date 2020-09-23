@@ -33,6 +33,7 @@ const FirebaseContextProvider = (props) => {
       firebaseState.then((res) => firebaseDispatch({ type: 'initialize', payload: res }));
       setPending(false);
     }
+    setPending(false);
   }, []);
 
   if (!pending) {

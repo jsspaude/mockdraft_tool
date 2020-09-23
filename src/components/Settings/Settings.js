@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState, useEffect } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import Switch from '@material-ui/core/Switch';
 import KeeperList from '../KeeperList/KeeperList';
@@ -14,13 +14,21 @@ import PositionsSelect from './PositionsSelect';
 import { FirebaseContext } from '../../contexts/FirebaseContextProvider';
 
 const Settings = (props) => {
-  const [keeperBool, setKeeperBool] = useState(false);
-  const { dataState, dataDispatch } = useContext(DataContext);
-  const { uid, setUid } = useContext(AuthContext);
-  const { resultsState, resultsDispatch } = useContext(ResultsContext);
-  const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const [keeperBool, setKeeperBool] = React.useState(false);
+  const { dataState, dataDispatch } = React.useContext(DataContext);
+  const { uid, setUid } = React.useContext(AuthContext);
+  const { resultsState, resultsDispatch } = React.useContext(ResultsContext);
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
   const { firebaseState, firebaseDispatch } = React.useContext(FirebaseContext);
   const history = useHistory();
+
+  React.useEffect(() => {
+    if (dataState.inProgress) {
+      history.push(`/${uid}/draft`);
+    }
+  }, []);
+
+  React.useEffect(() => {}, [settingsState.keeperBool]);
 
   const updateDraftedStatus = (player, status, index) => {
     const change = player;
@@ -30,6 +38,7 @@ const Settings = (props) => {
   };
 
   const draftKeepers = async () => {
+    const keeperPicksArray = [];
     await settingsState.keeperList.forEach((player) => {
       if (player.round && player.manager) {
         const round = parseInt(player.round, 10);
@@ -44,6 +53,7 @@ const Settings = (props) => {
           type: 'draftPlayer',
           payload: draftedData,
         });
+        keeperPicksArray.push(draftedData.drafted);
         Firebase.updateUserData(
           uid,
           { ...dataState.playerData[player.index], drafted: keeperDrafted },
@@ -51,42 +61,43 @@ const Settings = (props) => {
         );
       }
     });
+    return keeperPicksArray;
   };
 
   const handleSettings = async (e) => {
     e.preventDefault();
+    const updateContexts = (res) => {
+      const keepers = res || false;
+      const rounds = Object.values(settingsState.positions).reduce((a, b) => a + b, 0);
+      dataDispatch({ type: 'inProgress', payload: true });
+      settingsDispatch({ type: 'rounds', payload: rounds });
+      settingsDispatch({ type: 'keeperPicks', payload: keepers });
+      Firebase.updateUserData(uid, {
+        ...dataState,
+        inProgress: true,
+        userSettings: {
+          managers: settingsState.managers,
+          rounds,
+          positions: settingsState.positions,
+          keeperList: settingsState.keeperList,
+          counter: {
+            ...settingsState.counter,
+            keeperPicks: keepers,
+          },
+          names: settingsState.names,
+        },
+      });
+    };
     if (settingsState.keeperList) {
-      draftKeepers();
+      return draftKeepers().then((res) => updateContexts(res));
     }
-    const rounds = Object.values(settingsState.positions).reduce((a, b) => a + b, 0);
-    dataDispatch({ type: 'inProgress', payload: true });
-    settingsDispatch({ type: 'rounds', payload: rounds });
-    firebaseDispatch({ type: 'initialize', payload: { ...settingsState, ...dataState } });
-    Firebase.updateUserData(uid, {
-      ...dataState,
-      inProgress: true,
-      userSettings: {
-        managers: settingsState.managers,
-        rounds,
-        positions: settingsState.positions,
-        keeperList: settingsState.keeperList,
-        counter: settingsState.counter,
-      },
-    });
-    history.push('/');
+    return updateContexts();
   };
 
   const handleKeeperChange = (e) => {
     setKeeperBool(e.target.checked);
   };
 
-  useEffect(() => {
-    if (dataState.inProgress) {
-      history.push(`/${uid}/draft`);
-    }
-  }, []);
-
-  useEffect(() => {}, [settingsState.keeperBool]);
   return (
     <div>
       <form className="user-settings" onSubmit={(e) => handleSettings(e)}>

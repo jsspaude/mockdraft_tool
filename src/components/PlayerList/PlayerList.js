@@ -1,23 +1,46 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 import { DataContext } from '../../contexts/DataContextProvider';
 import { CounterContext } from '../../contexts/CounterContextProvider';
 import { ResultsContext } from '../../contexts/ResultsContextProvider';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import { counter } from '../../helpers';
 import Player from '../Player/Player';
+import Firebase from '../../calls/base';
 
 const PlayerList = (props) => {
-  const { dataState, dataDispatch } = useContext(DataContext);
-  const { counterState, counterDispatch } = useContext(CounterContext);
-  const { resultsState, resultsDispatch } = useContext(ResultsContext);
-  const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const { uid, setUid } = React.useContext(AuthContext);
+  const { dataState, dataDispatch } = React.useContext(DataContext);
+  const { counterState, counterDispatch } = React.useContext(CounterContext);
+  const { resultsState, resultsDispatch } = React.useContext(ResultsContext);
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
+  const newCurrStatus = counter(counterState.currStatus, settingsState.managers);
 
   const handlePlayer = (info) => {
     resultsDispatch({ type: 'draftPlayer', payload: info });
+    Firebase.updateUserData(
+      uid,
+      { ...info, drafted: counterState.currStatus },
+      `playerData/${info.index}`,
+    );
   };
-  const newCurrStatus = counter(counterState.currStatus, settingsState.managers);
+
+  const handleCounter = () => {
+    const newCurrPick = counterState.currPick + 1;
+    Firebase.updateUserData(
+      uid,
+      { keeperPicks: counterState.keeperPicks, currPick: newCurrPick, currStatus: newCurrStatus },
+      'userSettings/counter',
+    );
+    counterDispatch({
+      type: 'setCurr',
+      currPick: newCurrPick,
+      currStatus: newCurrStatus,
+    });
+  };
+
   const keeperIndexes = () => {
     const keeperIndexArray = [];
     if (settingsState.keeperList) {
@@ -25,6 +48,12 @@ const PlayerList = (props) => {
     }
     return keeperIndexArray;
   };
+
+  React.useEffect(() => {
+    if (counterState.keeperPicks && counterState.keeperPicks.includes(counterState.currStatus)) {
+      handleCounter();
+    }
+  }, [counterState.keeperPicks, counterState.currStatus, newCurrStatus, settingsState.counter]);
 
   return (
     <div className="player-list">
@@ -50,7 +79,7 @@ const PlayerList = (props) => {
                 keepers={props.keepers}
                 keeperStatus={keeperStatus}
                 handleKeeper={props.handleKeeper}
-                newCurrStatus={newCurrStatus}
+                handleCounter={handleCounter}
                 buttonLabel={props.buttonLabel}
                 data={dataState}
                 status={!!dataState.playerData[key].drafted}

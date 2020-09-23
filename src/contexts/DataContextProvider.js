@@ -14,8 +14,6 @@ const initialState = {
 
 const dataReducer = (state, action) => {
   switch (action.type) {
-    case 'draftPlayer':
-      return { ...state, ...action.payload };
     case 'inProgress':
       return {
         ...state,

@@ -1,17 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import firebase from 'firebase/app';
-import {
-  withRouter, Link, useHistory, Redirect,
-} from 'react-router-dom';
+import { withRouter, Link, useHistory } from 'react-router-dom';
 import Firebase from '../../calls/base';
 import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setErrors] = useState('');
-  const { uid, setUid } = useContext(AuthContext);
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [error, setErrors] = React.useState('');
+  const { uid, setUid } = React.seContext(AuthContext);
   const history = useHistory();
 
   const errorHandler = (e) => {
@@ -65,7 +63,7 @@ const Login = () => {
         <p className="">
           Need to sign up?
           <Link to="/signup" className="">
-            Join here
+            Signup Here
           </Link>
         </p>
       </form>

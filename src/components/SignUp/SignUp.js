@@ -1,15 +1,16 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext, useLayoutEffect } from 'react';
-import { withRouter } from 'react-router-dom';
+import React from 'react';
+import { withRouter, Link, useHistory } from 'react-router-dom';
 import firebase from 'firebase/app';
 import Firebase from '../../calls/base';
 import { AuthContext } from '../../contexts/AuthContextProvider';
 
-const SignUp = ({ history }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setErrors] = useState('');
-  const { uid, setUid } = useContext(AuthContext);
+const SignUp = () => {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [error, setErrors] = React.useState('');
+  const { uid, setUid } = React.useContext(AuthContext);
+  const history = useHistory();
 
   const errorHandler = (e) => {
     setErrors(e.message);
@@ -18,21 +19,27 @@ const SignUp = ({ history }) => {
   const handleForm = (e) => {
     e.preventDefault();
     Firebase.createUser(email, password, errorHandler);
-  };
-
-  useLayoutEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        setUid(user.uid);
+        setUid({ type: 'loggedIn', payload: user.uid });
         history.push(`/${user.uid}`);
-        // ReferencePoint use css to help with login flicker https://github.com/firebase/quickstart-js/issues/58
       }
     });
-  });
+  };
+
+  const handleGoogleLogin = () => {
+    Firebase.authenticate('Google');
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUid({ type: 'loggedIn', payload: user.uid });
+        history.push(`/${user.uid}`);
+      }
+    });
+  };
 
   return (
     <div>
-      <h1>Join</h1>
+      <h1>Signup</h1>
       <form onSubmit={(e) => handleForm(e)}>
         <input
           value={email}
@@ -50,9 +57,15 @@ const SignUp = ({ history }) => {
         />
         <button type="submit">Login</button>
         <span>{error}</span>
+        <p className="">
+          Already have an account?
+          <Link to="/login" className="">
+            Login Here
+          </Link>
+        </p>
       </form>
       <nav className="login">
-        <button className="google" onClick={() => Firebase.authenticate('Google')}>
+        <button className="google" onClick={() => handleGoogleLogin()}>
           Login With Google
         </button>
       </nav>

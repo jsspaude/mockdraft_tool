@@ -41,8 +41,6 @@ const DataContextProvider = (props) => {
   const { firebaseState, setFirebaseState } = React.useContext(FirebaseContext);
   const [dataState, dataDispatch] = React.useReducer(dataReducer, initialState);
 
-  // USE THE PROMISE CREATED FROM FIREBASE CONTEXT TO SYPHON OFF INTO LOWER CONTEXTS
-
   React.useLayoutEffect(() => {
     if (uid) {
       const initData = () => {
@@ -64,7 +62,7 @@ const DataContextProvider = (props) => {
       };
       initData();
     }
-  }, [uid]);
+  }, [uid, firebaseState]);
 
   return (
     <DataContext.Provider value={{ dataState, dataDispatch }}>

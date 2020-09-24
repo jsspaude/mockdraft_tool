@@ -25,25 +25,13 @@ const baseReducer = (state, action) => {
 
 const FirebaseContextProvider = (props) => {
   const { uid, setUid } = useContext(AuthContext);
-  const [pending, setPending] = React.useState(true);
   const [firebaseState, firebaseDispatch] = React.useReducer(baseReducer, initBase(uid));
 
-  React.useEffect(() => {
-    if (uid) {
-      firebaseState.then((res) => firebaseDispatch({ type: 'initialize', payload: res }));
-      setPending(false);
-    }
-    setPending(false);
-  }, []);
-
-  if (!pending) {
-    return (
-      <FirebaseContext.Provider value={{ firebaseState, firebaseDispatch }}>
-        {props.children}
-      </FirebaseContext.Provider>
-    );
-  }
-  return <>Loading</>;
+  return (
+    <FirebaseContext.Provider value={{ firebaseState, firebaseDispatch }}>
+      {props.children}
+    </FirebaseContext.Provider>
+  );
 };
 
 export { FirebaseContext };

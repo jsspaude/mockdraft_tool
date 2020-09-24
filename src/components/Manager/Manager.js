@@ -24,7 +24,7 @@ const Manager = (props) => {
     if (settingsState.names) {
       updateName(settingsState.names[props.index] ? settingsState.names[props.index] : '');
     }
-  }, []);
+  }, [props.index, settingsState.names]);
 
   const handleName = (e) => {
     updateName(e);

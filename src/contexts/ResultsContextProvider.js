@@ -21,7 +21,6 @@ const resultsDataReducer = (state, action) => {
     case 'init':
       return draftedPlayers(action.payload);
     case 'draftPlayer':
-      console.log(state);
       return [...state, { ...action.payload }];
     default:
       return null;

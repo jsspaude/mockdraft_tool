@@ -19,7 +19,6 @@ const counterReducer = (state, action) => {
         ...action.payload,
       };
     case 'setCurr':
-      console.log(state);
       return {
         ...state,
         currPick: action.currPick,

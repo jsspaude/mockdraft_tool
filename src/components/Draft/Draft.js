@@ -48,7 +48,7 @@ const Draft = (props) => {
 
   React.useEffect(() => {
     history.push(`/${uid}/draft`);
-  }, []);
+  }, [history, uid]);
 
   return (
     <div className="draft-main">

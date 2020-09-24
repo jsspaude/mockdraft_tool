@@ -26,7 +26,7 @@ const Settings = (props) => {
     if (dataState.inProgress) {
       history.push(`/${uid}/draft`);
     }
-  }, []);
+  }, [dataState.inProgress, history, uid]);
 
   React.useEffect(() => {}, [settingsState.keeperBool]);
 

@@ -27,7 +27,7 @@ const PlayerList = (props) => {
     );
   };
 
-  const handleCounter = () => {
+  const handleCounter = React.useCallback(() => {
     const newCurrPick = counterState.currPick + 1;
     Firebase.updateUserData(
       uid,
@@ -39,7 +39,7 @@ const PlayerList = (props) => {
       currPick: newCurrPick,
       currStatus: newCurrStatus,
     });
-  };
+  }, [counterDispatch, counterState.currPick, counterState.keeperPicks, newCurrStatus, uid]);
 
   const keeperIndexes = () => {
     const keeperIndexArray = [];
@@ -53,7 +53,13 @@ const PlayerList = (props) => {
     if (counterState.keeperPicks && counterState.keeperPicks.includes(counterState.currStatus)) {
       handleCounter();
     }
-  }, [counterState.keeperPicks, counterState.currStatus, newCurrStatus, settingsState.counter]);
+  }, [
+    counterState.keeperPicks,
+    counterState.currStatus,
+    newCurrStatus,
+    settingsState.counter,
+    handleCounter,
+  ]);
 
   return (
     <div className="player-list">

@@ -9,7 +9,7 @@ const Login = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setErrors] = React.useState('');
-  const { uid, setUid } = React.seContext(AuthContext);
+  const { uid, setUid } = React.useContext(AuthContext);
   const history = useHistory();
 
   const errorHandler = (e) => {

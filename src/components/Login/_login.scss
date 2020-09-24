@@ -1,15 +1,58 @@
-.googleBtn {
-  width: 225px;
-  margin: 0 0 50px 0;
+.login-container {
+  width: 100%;
+  height: 75vh;
   display: flex;
   justify-content: center;
-  font-size: 16px;
+  align-items: center;
 
-  img {
-    width: 16px;
-    height: 16px;
-    padding: 0;
-    margin: 0 5px;
-    vertical-align: middle;
+  h1 {
+    text-align: center;
+  }
+
+  .login {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    form {
+      width: 75%;
+
+      .form-top {
+        width: 100%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        .form-inputs {
+          width: 100%;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-around;
+        }
+      }
+
+      .form-bottom {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        div {
+          width: 50%;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+
+          button {
+            margin: 10px;
+          }
+        }
+      }
+    }
   }
 }

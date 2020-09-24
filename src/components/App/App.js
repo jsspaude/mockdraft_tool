@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext } from 'react';
-import Router from '../Router';
+import React from 'react';
 import DataContextProvider from '../../contexts/DataContextProvider';
 import SettingsContextProvider from '../../contexts/SettingsContextProvider';
 import '../../sass/style.scss';
 import FirebaseContextProvider from '../../contexts/FirebaseContextProvider';
 import CounterContextProvider from '../../contexts/CounterContextProvider';
+import Router from '../Router';
 
 const App = (props) => (
   <div className="App">

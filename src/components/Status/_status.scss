@@ -1,0 +1,10 @@
+.status-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
+  div {
+    padding: 30px;
+  }
+}

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import {
   BrowserRouter, Switch, Route, useHistory,
 } from 'react-router-dom';
@@ -10,23 +10,8 @@ import Draft from './Draft/Draft';
 import Settings from './Settings/Settings';
 import PrivateRoute from './PrivateRoute';
 import { AuthContext } from '../contexts/AuthContextProvider';
-import { DataContext, initialState } from '../contexts/DataContextProvider';
+import { DataContext } from '../contexts/DataContextProvider';
 import { SettingsContext } from '../contexts/SettingsContextProvider';
-import Firebase from '../calls/base';
-import { createCsvObject } from '../calls/csvData';
-import CounterContextProvider from '../contexts/CounterContextProvider';
-
-const date = new Date();
-const components = [
-  date.getYear(),
-  date.getMonth(),
-  date.getDate(),
-  date.getHours(),
-  date.getMinutes(),
-  date.getSeconds(),
-  date.getMilliseconds(),
-];
-const id = components.join('');
 
 const Router = () => {
   const { uid, setUid } = React.useContext(AuthContext);

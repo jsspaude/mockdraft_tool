@@ -38,37 +38,45 @@ const SignUp = () => {
   };
 
   return (
-    <div>
-      <h1>Signup</h1>
-      <form onSubmit={(e) => handleForm(e)}>
-        <input
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          name="email"
-          type="email"
-          placeholder="email"
-        />
-        <input
-          onChange={(e) => setPassword(e.target.value)}
-          name="password"
-          value={password}
-          type="password"
-          placeholder="password"
-        />
-        <button type="submit">Login</button>
-        <span>{error}</span>
-        <p className="">
-          Already have an account?
-          <Link to="/login" className="">
-            Login Here
-          </Link>
-        </p>
-      </form>
-      <nav className="login">
-        <button className="google" onClick={() => handleGoogleLogin()}>
-          Login With Google
-        </button>
-      </nav>
+    <div className="signup-container">
+      <div className="signup">
+        <h1>Sign-Up</h1>
+        <form onSubmit={(e) => handleForm(e)}>
+          <div className="form-top">
+            <div className="form-inputs">
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                name="email"
+                type="email"
+                placeholder="email"
+              />
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={password}
+                type="password"
+                placeholder="password"
+              />
+            </div>
+            <span>{error}</span>
+          </div>
+          <div className="form-bottom">
+            <div className="form-buttons">
+              <button type="submit">Sign-Up</button>
+              <button className="google" onClick={() => handleGoogleLogin()}>
+                Login with Google
+              </button>
+            </div>
+            <div className="form-links">
+              <p className="">Already have an account?</p>
+              <Link to="/login" className="">
+                Login Here
+              </Link>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

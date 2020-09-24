@@ -78,9 +78,12 @@ class Firebase {
   }
 
   updateUserData = (uid, dataValue, dataKey) => {
-    const updates = {};
-    updates[`/${dataKey}`] = dataValue;
-    return this.dataRef(uid).update(updates);
+    if (dataKey) {
+      const updates = {};
+      updates[`/${dataKey}`] = dataValue;
+      return this.dataRef(uid).update(updates);
+    }
+    return this.dataRef(uid).update(dataValue);
   };
 
   updateResultsData = (uid, dataValue, dataKey) => new Promise((resolve, reject) => {

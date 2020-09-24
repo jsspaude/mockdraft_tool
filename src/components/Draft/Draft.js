@@ -1,67 +1,75 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useState, useLayoutEffect } from 'react';
+import React from 'react';
+import { useHistory, Link } from 'react-router-dom';
 import PlayerList from '../PlayerList/PlayerList';
 import ManagerList from '../ManagerList/ManagerList';
-import { DataContext } from '../DataContextProvider';
-import CounterContextProvider from '../CounterContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
+import CounterContextProvider from '../../contexts/CounterContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import Firebase from '../../calls/base';
+import { createCsvObject } from '../../calls/csvData';
 
-const draftedPlayers = (playerData) => {
-  if (playerData) {
-    let playerDataArray = [];
-    if (Array.isArray(playerData)) {
-      playerDataArray = playerData;
-    } else {
-      playerDataArray = Object.entries(playerData);
-    }
-    const req = playerDataArray
-      .map((player) => {
-        if (player.drafted !== false) {
-          return player;
-        }
-        return null;
-      })
-      .filter((item) => item != null);
-    return req;
-  }
-  return null;
-};
+const date = new Date();
+const components = [
+  date.getYear(),
+  date.getMonth(),
+  date.getDate(),
+  date.getHours(),
+  date.getMinutes(),
+  date.getSeconds(),
+  date.getMilliseconds(),
+];
+const id = components.join('');
 
 const Draft = (props) => {
-  const { state, dispatch } = useContext(DataContext);
-  const [drafted, setDrafted] = useState(draftedPlayers(state.playerData));
+  const { uid, setUid } = React.useContext(AuthContext);
+  const { dataState, dataDispatch } = React.useContext(DataContext);
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
+  const history = useHistory();
 
-  const handlePlayer = (info) => {
-    const newDrafted = [...drafted, info];
-    setDrafted(newDrafted);
+  const handleReset = async (e) => {
+    e.preventDefault();
+    const resultsObject = { playerData: dataState.playerData, posData: settingsState.positions };
+    await Firebase.updateResultsData(uid, resultsObject, id).then(() => Firebase.removeData(uid, '/data').then(() => {
+      createCsvObject(uid).then((data) => {
+        Firebase.setUserData(uid, { playerData: data }, 'data');
+        dataDispatch({ type: 'reset', payload: data });
+        settingsDispatch({ type: 'reset' });
+      });
+      history.push('/');
+    }));
   };
 
-  useLayoutEffect(() => {
-    if (state.userSettings.keeperList) {
-      state.userSettings.keeperList.forEach((player) => {
-        const round = parseInt(player.round, 10);
-        const manager = (parseInt(player.manager, 10) - 1) * 0.01;
-        const keeperDrafted = round + manager;
-        handlePlayer({ ...state.playerData[player.index], drafted: keeperDrafted });
-      });
-    }
-    // DISABLED ESLINT EXHAUSTIVE DEPENDENCIES DUE TO IT'S CREATION OF A LOOP
-    // eslint-disable-next-line
-  }, []);
+  const handleWipe = async (e) => {
+    e.preventDefault();
+    Firebase.removeData(uid, '/results');
+  };
+
+  React.useEffect(() => {
+    history.push(`/${uid}/draft`);
+  }, [history, uid]);
 
   return (
     <div className="draft-main">
-      <CounterContextProvider userSettings={state.userSettings}>
-        <PlayerList
-          {...props}
-          draftedPlayers={drafted}
-          buttonLabel="DRAFT"
-          handlePlayer={handlePlayer}
-        />
+      <ul>
+        <li>
+          <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
+            RESET
+          </Link>
+        </li>
+        <li>
+          <Link to={'/'} className="reset" onClick={(e) => handleWipe(e)}>
+            WIPE HISTORY
+          </Link>
+        </li>
+      </ul>
+      <CounterContextProvider userSettings={settingsState}>
+        <PlayerList {...props} buttonLabel="DRAFT" />
       </CounterContextProvider>
-      <ManagerList draftedPlayers={drafted} {...props} />
+      <ManagerList {...props} />
     </div>
   );
 };
 
-export { draftedPlayers };
 export default Draft;

@@ -1,15 +1,18 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext, useLayoutEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import firebase from 'firebase/app';
-import { withRouter, Link } from 'react-router-dom';
+import {
+  withRouter, Link, useHistory, Redirect,
+} from 'react-router-dom';
 import Firebase from '../../calls/base';
-import { AuthContext } from '../AuthContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
-const Login = ({ history }) => {
+const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
+  const history = useHistory();
 
   const errorHandler = (e) => {
     setErrors(e.message);
@@ -18,17 +21,23 @@ const Login = ({ history }) => {
   const handleForm = (e) => {
     e.preventDefault();
     Firebase.login(email, password, errorHandler);
-  };
-
-  useLayoutEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        setUid(user.uid);
+        setUid({ type: 'loggedIn', payload: user.uid });
         history.push(`/${user.uid}`);
-        // ReferencePoint use css to help with login flicker https://github.com/firebase/quickstart-js/issues/58
       }
     });
-  });
+  };
+
+  const handleGoogleLogin = () => {
+    Firebase.authenticate('Google');
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setUid({ type: 'loggedIn', payload: user.uid });
+        history.push(`/${user.uid}`);
+      }
+    });
+  };
 
   return (
     <div>
@@ -61,7 +70,7 @@ const Login = ({ history }) => {
         </p>
       </form>
       <nav className="login">
-        <button className="google" onClick={() => Firebase.authenticate('Google')}>
+        <button className="google" onClick={() => handleGoogleLogin()}>
           Login With Google
         </button>
       </nav>

@@ -1,21 +1,30 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../DataContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import Firebase from '../../calls/base';
 import ManagerPositions from '../ManagerPositions/ManagerPositions';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const Manager = (props) => {
-  const { state, dispatch } = useContext(DataContext);
-  const { names } = state.userSettings;
-  const [name, updateName] = useState(names[props.index] ? names[props.index] : '');
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
+  const { uid, setUid } = React.useContext(AuthContext);
+  const [name, updateName] = React.useState('');
+  const playerAssign = props.playerAssign(props.index);
+
   const newSettingsObject = {
-    ...state.userSettings,
+    ...settingsState,
     names: {
-      ...state.userSettings.names,
+      ...settingsState.names,
       [props.index]: name,
     },
   };
+
+  React.useLayoutEffect(() => {
+    if (settingsState.names) {
+      updateName(settingsState.names[props.index] ? settingsState.names[props.index] : '');
+    }
+  }, [props.index, settingsState.names]);
 
   const handleName = (e) => {
     updateName(e);
@@ -23,8 +32,8 @@ const Manager = (props) => {
 
   const handleNameBlur = (e) => {
     updateName(e);
-    dispatch({ type: 'managerNames', payload: name, index: props.index });
-    Firebase.updateUserData(props.uid, newSettingsObject, 'userSettings/');
+    settingsDispatch({ type: 'managerNames', payload: name, index: props.index });
+    Firebase.updateUserData(uid, newSettingsObject, 'userSettings/');
   };
 
   return (
@@ -53,7 +62,7 @@ const Manager = (props) => {
             posSettings={props.posSettings}
             flexPosArray={props.flexPosArray}
             flexCount={props.flexCount}
-            playerAssign={props.playerAssign}
+            playerAssign={playerAssign}
           />
         </tbody>
       </table>
@@ -67,7 +76,7 @@ Manager.propTypes = {
   data: PropTypes.object,
   flexPosArray: PropTypes.array,
   flexCount: PropTypes.number,
-  playerAssign: PropTypes.array,
+  playerAssign: PropTypes.func,
   posSettings: PropTypes.object,
   posStringArray: PropTypes.array,
 };

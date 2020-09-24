@@ -3,13 +3,13 @@ import React, { useState, useContext, useLayoutEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import firebase from 'firebase/app';
 import Firebase from '../../calls/base';
-import { AuthContext } from '../AuthContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const SignUp = ({ history }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setErrors] = useState('');
-  const [uid, setUid] = useContext(AuthContext);
+  const { uid, setUid } = useContext(AuthContext);
 
   const errorHandler = (e) => {
     setErrors(e.message);

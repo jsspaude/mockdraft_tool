@@ -1,22 +1,65 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../DataContextProvider';
-import { CounterContext } from '../CounterContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import { CounterContext } from '../../contexts/CounterContextProvider';
+import { ResultsContext } from '../../contexts/ResultsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import { counter } from '../../helpers';
 import Player from '../Player/Player';
+import Firebase from '../../calls/base';
 
 const PlayerList = (props) => {
-  const { state, dispatch } = useContext(DataContext);
-  const { counterState, counterDispatch } = useContext(CounterContext);
-  const newCurrStatus = counter(counterState.currStatus, state.userSettings.managers);
+  const { uid, setUid } = React.useContext(AuthContext);
+  const { dataState, dataDispatch } = React.useContext(DataContext);
+  const { counterState, counterDispatch } = React.useContext(CounterContext);
+  const { resultsState, resultsDispatch } = React.useContext(ResultsContext);
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
+  const newCurrStatus = counter(counterState.currStatus, settingsState.managers);
+
+  const handlePlayer = (info) => {
+    resultsDispatch({ type: 'draftPlayer', payload: info });
+    Firebase.updateUserData(
+      uid,
+      { ...info, drafted: counterState.currStatus },
+      `playerData/${info.index}`,
+    );
+  };
+
+  const handleCounter = React.useCallback(() => {
+    const newCurrPick = counterState.currPick + 1;
+    Firebase.updateUserData(
+      uid,
+      { keeperPicks: counterState.keeperPicks, currPick: newCurrPick, currStatus: newCurrStatus },
+      'userSettings/counter',
+    );
+    counterDispatch({
+      type: 'setCurr',
+      currPick: newCurrPick,
+      currStatus: newCurrStatus,
+    });
+  }, [counterDispatch, counterState.currPick, counterState.keeperPicks, newCurrStatus, uid]);
+
   const keeperIndexes = () => {
     const keeperIndexArray = [];
-    if (state.userSettings.keeperList) {
-      state.userSettings.keeperList.forEach((keeper) => keeperIndexArray.push(keeper.index));
+    if (settingsState.keeperList) {
+      settingsState.keeperList.forEach((keeper) => keeperIndexArray.push(keeper.index));
     }
     return keeperIndexArray;
   };
+
+  React.useEffect(() => {
+    if (counterState.keeperPicks && counterState.keeperPicks.includes(counterState.currStatus)) {
+      handleCounter();
+    }
+  }, [
+    counterState.keeperPicks,
+    counterState.currStatus,
+    newCurrStatus,
+    settingsState.counter,
+    handleCounter,
+  ]);
 
   return (
     <div className="player-list">
@@ -29,24 +72,23 @@ const PlayerList = (props) => {
           </tr>
         </thead>
         <tbody>
-          {Object.keys(state.playerData).map((key) => {
+          {Object.keys(dataState.playerData).map((key) => {
             const keeperStatus = keeperIndexes().includes(parseInt(key, 10));
             return (
               <Player
                 key={key}
                 index={parseInt(key, 10)}
-                details={state.playerData[key]}
-                draftedPlayers={props.draftedPlayers}
-                handlePlayer={props.handlePlayer}
-                user={props.uid}
+                details={dataState.playerData[key]}
+                draftedPlayers={resultsState}
+                handlePlayer={handlePlayer}
                 currStatus={counterState.currStatus}
                 keepers={props.keepers}
                 keeperStatus={keeperStatus}
                 handleKeeper={props.handleKeeper}
-                newCurrStatus={newCurrStatus}
+                handleCounter={handleCounter}
                 buttonLabel={props.buttonLabel}
-                data={state}
-                status={!!state.playerData[key].drafted}
+                data={dataState}
+                status={!!dataState.playerData[key].drafted}
               />
             );
           })}

@@ -1,53 +1,38 @@
 /* eslint-disable no-unused-vars */
-import React, {
-  useState, useContext, useEffect, useLayoutEffect,
-} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { CounterContext } from '../CounterContextProvider';
+import { CounterContext } from '../../contexts/CounterContextProvider';
 import Firebase from '../../calls/base';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 
 const Player = (props) => {
   const { index } = props;
-  const [playerData, setPlayerData] = useState(props.data.playerData[index]);
-  const [drafted, setDrafted] = useState(false);
-  const { counterState, counterDispatch } = useContext(CounterContext);
+  const [playerData, setPlayerData] = React.useState(props.data.playerData[index]);
+  const [drafted, setDrafted] = React.useState(false);
+  const { counterState, counterDispatch } = React.useContext(CounterContext);
+  const { uid, setUid } = React.useContext(AuthContext);
   const { overall, pos, team } = props.details;
+
+  React.useLayoutEffect(() => {
+    if (props.status || props.keeperStatus) {
+      setDrafted(true);
+    }
+  }, [props.status, props.keeperStatus]);
+
   const posStripped = (position) => position.replace(/[0-9]/g, '');
+
   const handleDraft = async (e) => {
     e.preventDefault();
     if (props.buttonLabel === 'DRAFT') {
-      const newCurrPick = (await counterState.currPick) + 1;
-      await Firebase.updateUserData(
-        props.user,
-        { currPick: newCurrPick, currStatus: props.newCurrStatus },
-        'userSettings/counter',
-      );
-      setPlayerData({ ...playerData, drafted: props.currStatus });
-      counterDispatch({
-        type: 'setCurr',
-        payload: {
-          currPick: newCurrPick,
-          currStatus: props.newCurrStatus,
-        },
-      });
+      setPlayerData({ ...playerData, drafted: counterState.currStatus });
+      props.handleCounter();
+      props.handlePlayer({ ...playerData, drafted: counterState.currStatus, index });
       setDrafted(true);
-      props.handlePlayer({ ...playerData, drafted: props.currStatus });
-      Firebase.updateUserData(
-        props.user,
-        { ...playerData, drafted: props.currStatus },
-        `playerData/${index}`,
-      );
     } else {
       props.handleKeeper({ ...props.keepers, index });
       setDrafted(true);
     }
   };
-
-  useLayoutEffect(() => {
-    if (props.status || props.keeperStatus) {
-      setDrafted(true);
-    }
-  }, [props.status, props.keeperStatus]);
 
   return (
     <tr className={`player-data ${drafted}`}>
@@ -73,7 +58,6 @@ Player.propTypes = {
   index: PropTypes.number,
   newCurrStatus: PropTypes.number,
   status: PropTypes.bool,
-  user: PropTypes.string,
 };
 
 export default Player;

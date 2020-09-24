@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext } from 'react';
+import React, { useContext, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
-import { DataContext } from '../DataContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
+import { ResultsContext } from '../../contexts/ResultsContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import Manager from '../Manager/Manager';
 import { flattenObject } from '../../helpers';
 
@@ -11,11 +13,18 @@ const roundingHelper = (x, key) => {
 };
 
 const ManagerList = (props) => {
-  const { state, dispatch } = useContext(DataContext);
-  const { positions } = state.userSettings;
-  const playerAssign = (i) => props.draftedPlayers
-    .map((p) => (roundingHelper(p, 'drafted') === i ? p : null))
-    .filter((item) => item != null);
+  const { dataState, dataDispatch } = useContext(DataContext);
+  const { resultsState, resultsDispatch } = useContext(ResultsContext);
+  const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const { positions } = settingsState;
+  const playerAssign = (i) => {
+    if (resultsState && resultsState.length) {
+      return resultsState
+        .map((p) => (roundingHelper(p, 'drafted') === i ? p : null))
+        .filter((item) => item != null);
+    }
+    return [];
+  };
 
   const posOrder = [
     'QB',
@@ -33,11 +42,11 @@ const ManagerList = (props) => {
   ];
 
   const posSettings = flattenObject({
-    ...Object.keys(positions)
+    ...Object.keys(settingsState.positions)
       .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
       .map((pos) => ({ [pos]: positions[pos] })),
   });
-  const posStringArray = Object.keys(positions)
+  const posStringArray = Object.keys(settingsState.positions)
     .sort((a, b) => posOrder.indexOf(a) - posOrder.indexOf(b))
     .map((pos) => Array(positions[pos])
       .fill(pos)
@@ -54,17 +63,17 @@ const ManagerList = (props) => {
 
   return (
     <div className="manager-list">
-      {Array.from(Array(state.userSettings.managers)).map((x, key) => (
+      {Array.from(Array(settingsState.managers)).map((x, key) => (
         <Manager
           key={key}
           uid={props.uid}
           index={key}
-          data={state}
+          data={dataState}
           posStringArray={posStringArray}
           posSettings={posSettings}
           flexPosArray={flexPosArray}
           flexCount={flexCount}
-          playerAssign={playerAssign(key)}
+          playerAssign={playerAssign}
         />
       ))}
     </div>

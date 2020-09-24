@@ -1,15 +1,15 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import PropTypes from 'prop-types';
 import { AuthContext } from '../../contexts/AuthContextProvider';
 import Firebase from '../../calls/base';
 
-const Header = (props) => {
+const Header = () => {
   const { uid, setUid } = useContext(AuthContext);
   const history = useHistory();
   const handleLogout = () => {
     Firebase.logout();
+    setUid({ type: 'loggedOut', payload: false });
     history.push({
       pathname: '/login',
     });
@@ -36,10 +36,6 @@ const Header = (props) => {
       )}
     </ul>
   );
-};
-
-Header.propTypes = {
-  routes: PropTypes.array,
 };
 
 export default Header;

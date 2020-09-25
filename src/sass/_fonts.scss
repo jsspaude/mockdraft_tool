@@ -1,4 +1,16 @@
-h1 {
-  margin: 0 0 25px 0;
-  text-align: left;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+}
+
+p,
+td,
+li,
+a {
+  font-family: 'Lato', sans-serif;
 }

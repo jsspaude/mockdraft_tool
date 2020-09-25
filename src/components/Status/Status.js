@@ -17,6 +17,7 @@ const Status = () => {
   const { counterState, counterDispatch } = React.useContext(CounterContext);
   const { resultsState, resultsDispatch } = React.useContext(ResultsContext);
   const history = useHistory();
+  const posStripped = (position) => position.replace(/[0-9]/g, '');
 
   const handleReset = async (e) => {
     e.preventDefault();
@@ -39,7 +40,9 @@ const Status = () => {
   const currRound = () => Math.trunc(counterState.currStatus);
 
   function currManager() {
-    const index = (counterState.currStatus - Math.trunc(counterState.currStatus)).toFixed(2) * 100;
+    const index = (
+      (counterState.currStatus - Math.trunc(counterState.currStatus)).toFixed(2) * 100
+    ).toFixed(0);
     const manager = settingsState.names[index];
     if (manager) {
       return manager;
@@ -49,7 +52,7 @@ const Status = () => {
 
   function nextManager() {
     const status = counter(counterState.currStatus, settingsState.managers);
-    const index = (status - Math.trunc(status)).toFixed(2) * 100;
+    const index = ((status - Math.trunc(status)).toFixed(2) * 100).toFixed(0);
     const manager = settingsState.names[index];
     if (manager) {
       return manager;
@@ -58,15 +61,21 @@ const Status = () => {
   }
 
   function prevManager() {
-    if (counterState.currStatus > 1) {
-      const status = resultsState[resultsState.length - 1].drafted;
-      const player = resultsState[resultsState.length - 1].overall;
-      const { pos } = resultsState[resultsState.length - 1];
-      const { team } = resultsState[resultsState.length - 1];
-      const index = (status - Math.trunc(status)).toFixed(2) * 100;
+    if (counterState.currStatus > 1 && resultsState.length >= 1) {
+      const resultsArray = resultsState.length > 1 ? resultsState[resultsState.length - 1] : resultsState[0];
+      const status = resultsArray.drafted;
+      const player = resultsArray.overall;
+      const pos = posStripped(resultsArray.pos);
+      const { team } = resultsArray;
+      const index = ((status - Math.trunc(status)).toFixed(2) * 100).toFixed(0);
       const manager = settingsState.names[index];
       if (manager) {
-        return manager;
+        return {
+          player,
+          pos,
+          team,
+          manager,
+        };
       }
       return {
         player,
@@ -105,6 +114,18 @@ const Status = () => {
             {` drafted by ${prevManager().manager}`}
           </h5>
         )}
+      </div>
+      <div className="results">
+        <ul>
+          <h5>Draft Results</h5>
+          {resultsState.map((player, key) => (
+            <li key={key}>
+              {`${player.drafted} - `}
+              {`${player.overall} - `}
+              <span className="subtext">{`(${player.pos}, ${player.team})`}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

@@ -1,10 +1,12 @@
 .player-list {
   max-height: 100vh;
+  width: 100%;
   overflow-y: scroll;
   .true {
     display: none;
   }
   .players {
+    width: 100%;
     tr {
       box-shadow: 0.5px 0.5px 0.5px 0.5px lightgrey;
       &:nth-child(even) {

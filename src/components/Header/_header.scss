@@ -1,12 +1,26 @@
-.nav {
+.header {
+  max-height: 200px;
+  padding: 0 30px;
   display: flex;
-  text-decoration: none;
-  list-style-type: none;
-  justify-content: flex-start;
-  margin: 0 0 50px;
-  padding: 0;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 
-  li {
-    margin: 0 10px;
+  div {
+    width: 33%;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    &:first-child {
+      text-align: left;
+      justify-content: flex-start;
+    }
+    &:last-child {
+      text-align: right;
+      justify-content: flex-end;
+    }
   }
 }

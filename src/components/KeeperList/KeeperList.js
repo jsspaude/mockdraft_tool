@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext } from 'react';
-import PlayerList from '../PlayerList/PlayerList';
+import PlayerTable from '../PlayerList/PlayerTable';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
 
 const KeeperList = (props) => {
   const [keepers, setKeepers] = useState('');
   const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const { dataState, dataDispatch } = useContext(DataContext);
   const { playerData } = props;
 
   const handleKeeper = (info) => {
@@ -25,7 +27,7 @@ const KeeperList = (props) => {
 
   return (
     <div className="keeper-list-container">
-      <PlayerList keepers={keepers} handleKeeper={handleKeeper} buttonLabel="KEEP" />
+      <PlayerTable keepers={keepers} handleKeeper={handleKeeper} buttonLabel="KEEP" />
       <div className="keeper-player-info">
         {keepers
           && keepers.map((key, i) => (

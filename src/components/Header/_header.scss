@@ -1,26 +1,40 @@
-.header {
+.header-bar {
   max-height: 200px;
   padding: 0 30px;
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
   justify-content: space-between;
 
-  div {
-    width: 33%;
+  .header-top {
+    width: 100%;
     text-align: center;
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
     align-items: center;
-    justify-content: center;
 
-    &:first-child {
-      text-align: left;
-      justify-content: flex-start;
+    div {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      &:first-child {
+        text-align: left;
+        flex: 1;
+        justify-content: flex-start;
+      }
+      &:last-child {
+        text-align: right;
+        flex: 1;
+      }
     }
-    &:last-child {
-      text-align: right;
+
+    .navigation-mobile {
+      flex: none !important;
       justify-content: flex-end;
     }
   }
+}
+
+.header-mobile {
+  padding: 0;
 }

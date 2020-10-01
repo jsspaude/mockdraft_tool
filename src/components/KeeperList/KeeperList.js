@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useContext } from 'react';
-import PlayerTable from '../PlayerList/PlayerTable';
+import PlayerTable from '../PlayerTable/PlayerTable';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import { DataContext } from '../../contexts/DataContextProvider';
 

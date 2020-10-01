@@ -1,12 +1,10 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext, useLayoutEffect } from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import MuiAccordion from '@material-ui/core/Accordion';
 import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
 import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
-import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
 import { DataContext } from '../../contexts/DataContextProvider';
 import { ResultsContext } from '../../contexts/ResultsContextProvider';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
@@ -66,7 +64,7 @@ const ManagerList = (props) => {
   const { resultsState, resultsDispatch } = useContext(ResultsContext);
   const { settingsState, settingsDispatch } = useContext(SettingsContext);
   const { positions } = settingsState;
-  const [expanded, setExpanded] = React.useState('panel1');
+  const [expanded, setExpanded] = React.useState('panel0');
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -156,8 +154,6 @@ const ManagerList = (props) => {
 
 ManagerList.propTypes = {
   uid: PropTypes.string,
-  data: PropTypes.object,
-  draftedPlayers: PropTypes.any,
 };
 
 export default ManagerList;

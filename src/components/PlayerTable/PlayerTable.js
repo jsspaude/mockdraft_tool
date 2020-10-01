@@ -1,14 +1,17 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { useTable } from 'react-table';
+import {
+  useTable, useFilters, useGlobalFilter, useSortBy,
+} from 'react-table';
 import { AuthContext } from '../../contexts/AuthContextProvider';
 import { CounterContext } from '../../contexts/CounterContextProvider';
 import { ResultsContext } from '../../contexts/ResultsContextProvider';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
 import { DataContext } from '../../contexts/DataContextProvider';
 import { counter } from '../../helpers';
-import Player from '../Player/Player';
+import {
+  Filter, GlobalFilter, DefaultColumnFilter, SelectColumnFilter,
+} from '../Filters/Filters';
 import Firebase from '../../calls/base';
 
 const defaultPropGetter = () => ({});
@@ -24,7 +27,7 @@ const PlayerTable = ({
   const newCurrStatus = counter(counterState.currStatus, settingsState.managers);
   const [tableData, setTableData] = React.useState(Object.values(dataState.playerData));
   const posStripped = (position) => position.replace(/[0-9]/g, '');
-  const data = Object.values(dataState.playerData);
+  const data = React.useMemo(() => Object.values(dataState.playerData), [dataState.playerData]);
 
   const handlePlayer = React.useCallback(
     (index, info) => {
@@ -69,12 +72,73 @@ const PlayerTable = ({
     [buttonLabel, counterState.currStatus, handleCounter, handleKeeper, handlePlayer, keepers],
   );
 
-  const keeperIndexes = () => {
-    const keeperIndexArray = [];
-    if (settingsState.keeperList) {
-      settingsState.keeperList.forEach((keeper) => keeperIndexArray.push(keeper.index));
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'Rank',
+        accessor: 'rank',
+        disableFilters: true,
+      },
+      {
+        Header: 'Name',
+        accessor: 'overall',
+        disableFilters: true,
+        disableSortBy: true,
+      },
+      {
+        id: 'draft-pos',
+        Header: '',
+        accessor: (d) => posStripped(d.pos),
+        Filter: SelectColumnFilter,
+        filter: 'equals',
+        disableSortBy: true,
+      },
+      {
+        Header: 'ADP',
+        accessor: (d) => (Number(d.adp) ? Number(d.adp) : 1000),
+        disableFilters: true,
+      },
+      {
+        Header: 'Team',
+        accessor: 'team',
+        disableFilters: true,
+        disableSortBy: true,
+      },
+      {
+        id: 'draft-button',
+        Header: '',
+        disableSortBy: true,
+        Cell: ({ cell }) => <button onClick={() => handleDrafted(cell.row)}>Draft</button>,
+      },
+    ],
+    [handleDrafted],
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    state,
+    visibleColumns,
+    prepareRow,
+    setGlobalFilter,
+  } = useTable(
+    {
+      columns,
+      data,
+      defaultColumn: { Filter: DefaultColumnFilter },
+    },
+    useFilters,
+    useGlobalFilter,
+    useSortBy,
+  );
+
+  const generateSortingIndicator = (column) => {
+    if (column.isSorted) {
+      return column.isSortedDesc ? ' 🔽' : ' 🔼';
     }
-    return keeperIndexArray;
+    return '';
   };
 
   React.useEffect(() => {
@@ -89,34 +153,6 @@ const PlayerTable = ({
     handleCounter,
   ]);
 
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Name',
-        accessor: 'overall', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Position',
-        accessor: (d) => posStripped(d.pos),
-      },
-      {
-        Header: 'Team',
-        accessor: 'team',
-      },
-      {
-        id: 'draft-button',
-        Header: '',
-        Cell: ({ cell }) => <button onClick={() => handleDrafted(cell.row)}>Draft</button>,
-      },
-    ],
-    [handleDrafted],
-  );
-
-  const tableInstance = useTable({ columns, data, getRowProps });
-  const {
-    getTableProps, getTableBodyProps, headerGroups, rows, prepareRow,
-  } = tableInstance;
-
   if (tableData) {
     return (
       <table {...getTableProps()}>
@@ -124,16 +160,32 @@ const PlayerTable = ({
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                <th {...column.getHeaderProps()}>
+                  <div {...column.getSortByToggleProps()}>
+                    {column.render('Header')}
+                    {generateSortingIndicator(column)}
+                  </div>
+                  <Filter column={column} />
+                </th>
               ))}
             </tr>
           ))}
+          <tr className="global-filter">
+            <th
+              colSpan={visibleColumns.length}
+              style={{
+                textAlign: 'left',
+              }}
+            >
+              <GlobalFilter globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} />
+            </th>
+          </tr>
         </thead>
         <tbody {...getTableBodyProps()}>
           {rows.map((row, i) => {
             prepareRow(row);
             return (
-              <tr className={i} {...row.getRowProps(getRowProps(row))}>
+              <tr className={`players ${i}`} {...row.getRowProps(getRowProps(row))}>
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
                 ))}
@@ -145,42 +197,6 @@ const PlayerTable = ({
     );
   }
   return <>LOADING</>;
-
-  // return (
-  //   <div className="player-list">
-  //     <table className="players">
-  //       <thead>
-  //         <tr>
-  //           <th>Name</th>
-  //           <th>Position</th>
-  //           <th>Team</th>
-  //         </tr>
-  //       </thead>
-  //       <tbody>
-  //         {Object.keys(dataState.playerData).map((key) => {
-  //           const keeperStatus = keeperIndexes().includes(parseInt(key, 10));
-  //           return (
-  //             <Player
-  //               key={key}
-  //               index={parseInt(key, 10)}
-  //               details={dataState.playerData[key]}
-  //               draftedPlayers={resultsState}
-  //               handlePlayer={handlePlayer}
-  //               currStatus={counterState.currStatus}
-  //               keepers={props.keepers}
-  //               keeperStatus={keeperStatus}
-  //               handleKeeper={props.handleKeeper}
-  //               handleCounter={handleCounter}
-  //               buttonLabel={props.buttonLabel}
-  //               data={dataState}
-  //               status={!!dataState.playerData[key].drafted}
-  //             />
-  //           );
-  //         })}
-  //       </tbody>
-  //     </table>
-  //   </div>
-  // );
 };
 
 export default PlayerTable;

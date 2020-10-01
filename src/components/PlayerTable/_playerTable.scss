@@ -1,0 +1,32 @@
+.player-table {
+  max-height: 100vh;
+  width: 100%;
+  overflow-y: scroll;
+
+  table {
+    width: 100%;
+  }
+
+  .global-filter {
+    th {
+      padding: 10px 0;
+    }
+
+    input {
+      margin: 0;
+    }
+  }
+
+  .players {
+    width: 100%;
+    box-shadow: 0.5px 0.5px 0.5px 0.5px lightgrey;
+
+    &:nth-child(even) {
+      background-color: lightblue;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}

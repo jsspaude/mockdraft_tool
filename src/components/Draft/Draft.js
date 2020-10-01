@@ -4,8 +4,7 @@ import { useHistory, Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { AuthContext } from '../../contexts/AuthContextProvider';
-import { DataContext } from '../../contexts/DataContextProvider';
-import PlayerTable from '../PlayerList/PlayerTable';
+import PlayerTable from '../PlayerTable/PlayerTable';
 import ManagerList from '../ManagerList/ManagerList';
 import Status from '../Status/Status';
 
@@ -31,7 +30,6 @@ const Draft = (props) => {
   const { uid, setUid } = React.useContext(AuthContext);
   const history = useHistory();
   const classes = useStyles();
-  const { dataState, dataDispatch } = React.useContext(DataContext);
 
   React.useEffect(() => {
     history.push(`/${uid}/draft`);
@@ -42,7 +40,7 @@ const Draft = (props) => {
       <div className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs={12}></Grid>
-          <Grid item xs={4}>
+          <Grid className="player-table" item xs={4}>
             <PlayerTable
               {...props}
               getRowProps={(row) => ({

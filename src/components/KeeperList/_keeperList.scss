@@ -1,14 +1,7 @@
 .keeper-list-container {
-  display: flex;
-  flex-direction: row;
+  margin: 5% 0;
 
-  .player-list {
-    width: auto;
-    margin-right: 5%;
-  }
-
-  .keeper-player-info {
-    display: flex;
-    flex-direction: column;
+  .keeper-player-input {
+    padding: 10px 0;
   }
 }

@@ -75,7 +75,7 @@ const PlayerTable = ({
   const columns = React.useMemo(
     () => [
       {
-        Header: 'Rank',
+        Header: 'Rnk',
         accessor: 'rank',
         disableFilters: true,
       },
@@ -108,10 +108,10 @@ const PlayerTable = ({
         id: 'draft-button',
         Header: '',
         disableSortBy: true,
-        Cell: ({ cell }) => <button onClick={() => handleDrafted(cell.row)}>Draft</button>,
+        Cell: ({ cell }) => <button onClick={() => handleDrafted(cell.row)}>{buttonLabel}</button>,
       },
     ],
-    [handleDrafted],
+    [handleDrafted, buttonLabel],
   );
 
   const {

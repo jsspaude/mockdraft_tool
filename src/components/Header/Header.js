@@ -1,35 +1,22 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
-import { useMediaQuery } from 'react-responsive';
 import { Link, useHistory } from 'react-router-dom';
-import Navigation from '../Navigation/NavigationMobile';
+import { Default, Mobile } from '../MediaQuery';
+import NavigationMobile from '../Navigation/NavigationMobile';
 import { AuthContext } from '../../contexts/AuthContextProvider';
+import { SettingsContext } from '../../contexts/SettingsContextProvider';
+import { DataContext } from '../../contexts/DataContextProvider';
 import { ReactComponent as LogoSvg } from '../../img/logo.svg';
 import Firebase from '../../calls/base';
-import { DataContext } from '../../contexts/DataContextProvider';
-
-const Desktop = ({ children }) => {
-  const isDesktop = useMediaQuery({ minWidth: 992 });
-  return isDesktop ? children : null;
-};
-const Tablet = ({ children }) => {
-  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
-  return isTablet ? children : null;
-};
-const Mobile = ({ children }) => {
-  const isMobile = useMediaQuery({ maxWidth: 767 });
-  return isMobile ? children : null;
-};
-const Default = ({ children }) => {
-  const isNotMobile = useMediaQuery({ minWidth: 768 });
-  return isNotMobile ? children : null;
-};
+import { createCsvObject } from '../../calls/csvData';
+import { id } from '../../helpers';
 
 const Logo = () => <LogoSvg height="100px" width="200px" />;
 
 const Header = () => {
   const { uid, setUid } = useContext(AuthContext);
   const { dataState, dataDispatch } = useContext(DataContext);
+  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
   const history = useHistory();
   const handleLogout = () => {
     Firebase.logout();
@@ -37,6 +24,24 @@ const Header = () => {
     history.push({
       pathname: '/login',
     });
+  };
+
+  const handleReset = async (e) => {
+    e.preventDefault();
+    const resultsObject = { playerData: dataState.playerData, posData: settingsState.positions };
+    await Firebase.updateResultsData(uid, resultsObject, id).then(() => Firebase.removeData(uid, '/data').then(() => {
+      createCsvObject(uid).then((data) => {
+        Firebase.setUserData(uid, { playerData: data }, 'data');
+        dataDispatch({ type: 'reset', payload: data });
+        settingsDispatch({ type: 'reset' });
+      });
+      history.push('/');
+    }));
+  };
+
+  const handleWipe = async (e) => {
+    e.preventDefault();
+    Firebase.removeData(uid, '/results');
   };
   return (
     <div className="header">
@@ -46,14 +51,11 @@ const Header = () => {
             <div>
               <Logo />
             </div>
-            <div className="navigation-mobile">
-              <Navigation />
-            </div>
-          </div>
-          <div className="header-bottom">
-            <div>
-              <h1>MOCK DRAFT TOOL</h1>
-            </div>
+            {uid && (
+              <div className="navigation-mobile">
+                <NavigationMobile />
+              </div>
+            )}
           </div>
         </div>
       </Mobile>
@@ -63,22 +65,19 @@ const Header = () => {
             <div>
               <Logo />
             </div>
-            <div className="navigation">
-              {!uid && (
-                <>
-                  <Link to="/login">LOGIN</Link>
-                  <Link to="/signup">SIGNUP</Link>
-                </>
-              )}
-              {uid && (
-                <>
-                  <Link to={`${uid}`}>Draft Room</Link>
-                  <Link to="/login" className="logout" onClick={(e) => handleLogout(e)}>
-                    LOGOUT
-                  </Link>
-                </>
-              )}
-            </div>
+            {uid && (
+              <div className="navigation">
+                <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
+                  RESET
+                </Link>
+                <Link to={'/'} className="reset" onClick={(e) => handleWipe(e)}>
+                  WIPE HISTORY
+                </Link>
+                <Link to="/login" className="logout" onClick={(e) => handleLogout(e)}>
+                  LOGOUT
+                </Link>
+              </div>
+            )}
           </div>
           <div className="header-bottom"></div>
         </div>

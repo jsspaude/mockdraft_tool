@@ -4,6 +4,7 @@ import {
   BrowserRouter, Switch, Route, useHistory,
 } from 'react-router-dom';
 import Header from './Header/Header';
+import Landing from './Landing/Landing';
 import Login from './Login/Login';
 import SignUp from './SignUp/SignUp';
 import Draft from './Draft/Draft';
@@ -31,28 +32,36 @@ const Router = () => {
   if (!pending) {
     return (
       <BrowserRouter>
-        <Header />
         <Switch>
           {isLoggedIn(uid) && dataState.inProgress && (
-            <PrivateRoute
-              isLoggedIn={isLoggedIn(uid)}
-              key="/"
-              exact
-              path={['/', `/${uid}`, `/${uid}/draft`]}
-              component={Draft}
-            />
+            <>
+              <Header />
+              <PrivateRoute
+                isLoggedIn={isLoggedIn(uid)}
+                key="/"
+                exact
+                path={['/', `/${uid}`, `/${uid}/draft`]}
+                component={Draft}
+              />
+            </>
           )}
           {isLoggedIn(uid) && !dataState.inProgress && (
-            <PrivateRoute
-              isLoggedIn={isLoggedIn(uid)}
-              key="/"
-              exact
-              path={['/', `/${uid}`, `/${uid}/settings`]}
-              component={Settings}
-            />
+            <>
+              <Header />
+              <PrivateRoute
+                isLoggedIn={isLoggedIn(uid)}
+                key="/"
+                exact
+                path={['/', `/${uid}`, `/${uid}/settings`]}
+                component={Settings}
+              />
+            </>
           )}
-          <Route exact path={['/', '/login']} render={(props) => <Login {...props} />} />
-          <Route key="/signup" exact path="/signup" component={SignUp} />
+          <Route
+            exact
+            path={['/', '/login']}
+            render={(props) => <Landing component={Login} {...props} />}
+          />
         </Switch>
       </BrowserRouter>
     );

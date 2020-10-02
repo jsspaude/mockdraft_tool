@@ -39,8 +39,10 @@ const Draft = (props) => {
     <div className="draft-room">
       <div className={classes.root}>
         <Grid container spacing={3}>
-          <Grid item xs={12}></Grid>
-          <Grid className="player-table" item xs={4}>
+          <Grid item xs={3}>
+            <ManagerList {...props} />
+          </Grid>
+          <Grid className="player-table" item xs={6}>
             <PlayerTable
               {...props}
               getRowProps={(row) => ({
@@ -51,44 +53,13 @@ const Draft = (props) => {
               buttonLabel="DRAFT"
             />
           </Grid>
-          <Grid item xs={4}>
-            <ManagerList {...props} />
-          </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Status />
           </Grid>
         </Grid>
       </div>
     </div>
   );
-
-  // return (
-  //   <div className={classes.root}>
-  //     <Grid container spacing={3}>
-  //       <Grid item xs={12}>
-  //         <Paper className={classes.paper}>xs=12</Paper>
-  //       </Grid>
-  //       <Grid item xs={6}>
-  //         <Paper className={classes.paper}>xs=6</Paper>
-  //       </Grid>
-  //       <Grid item xs={6}>
-  //         <Paper className={classes.paper}>xs=6</Paper>
-  //       </Grid>
-  //       <Grid item xs={3}>
-  //         <Paper className={classes.paper}>xs=3</Paper>
-  //       </Grid>
-  //       <Grid item xs={3}>
-  //         <Paper className={classes.paper}>xs=3</Paper>
-  //       </Grid>
-  //       <Grid item xs={3}>
-  //         <Paper className={classes.paper}>xs=3</Paper>
-  //       </Grid>
-  //       <Grid item xs={3}>
-  //         <Paper className={classes.paper}>xs=3</Paper>
-  //       </Grid>
-  //     </Grid>
-  //   </div>
-  // );
 };
 
 export default Draft;

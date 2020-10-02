@@ -1,58 +1,24 @@
 /* eslint-disable no-unused-vars */
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import MuiAccordion from '@material-ui/core/Accordion';
-import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import Button from '@material-ui/core/Button';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { DataContext } from '../../contexts/DataContextProvider';
 import { ResultsContext } from '../../contexts/ResultsContextProvider';
 import { SettingsContext } from '../../contexts/SettingsContextProvider';
+import { AuthContext } from '../../contexts/AuthContextProvider';
 import Manager from '../Manager/Manager';
 import { flattenObject } from '../../helpers';
 
-const Accordion = withStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
-    border: '1px solid rgba(0, 0, 0, .125)',
-    boxShadow: 'none',
-    '&:not(:last-child)': {
-      borderBottom: 0,
-    },
-    '&:before': {
-      display: 'none',
-    },
-    '&$expanded': {
-      margin: 'auto',
+    '& > *': {
+      margin: theme.spacing(1),
     },
   },
-  expanded: {},
-})(MuiAccordion);
-
-const AccordionSummary = withStyles({
-  root: {
-    backgroundColor: 'rgba(0, 0, 0, .03)',
-    borderBottom: '1px solid rgba(0, 0, 0, .125)',
-    marginBottom: -1,
-    minHeight: 56,
-    '&$expanded': {
-      backgroundColor: '#F9C22E',
-      minHeight: 56,
-    },
-  },
-  content: {
-    margin: '1px 0',
-    '&$expanded': {
-      margin: '1px 0',
-    },
-  },
-  expanded: {},
-})(MuiAccordionSummary);
-
-const AccordionDetails = withStyles((theme) => ({
-  root: {
-    padding: theme.spacing(2),
-  },
-}))(MuiAccordionDetails);
+}));
 
 const roundingHelper = (x, key) => {
   const y = x[key];
@@ -63,11 +29,23 @@ const ManagerList = (props) => {
   const { dataState, dataDispatch } = useContext(DataContext);
   const { resultsState, resultsDispatch } = useContext(ResultsContext);
   const { settingsState, settingsDispatch } = useContext(SettingsContext);
+  const { uid, setUid } = useContext(AuthContext);
   const { positions } = settingsState;
-  const [expanded, setExpanded] = React.useState('panel0');
+  const [value, setValue] = React.useState(0);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const classes = useStyles();
 
-  const handleChange = (panel) => (event, newExpanded) => {
-    setExpanded(newExpanded ? panel : false);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleManagerChange = (x) => {
+    setValue(x);
+    setAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const playerAssign = (i) => {
@@ -121,39 +99,44 @@ const ManagerList = (props) => {
     .flat();
   const flexCount = Object.values(...flexSettings).reduce((a, b) => a + b);
 
+  const managerControl = () => (
+    <Manager
+      key={value}
+      uid={uid}
+      index={value}
+      data={dataState}
+      posStringArray={posStringArray}
+      posSettings={posSettings}
+      flexPosArray={flexPosArray}
+      flexCount={flexCount}
+      playerAssign={playerAssign}
+    />
+  );
+
   return (
     <div className="manager-list">
-      {Array.from(Array(settingsState.managers)).map((x, key) => (
-        <Accordion
-          square
-          expanded={expanded === `panel${key}`}
-          onChange={handleChange(`panel${key}`)}
-          key={key}
+      <div className={classes.root}>
+        <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>
+          {handleName(value)}
+          <ExpandMoreIcon />
+        </Button>
+        <Menu
+          id="simple-menu"
+          anchorEl={anchorEl}
+          keepMounted
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
         >
-          <AccordionSummary aria-controls={`panel${key}d-content`} id={`panel${key}d-header`}>
-            <h3>{handleName(key)}</h3>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Manager
-              key={key}
-              uid={props.uid}
-              index={key}
-              data={dataState}
-              posStringArray={posStringArray}
-              posSettings={posSettings}
-              flexPosArray={flexPosArray}
-              flexCount={flexCount}
-              playerAssign={playerAssign}
-            />
-          </AccordionDetails>
-        </Accordion>
-      ))}
+          {Array.from(Array(settingsState.managers)).map((x, key) => (
+            <MenuItem key={key} value={key} onClick={() => handleManagerChange(key)}>
+              {handleName(key)}
+            </MenuItem>
+          ))}
+        </Menu>
+        <div>{managerControl()}</div>
+      </div>
     </div>
   );
-};
-
-ManagerList.propTypes = {
-  uid: PropTypes.string,
 };
 
 export default ManagerList;

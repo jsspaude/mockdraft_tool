@@ -36,9 +36,6 @@ export const GlobalFilter = ({ globalFilter, setGlobalFilter }) => {
           onChange(e.target.value);
         }}
         placeholder="Player Search"
-        style={{
-          border: '0',
-        }}
       />
     </span>
   );

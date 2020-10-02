@@ -2,15 +2,36 @@
 import React from 'react';
 import firebase from 'firebase/app';
 import { withRouter, Link, useHistory } from 'react-router-dom';
+import TextField from '@material-ui/core/TextField';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import Box from '@material-ui/core/Box';
 import Firebase from '../../calls/base';
 import { AuthContext } from '../../contexts/AuthContextProvider';
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <a href="https://jessspaude.ca" target="_blank" rel="noopener noreferrer">
+        JSS DEV/DESIGN
+      </a>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const Login = () => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setErrors] = React.useState('');
+  const [login, setLogin] = React.useState(true);
   const { uid, setUid } = React.useContext(AuthContext);
   const history = useHistory();
+
+  const loginBool = () => (login ? 'Login' : 'Sign Up');
+  const loginMessage = () => (login ? "Don't have an account? Sign Up" : 'Have an account? Login');
 
   const errorHandler = (e) => {
     setErrors(e.message);
@@ -18,13 +39,23 @@ const Login = () => {
 
   const handleForm = (e) => {
     e.preventDefault();
-    Firebase.login(email, password, errorHandler);
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setUid({ type: 'loggedIn', payload: user.uid });
-        history.push(`/${user.uid}`);
-      }
-    });
+    if (login) {
+      Firebase.login(email, password, errorHandler);
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          setUid({ type: 'loggedIn', payload: user.uid });
+          history.push(`/${user.uid}`);
+        }
+      });
+    } else {
+      Firebase.createUser(email, password, errorHandler);
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          setUid({ type: 'loggedIn', payload: user.uid });
+          history.push(`/${user.uid}`);
+        }
+      });
+    }
   };
 
   const handleGoogleLogin = () => {
@@ -39,44 +70,48 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <div className="login">
-        <h1>Login</h1>
-        <form onSubmit={(e) => handleForm(e)}>
-          <div className="form-top">
-            <div className="form-inputs">
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                name="email"
-                type="email"
-                placeholder="email"
-              />
-              <input
-                onChange={(e) => setPassword(e.target.value)}
-                name="password"
-                value={password}
-                type="password"
-                placeholder="password"
-              />
-            </div>
-            <span>{error}</span>
-          </div>
-          <div className="form-bottom">
-            <div className="form-buttons">
-              <button type="submit">Login</button>
-              <button className="google" onClick={() => handleGoogleLogin()}>
-                Login with Google
-              </button>
-            </div>
-            <div className="form-links">
-              <p className="">Don't have an account?</p>
-              <Link to="/signup" className="">
-                Sign-Up Here
-              </Link>
-            </div>
-          </div>
-        </form>
-      </div>
+      <h1>{loginBool()}</h1>
+      <form onSubmit={(e) => handleForm(e)}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email"
+          label="Email Address"
+          name="email"
+          autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          autoFocus
+        />
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          name="password"
+          label="Password"
+          type="password"
+          id="password"
+          value={password}
+          autoComplete="current-password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <span>{error}</span>
+        <Button className="custom-button" type="submit" fullWidth>
+          Sign In
+        </Button>
+        <Button className="custom-button" fullWidth onClick={() => handleGoogleLogin()}>
+          Login with Google
+        </Button>
+        <div className="login-link">
+          <h5 onClick={() => setLogin(!login)}>{loginMessage()}</h5>
+        </div>
+        <Box mt={5}>
+          <Copyright />
+        </Box>
+      </form>
     </div>
   );
 };

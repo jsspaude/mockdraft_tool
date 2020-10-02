@@ -4,13 +4,18 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Poppins', sans-serif;
+  font-family: map-get($fonts, 'brandfont');
   font-weight: 400;
 }
 
 p,
 td,
+th,
+option,
 li,
-a {
-  font-family: 'Lato', sans-serif;
+.MuiButton-label,
+a,
+span,
+button {
+  font-family: map-get($fonts, 'mainfont');
 }

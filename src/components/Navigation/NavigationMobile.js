@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { Link, useHistory } from 'react-router-dom';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import Button from '@material-ui/core/Button';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -20,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function SwipeableTemporaryDrawer() {
+const NavigationMobile = () => {
   const classes = useStyles();
   const [state, setState] = React.useState({
     top: false,
@@ -39,7 +38,9 @@ export default function SwipeableTemporaryDrawer() {
 
   const list = (anchor) => (
     <div
-      className="drawer"
+      className={clsx(classes.list, {
+        [classes.fullList]: anchor === 'top' || anchor === 'bottom',
+      })}
       role="presentation"
       onClick={toggleDrawer(anchor, false)}
       onKeyDown={toggleDrawer(anchor, false)}
@@ -47,13 +48,11 @@ export default function SwipeableTemporaryDrawer() {
       <List>
         <ListItem button key="login">
           <Link to="/login">
-            <ListItemIcon>{}</ListItemIcon>
             <ListItemText primary="Login" />
           </Link>
         </ListItem>
         <ListItem button key="signup">
           <Link to="/signup">
-            <ListItemIcon>{}</ListItemIcon>
             <ListItemText primary="Signup" />
           </Link>
         </ListItem>
@@ -76,4 +75,6 @@ export default function SwipeableTemporaryDrawer() {
       </React.Fragment>
     </div>
   );
-}
+};
+
+export default NavigationMobile;

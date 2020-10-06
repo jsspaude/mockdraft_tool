@@ -6,7 +6,6 @@ import {
 import Header from './Header/Header';
 import Landing from './Landing/Landing';
 import Login from './Login/Login';
-import SignUp from './SignUp/SignUp';
 import Draft from './Draft/Draft';
 import Settings from './Settings/Settings';
 import PrivateRoute from './PrivateRoute';

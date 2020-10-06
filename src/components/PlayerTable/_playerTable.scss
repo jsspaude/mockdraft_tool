@@ -1,12 +1,13 @@
-.player-table {
-  max-height: calc(100vh - 200px);
-  width: 100%;
+.player-container {
+  height: calc(100vh - 100px);
+  padding: 0 15px;
+  margin: 0 30px;
   overflow-y: scroll;
-  margin-top: 30px !important;
-  border-right: 1px solid map-get($colors, 'black');
-  border-left: 1px solid map-get($colors, 'black');
+  -webkit-box-shadow: -2px 4px 24px hsla(0, 0%, 75.3%, 0.25);
+  box-shadow: -2px 4px 24px hsla(0, 0%, 75.3%, 0.25);
 
   table {
+    margin-top: 30px;
     width: 100%;
   }
 

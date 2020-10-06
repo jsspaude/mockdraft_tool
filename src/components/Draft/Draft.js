@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import { AuthContext } from '../../contexts/AuthContextProvider';
 import PlayerTable from '../PlayerTable/PlayerTable';
 import ManagerList from '../ManagerList/ManagerList';
-import Status from '../Status/Status';
+import StatusTabs from '../StatusTabs/StatusTabs';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -38,23 +38,31 @@ const Draft = (props) => {
   return (
     <div className="draft-room">
       <div className={classes.root}>
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
           <Grid item xs={3}>
-            <ManagerList {...props} />
+            <div className="manager-container">
+              <h3>ROSTERS</h3>
+              <ManagerList {...props} />
+            </div>
           </Grid>
-          <Grid className="player-table" item xs={6}>
-            <PlayerTable
-              {...props}
-              getRowProps={(row) => ({
-                style: {
-                  display: row.original.drafted ? 'none' : '',
-                },
-              })}
-              buttonLabel="DRAFT"
-            />
+          <Grid item xs={6}>
+            <div className="player-container">
+              <h3>PLAYERS</h3>
+              <PlayerTable
+                {...props}
+                getRowProps={(row) => ({
+                  style: {
+                    display: row.original.drafted ? 'none' : '',
+                  },
+                })}
+                buttonLabel="DRAFT"
+              />
+            </div>
           </Grid>
           <Grid item xs={3}>
-            <Status />
+            <div className="status-container">
+              <StatusTabs />
+            </div>
           </Grid>
         </Grid>
       </div>

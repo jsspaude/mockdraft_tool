@@ -1,5 +1,7 @@
 .header {
   border-bottom: 1px solid map-get($colors, 'black');
+  background-color: map-get($colors, 'black');
+
   .header-bar {
     max-height: 200px;
     margin: 0 5%;
@@ -27,6 +29,16 @@
         &:last-child {
           text-align: right;
           flex: 1;
+        }
+      }
+
+      .navigation {
+        a {
+          color: map-get($colors, 'white');
+
+          &:hover {
+            color: map-get($colors, 'yellow');
+          }
         }
       }
 

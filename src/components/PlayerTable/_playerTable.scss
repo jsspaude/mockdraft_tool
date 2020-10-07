@@ -7,6 +7,7 @@
   box-shadow: -2px 4px 24px hsla(0, 0%, 75.3%, 0.25);
 
   table {
+    margin: 0px;
     margin-top: 30px;
     width: 100%;
   }
@@ -20,17 +21,30 @@
       margin: 0;
     }
   }
+}
 
-  .players {
-    width: 100%;
-    box-shadow: 0.5px 0.5px 0.5px 0.5px lightgrey;
+.players {
+  width: 100%;
+  box-shadow: 0.5px 0.5px 0.5px 0.5px lightgrey;
 
-    &:nth-child(even) {
-      background-color: lightblue;
-    }
+  &:nth-child(even) {
+    background-color: lightblue;
+  }
+}
 
-    button {
-      width: 100%;
-    }
+.draft-button-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    width: 75%;
+    margin: 5px;
+    background-color: map-get($colors, 'pink');
+    border: 0;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px 1px black;
+    padding: 10px;
   }
 }

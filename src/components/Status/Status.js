@@ -11,6 +11,7 @@ const Status = () => {
   const { resultsState, resultsDispatch } = React.useContext(ResultsContext);
   const posStripped = (position) => position.replace(/[0-9]/g, '');
   const currRound = () => Math.trunc(counterState.currStatus);
+  const currPick = () => Math.trunc(counterState.currPick);
 
   function currManager() {
     const index = (
@@ -67,25 +68,34 @@ const Status = () => {
 
   return (
     <div className="status-info">
-      <div className="round next-manager">
-        <h5 className="no-margin underline">Round</h5>
-        <h5>{currRound()}</h5>
-        <h5 className="no-margin underline">On The Clock:</h5>
-        <h2>{currManager()}</h2>
+      <div className="status status-1 no-margin">
+        <div>
+          <h6 className="underline">Round</h6>
+          <h5>{currRound()}</h5>
+        </div>
+        <div>
+          <h6 className="underline">Pick</h6>
+          <h5>{currPick()}</h5>
+        </div>
       </div>
-      <div className="curr-manager prev-manager">
-        <h5 className="no-margin underline">Next:</h5>
-        <h5>{nextManager()}</h5>
+      <div className="status no-margin ">
         {prevManager() && (
           <>
-            <h5 className="no-margin underline">Previous:</h5>
-            <h5 className="subtext">{prevManager().manager}</h5>
-            <h5 className="no-margin">
+            <h6 className="underline">{`${prevManager().manager} drafted:`}</h6>
+            <h5>
               {prevManager().player}{' '}
               <span className="subtext">{`(${prevManager().pos}, ${prevManager().team})`}</span>
             </h5>
           </>
         )}
+      </div>
+      <div className="status no-margin ">
+        <h6 className="underline">On The Clock:</h6>
+        <h4>{currManager()}</h4>
+      </div>
+      <div className="status no-margin">
+        <h6 className="underline">Next:</h6>
+        <h5>{nextManager()}</h5>
       </div>
     </div>
   );

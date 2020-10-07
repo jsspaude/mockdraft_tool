@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useContext } from 'react';
+import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Default, Mobile } from '../MediaQuery';
 import NavigationMobile from '../Navigation/NavigationMobile';
@@ -14,8 +14,8 @@ import { id } from '../../helpers';
 const Logo = () => <LogoSvg height="100px" width="200px" />;
 
 const Header = () => {
-  const { uid, setUid } = useContext(AuthContext);
-  const { dataState, dataDispatch } = useContext(DataContext);
+  const { uid, setUid } = React.useContext(AuthContext);
+  const { dataState, dataDispatch } = React.useContext(DataContext);
   const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
   const history = useHistory();
   const handleLogout = () => {

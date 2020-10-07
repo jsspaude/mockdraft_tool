@@ -29,6 +29,17 @@ const PlayerTable = ({
   const posStripped = (position) => position.replace(/[0-9]/g, '');
   const data = React.useMemo(() => Object.values(dataState.playerData), [dataState.playerData]);
 
+  function currManager() {
+    const index = (
+      (counterState.currStatus - Math.trunc(counterState.currStatus)).toFixed(2) * 100
+    ).toFixed(0);
+    const manager = settingsState.names[index];
+    if (manager) {
+      return manager;
+    }
+    return `Manager-${index}`;
+  }
+
   const handlePlayer = React.useCallback(
     (index, info) => {
       resultsDispatch({ type: 'draftPlayer', payload: info });
@@ -108,7 +119,11 @@ const PlayerTable = ({
         id: 'draft-button',
         Header: '',
         disableSortBy: true,
-        Cell: ({ cell }) => <button onClick={() => handleDrafted(cell.row)}>{buttonLabel}</button>,
+        Cell: ({ cell }) => (
+          <div className="draft-button-container">
+            <button onClick={() => handleDrafted(cell.row)}>{buttonLabel}</button>
+          </div>
+        ),
       },
     ],
     [handleDrafted, buttonLabel],

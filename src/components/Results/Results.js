@@ -7,12 +7,13 @@ const Results = () => {
   return (
     <div className="results">
       <ul>
-        <h5>Draft Results</h5>
         {resultsState.map((player, key) => (
           <li key={key}>
-            {`${player.drafted} - `}
-            {`${player.overall} - `}
-            <span className="subtext">{`(${player.pos}, ${player.team})`}</span>
+            <h6>
+              {`${player.drafted} - `}
+              {`${player.overall} - `}
+              <span className="subtext">{`(${player.pos}, ${player.team})`}</span>
+            </h6>
           </li>
         ))}
       </ul>

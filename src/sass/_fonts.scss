@@ -1,4 +1,21 @@
-h1 {
-  margin: 0 0 25px 0;
-  text-align: left;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: map-get($fonts, 'brandfont');
+  font-weight: 400;
+}
+
+p,
+td,
+th,
+option,
+li,
+.MuiButton-label,
+a,
+span,
+button {
+  font-family: map-get($fonts, 'mainfont');
 }

@@ -1,32 +1,17 @@
 /* eslint-disable no-unused-vars */
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import {
   BrowserRouter, Switch, Route, useHistory,
 } from 'react-router-dom';
 import Header from './Header/Header';
+import Landing from './Landing/Landing';
 import Login from './Login/Login';
-import SignUp from './SignUp/SignUp';
 import Draft from './Draft/Draft';
 import Settings from './Settings/Settings';
 import PrivateRoute from './PrivateRoute';
 import { AuthContext } from '../contexts/AuthContextProvider';
-import { DataContext, initialState } from '../contexts/DataContextProvider';
+import { DataContext } from '../contexts/DataContextProvider';
 import { SettingsContext } from '../contexts/SettingsContextProvider';
-import Firebase from '../calls/base';
-import { createCsvObject } from '../calls/csvData';
-import CounterContextProvider from '../contexts/CounterContextProvider';
-
-const date = new Date();
-const components = [
-  date.getYear(),
-  date.getMonth(),
-  date.getDate(),
-  date.getHours(),
-  date.getMinutes(),
-  date.getSeconds(),
-  date.getMilliseconds(),
-];
-const id = components.join('');
 
 const Router = () => {
   const { uid, setUid } = React.useContext(AuthContext);
@@ -46,28 +31,36 @@ const Router = () => {
   if (!pending) {
     return (
       <BrowserRouter>
-        <Header />
         <Switch>
           {isLoggedIn(uid) && dataState.inProgress && (
-            <PrivateRoute
-              isLoggedIn={isLoggedIn(uid)}
-              key="/"
-              exact
-              path={['/', `/${uid}`, `/${uid}/draft`]}
-              component={Draft}
-            />
+            <>
+              <Header />
+              <PrivateRoute
+                isLoggedIn={isLoggedIn(uid)}
+                key="/"
+                exact
+                path={['/', `/${uid}`, `/${uid}/draft`]}
+                component={Draft}
+              />
+            </>
           )}
           {isLoggedIn(uid) && !dataState.inProgress && (
-            <PrivateRoute
-              isLoggedIn={isLoggedIn(uid)}
-              key="/"
-              exact
-              path={['/', `/${uid}`, `/${uid}/settings`]}
-              component={Settings}
-            />
+            <>
+              <Header />
+              <PrivateRoute
+                isLoggedIn={isLoggedIn(uid)}
+                key="/"
+                exact
+                path={['/', `/${uid}`, `/${uid}/settings`]}
+                component={Settings}
+              />
+            </>
           )}
-          <Route exact path={['/', '/login']} render={(props) => <Login {...props} />} />
-          <Route key="/signup" exact path="/signup" component={SignUp} />
+          <Route
+            exact
+            path={['/', '/login']}
+            render={(props) => <Landing component={Login} {...props} />}
+          />
         </Switch>
       </BrowserRouter>
     );

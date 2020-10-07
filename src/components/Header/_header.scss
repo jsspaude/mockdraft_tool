@@ -1,12 +1,55 @@
-.nav {
-  display: flex;
-  text-decoration: none;
-  list-style-type: none;
-  justify-content: flex-start;
-  margin: 0 0 50px;
-  padding: 0;
+.header {
+  border-bottom: 1px solid map-get($colors, 'black');
+  background-color: map-get($colors, 'black');
 
-  li {
-    margin: 0 10px;
+  .header-bar {
+    max-height: 200px;
+    margin: 0 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .header-top {
+      width: 100%;
+      text-align: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      align-items: center;
+
+      div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        &:first-child {
+          text-align: left;
+          flex: 1;
+          justify-content: flex-start;
+        }
+        &:last-child {
+          text-align: right;
+          flex: 1;
+        }
+      }
+
+      .navigation {
+        a {
+          color: map-get($colors, 'white');
+
+          &:hover {
+            color: map-get($colors, 'yellow');
+          }
+        }
+      }
+
+      .navigation-mobile {
+        flex: none !important;
+        justify-content: flex-end;
+      }
+    }
+  }
+
+  .header-mobile {
+    padding: 0;
   }
 }

@@ -1,73 +1,66 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { useHistory, Link } from 'react-router-dom';
-import PlayerList from '../PlayerList/PlayerList';
-import ManagerList from '../ManagerList/ManagerList';
-import { SettingsContext } from '../../contexts/SettingsContextProvider';
-import CounterContextProvider from '../../contexts/CounterContextProvider';
+import { useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import { Default, Mobile } from '../MediaQuery';
 import { AuthContext } from '../../contexts/AuthContextProvider';
-import { DataContext } from '../../contexts/DataContextProvider';
-import Firebase from '../../calls/base';
-import { createCsvObject } from '../../calls/csvData';
+import PlayerTable from '../PlayerTable/PlayerTable';
+import ManagerList from '../ManagerList/ManagerList';
+import StatusTabs from '../StatusTabs/StatusTabs';
+import DraftTabs from '../DraftTabs/DraftTabs';
 
-const date = new Date();
-const components = [
-  date.getYear(),
-  date.getMonth(),
-  date.getDate(),
-  date.getHours(),
-  date.getMinutes(),
-  date.getSeconds(),
-  date.getMilliseconds(),
-];
-const id = components.join('');
+const useStyles = makeStyles(() => ({
+  root: {
+    flexGrow: 1,
+  },
+}));
 
 const Draft = (props) => {
   const { uid, setUid } = React.useContext(AuthContext);
-  const { dataState, dataDispatch } = React.useContext(DataContext);
-  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
   const history = useHistory();
-
-  const handleReset = async (e) => {
-    e.preventDefault();
-    const resultsObject = { playerData: dataState.playerData, posData: settingsState.positions };
-    await Firebase.updateResultsData(uid, resultsObject, id).then(() => Firebase.removeData(uid, '/data').then(() => {
-      createCsvObject(uid).then((data) => {
-        Firebase.setUserData(uid, { playerData: data }, 'data');
-        dataDispatch({ type: 'reset', payload: data });
-        settingsDispatch({ type: 'reset' });
-      });
-      history.push('/');
-    }));
-  };
-
-  const handleWipe = async (e) => {
-    e.preventDefault();
-    Firebase.removeData(uid, '/results');
-  };
+  const classes = useStyles();
 
   React.useEffect(() => {
     history.push(`/${uid}/draft`);
   }, [history, uid]);
 
   return (
-    <div className="draft-main">
-      <ul>
-        <li>
-          <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
-            RESET
-          </Link>
-        </li>
-        <li>
-          <Link to={'/'} className="reset" onClick={(e) => handleWipe(e)}>
-            WIPE HISTORY
-          </Link>
-        </li>
-      </ul>
-      <CounterContextProvider userSettings={settingsState}>
-        <PlayerList {...props} buttonLabel="DRAFT" />
-      </CounterContextProvider>
-      <ManagerList {...props} />
+    <div className="draft-room">
+      <Default>
+        <div className={classes.root}>
+          <Grid container spacing={0}>
+            <Grid item xs={3}>
+              <div className="manager-container">
+                <h3>ROSTERS</h3>
+                <ManagerList {...props} />
+              </div>
+            </Grid>
+            <Grid item xs={6}>
+              <div className="player-container">
+                <h3>PLAYERS</h3>
+                <PlayerTable
+                  {...props}
+                  getRowProps={(row) => ({
+                    style: {
+                      display: row.original.drafted ? 'none' : '',
+                    },
+                  })}
+                  buttonLabel="DRAFT"
+                />
+              </div>
+            </Grid>
+            <Grid item xs={3}>
+              <div className="status-container">
+                <StatusTabs />
+              </div>
+            </Grid>
+          </Grid>
+        </div>
+      </Default>
+      <Mobile>
+        <DraftTabs {...props} />
+      </Mobile>
     </div>
   );
 };

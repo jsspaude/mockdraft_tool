@@ -25,6 +25,14 @@ const dataReducer = (state, action) => {
         inProgress: false,
         playerData: { ...action.payload },
       };
+    case 'draft':
+      return {
+        ...state,
+        playerData: {
+          ...state.playerData,
+          [action.index]: action.payload,
+        },
+      };
     case 'loadData':
       return {
         ...state,

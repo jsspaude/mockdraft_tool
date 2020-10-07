@@ -1,0 +1,53 @@
+/* ----------------------------------------- */
+/* CONFIG */
+/* ----------------------------------------- */
+
+// Assets
+
+@function image($file) {
+  @return url('../../img' + '/' + $file);
+}
+
+//Fonts
+$fonts: (
+  'mainfont': (
+    'Lato',
+    sans-serif,
+  ),
+  'brandfont': (
+    'Poppins',
+    sans-serif,
+  ),
+);
+
+//Colors
+$colors: (
+  'white': #fafafa,
+  'black': #1c0f13,
+  'green': #52796f,
+  'yellow': #f9c22e,
+  'blue': #d8dbe2,
+  'pink': #f6e8ea,
+);
+
+//Layout
+$layout: (
+  'max-width': 1400px,
+  'max-width-half': 720px,
+  'gutter': 30px,
+  'grid-max': 12,
+  'header-height': 160px,
+);
+
+//Primary Styles
+$primary: (
+  font-weight: 400,
+  line-height: 1.33,
+  font-family: map-get($fonts, 'mainfont'),
+  overflow-x: hidden,
+  background: #fff,
+  -webkit-font-smoothing: antialiased,
+  -moz-osx-font-smoothing: grayscale,
+  -webkit-text-size-adjust: 100%,
+  -ms-text-size-adjust: 100%,
+);

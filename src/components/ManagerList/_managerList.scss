@@ -1,15 +1,21 @@
 .manager-list {
-  height: 100vh;
-  flex-wrap: wrap;
-  display: flex;
-  flex-direction: row;
-  margin: 0 5%;
-  flex: 1;
+  height: calc(100vh - 200px);
 
-  div {
-    width: 30%;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    margin: 10px;
-    padding: 0px;
+  * {
+    margin: 0 !important;
   }
+
+  button {
+    border: 1px solid map-get($colors, 'green');
+    margin-top: 0;
+  }
+
+  input {
+    margin: 15px 0 !important;
+  }
+
+  // div {
+  //   padding: 5px;
+  //   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  // }
 }

@@ -43,7 +43,7 @@ const Manager = (props) => {
         name="name"
         onChange={(e) => handleName(e.target.value)}
         onBlur={(e) => handleNameBlur(e.target.value)}
-        placeholder={(name && name) || (!name && `Manager-${props.index}`)}
+        placeholder="Change Team Name"
         value={name && `${name}`}
       />
       <table className="manager-drafted-players">

@@ -1,7 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Poppins:wght@400;900&display=swap');
+@import './config';
+@import '../components/Landing/landing';
+@import '../components/Settings/settings';
+@import '../components/StatusTabs/statusTabs';
 @import '../components/App/app';
 @import '../components/Draft/draft';
-@import '../components/PlayerList/playerList';
-@import '../components/Player/player';
+@import '../components/PlayerTable/playerTable';
 @import '../components/ManagerList/managerList';
 @import '_global';
 @import '../components/Manager/manager';
@@ -9,3 +13,5 @@
 @import '../components/Login/login';
 @import '../components/Header/header';
 @import '../components/KeeperList/keeperList';
+@import '../components/Status/status';
+@import '../components/Filters/filters';

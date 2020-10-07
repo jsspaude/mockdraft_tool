@@ -135,3 +135,15 @@ export const flattenObject = (obj) => Object.keys(obj).reduce((acc, k) => {
   else acc[k] = obj[k];
   return acc;
 }, {});
+
+const date = new Date();
+const components = [
+  date.getYear(),
+  date.getMonth(),
+  date.getDate(),
+  date.getHours(),
+  date.getMinutes(),
+  date.getSeconds(),
+  date.getMilliseconds(),
+];
+export const id = components.join('');

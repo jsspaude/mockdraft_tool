@@ -1,0 +1,9 @@
+.landing-page {
+  .landing-image {
+    background-color: map-get($colors, 'black');
+    background-image: image('logo.svg');
+    background-repeat: no-repeat;
+    background-size: 75%;
+    background-position: center center;
+  }
+}

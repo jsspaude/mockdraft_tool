@@ -43,8 +43,10 @@
       }
 
       .navigation-mobile {
-        flex: none !important;
-        justify-content: flex-end;
+        div {
+          display: flex;
+          justify-content: flex-end;
+        }
       }
     }
   }

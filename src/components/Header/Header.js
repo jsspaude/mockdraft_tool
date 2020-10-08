@@ -70,9 +70,9 @@ const Header = () => {
                 <Link to={'/'} className="reset" onClick={(e) => handleReset(e)}>
                   RESET
                 </Link>
-                <Link to={'/'} className="reset" onClick={(e) => handleWipe(e)}>
+                {/* <Link to={'/'} className="reset" onClick={(e) => handleWipe(e)}>
                   WIPE HISTORY
-                </Link>
+                </Link> */}
                 <Link to="/login" className="logout" onClick={(e) => handleLogout(e)}>
                   LOGOUT
                 </Link>

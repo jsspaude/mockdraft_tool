@@ -53,7 +53,7 @@ const Header = () => {
             </div>
             {uid && (
               <div className="navigation-mobile">
-                <NavigationMobile />
+                <NavigationMobile handleReset={handleReset} handleLogout={handleLogout} />
               </div>
             )}
           </div>

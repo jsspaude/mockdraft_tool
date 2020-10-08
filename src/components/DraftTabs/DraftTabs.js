@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import PlayerTable from '../PlayerTable/PlayerTable';
 import ManagerList from '../ManagerList/ManagerList';

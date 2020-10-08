@@ -36,11 +36,11 @@ export default function ManagerSelect() {
           defaultValue={10}
           onChange={(e) => handleManagerChange(e.target.value)}
         >
-          <MenuItem value={4}>4</MenuItem>
+          <MenuItem value={8}>8</MenuItem>
           <MenuItem value={10}>10</MenuItem>
           <MenuItem value={12}>12</MenuItem>
-          <MenuItem value={14}>12</MenuItem>
-          <MenuItem value={16}>12</MenuItem>
+          <MenuItem value={14}>14</MenuItem>
+          <MenuItem value={16}>16</MenuItem>
         </Select>
       </FormControl>
     </div>

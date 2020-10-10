@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useReducer, useEffect, useState } from 'react';
 import firebase from 'firebase/app';
+import Loading from '../components/Loading/Loading';
 import 'firebase/auth';
 
 const AuthContext = React.createContext('');
@@ -30,7 +31,7 @@ const AuthContextProvider = (props) => {
   }, [uid]);
 
   if (pending) {
-    return <>Loading...</>;
+    return <Loading />;
   }
 
   return (

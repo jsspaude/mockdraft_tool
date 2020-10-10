@@ -5,20 +5,18 @@ import {
 } from 'react-router-dom';
 import Header from './Header/Header';
 import Landing from './Landing/Landing';
+import Loading from './Loading/Loading';
 import Login from './Login/Login';
 import Draft from './Draft/Draft';
 import Settings from './Settings/Settings';
 import PrivateRoute from './PrivateRoute';
 import { AuthContext } from '../contexts/AuthContextProvider';
 import { DataContext } from '../contexts/DataContextProvider';
-import { SettingsContext } from '../contexts/SettingsContextProvider';
 
 const Router = () => {
   const { uid, setUid } = React.useContext(AuthContext);
   const { dataState, dataDispatch } = React.useContext(DataContext);
-  const { settingsState, settingsDispatch } = React.useContext(SettingsContext);
   const [pending, setPending] = React.useState(true);
-  const history = useHistory();
   const isLoggedIn = (x) => !!x;
 
   React.useEffect(() => {
@@ -65,6 +63,6 @@ const Router = () => {
       </BrowserRouter>
     );
   }
-  return <>Loading...</>;
+  return <Loading />;
 };
 export default Router;

@@ -29,7 +29,7 @@
     "re-base": "4.0.0",
     "react": "^16.13.1",
     "react-autosuggest": "^10.0.2",
-    "react-devtools": "^3.6.3",
+    "react-devtools": "^4.27.7",
     "react-dom": "^16.13.1",
     "react-loadingg": "^1.7.2",
     "react-papaparse": "^3.4.0",

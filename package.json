@@ -5,7 +5,7 @@
   "devDependencies": {
     "concurrently": "4.1.0",
     "prettier-eslint": "^11.0.0",
-    "react-scripts": "3.4.3"
+    "react-scripts": "5.0.1"
   },
   "dependencies": {
     "@date-io/date-fns": "^2.10.6",
